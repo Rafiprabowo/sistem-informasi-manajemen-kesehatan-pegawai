@@ -53,4 +53,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Admin::class);
     }
+    public function pharmacist():HasOne
+    {
+        return $this->hasOne(Pharmacist::class);
+    }
 }

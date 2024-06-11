@@ -29,6 +29,7 @@ class AuthController extends Controller
             'admin' => '/admin/',
             'dokter' => '/dokter/',
             'pegawai' => '/pegawai/',
+            'apoteker' => '/apoteker/'
         ];
         $role = Auth::user()->role;
         return isset($roleRoutes[$role])

@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Medicine;
+use App\Models\MedicineCategories;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -26,8 +28,20 @@ class DatabaseSeeder extends Seeder
          ]);
 
          \App\Models\User::factory(1)->create([
-            'role' => 'admin'
+            'role' => 'apoteker'
          ]);
+
+         $categories = MedicineCategories::create([
+             'name' => 'name',
+             'description' => 'description'
+         ]);
+         Medicine::create([
+             'name' => 'medicine test',
+             'description' => 'desc medicine test',
+             'categories_id' =>$categories->id
+         ]);
+
+
 
 
 

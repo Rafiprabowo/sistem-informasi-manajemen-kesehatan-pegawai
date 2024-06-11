@@ -23,7 +23,7 @@
                 <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
             </div>
         @endif
-       <form class="card" action="{{ route('dokter.storeJadwal') }}" method="post">
+       <form class="card" action="{{ route('jadwal.store') }}" method="post">
     @csrf
     <div class="card-header">
         <h3 class="card-title">Tambah jadwal</h3>

@@ -6,11 +6,11 @@ use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AppointmentsController extends Controller
 {
     //
-
 
     public function storeJanjiTemu(Request $request)
 {
@@ -33,14 +33,21 @@ class AppointmentsController extends Controller
     }
 
     // Simpan janji temu
-    Appointment::create([
-        'name' => $validated['name'],
-        'phone' => $validated['phone'],
-        'address' => $validated['address'],
-        'employee_id' => auth()->user()->id,
-        'doctor_id' => $validated['doctor_id'],
-        'appointment_time' => $validated['appointment_time'],
-    ]);
+    DB::transaction(function () use ($isAvailable, $validated){
+        Appointment::create([
+            'name' => $validated['name'],
+            'phone' => $validated['phone'],
+            'address' => $validated['address'],
+            'employee_id' => auth()->user()->id,
+            'doctor_id' => $validated['doctor_id'],
+            'appointment_time' => $validated['appointment_time'],
+        ]);
+
+        Schedule::updateOrCreate([
+           ['id' , $isAvailable->id],
+           ['is_available', false]
+        ]);
+    });
 
     return redirect()->back()->with('success', 'Janji temu berhasil dibuat.');
 }

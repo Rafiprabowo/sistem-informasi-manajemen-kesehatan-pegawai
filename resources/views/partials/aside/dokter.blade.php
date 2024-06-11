@@ -30,12 +30,15 @@
                   </span>
                 </a>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="{{route('dokter.createJadwal')}}" >
-                    Manajemen Jadwal
+                  <a class="dropdown-item" href="{{route('jadwal.create')}}" >
+                    Tambah jadwal
                   </a>
-                  <a class="dropdown-item" href="./changelog.html">
-                    Manajemen Janji Temu
+                  <a class="dropdown-item" href="#">
+                    Lihat janji temu
                   </a>
+                    <a class="dropdown-item" href="/create-diagnosis">
+                        Buat diagnosis
+                    </a>
 
                 </div>
               </li>
