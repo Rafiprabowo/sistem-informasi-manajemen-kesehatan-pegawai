@@ -11,7 +11,7 @@ class Appointment extends Model
     use HasFactory;
     protected $guarded = [];
 
-    public function employees() : BelongsTo
+    public function employee() : BelongsTo
     {
         return $this->belongsTo(Employee::class);
     }
@@ -21,8 +21,4 @@ class Appointment extends Model
         return $this->belongsTo(Doctor::class);
     }
 
-    public function schedule() : BelongsTo
-    {
-        return $this->belongsTo(Schedule::class);
-    }
 }

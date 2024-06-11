@@ -18,65 +18,92 @@
           <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
         </div>
         @endif
-              <form class="card" action="/pegawai/janji-temu" method="post">
-                  @csrf
-                <div class="card-header">
-                  <h3 class="card-title">Form Janji Temu</h3>
-                </div>
-                <div class="card-body">
-                    <input type="hidden" name="employee_id" value="{{$user->employee->id}}">
-                  <div class="mb-3">
-                            <label class="form-label">Nama</label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Nama" value="{{old('name', $user->name)}}" >
-                            @error('name')
-                              <div class="invalid-feedback">{{$message}}</div>
-                              @enderror
-                          </div>
-                  <div class="mb-3">
-                            <label class="form-label ">Alamat</label>
-                            <input type="text" name="address" class="form-control @error('address') is-invalid @enderror " placeholder="Address" value="{{old('address', $user->address)}}" >
-                            @error('address')
-                              <div class="invalid-feedback">{{$message}}</div>
-                              @enderror
-                          </div>
-                     <div class="mb-3">
-                            <label class="form-label ">Phone</label>
-                            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="+62xx" value="{{old('phone',$user->phone)}}">
-                            @error('phone')
-                              <div class="invalid-feedback">{{$message}}</div>
-                              @enderror
-                          </div>
-                  <div class="mb-3">
-                    <label class="form-label">Pilih Dokter</label>
-                    <div>
-                      <select class="form-select" name="doctor_id">
-                       @if($doctors)
-                           @foreach($doctors as $doctor)
-                           <option value="{{$doctor->id}}">{{$doctor->user->name}}</option>
-                           @endforeach
-                          @else
-                          <option class="@error('doctor_id') is-invalid @enderror">Dokter tidak tersedia</option>
-                           @error('doctor_id')
-                            <div class="invalid-feedback">{{$message}}</div>
-                           @enderror
-                          @endif
-                      </select>
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Pilih Tanggal & Waktu</label>
-                    <div>
-                        <input type="datetime-local" class="form-fieldset @error('appointments_time') is-invalid @enderror" name="appointments_time" id="">
-                        @error('appointments_time')
-                        <div class="invalid-feedback">{{$message}}</div>
-                        @enderror
-                    </div>
-                  </div>
-                </div>
-                <div class="card-footer text-end">
-                  <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
+            <form class="card" action="/api/store-janjiTemu" method="post">
+    @csrf
+    <div class="card-header">
+        <h3 class="card-title">Form Janji Temu</h3>
+    </div>
+    <div class="card-body">
+        <div class="mb-3">
+            <label class="form-label">Nama</label>
+            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Nama" value="{{ old('name', $user->name) }}">
+            @error('name')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Alamat</label>
+            <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" placeholder="Alamat" value="{{ old('address', $user->address) }}">
+            @error('address')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="+62xx" value="{{ old('phone', $user->phone) }}">
+            @error('phone')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Pilih Dokter</label>
+            <select class="form-select @error('doctor_id') is-invalid @enderror" name="doctor_id" id="doctor-select">
+                <option value="">-- Pilih dokter --</option>
+                @foreach($doctors as $doctor)
+                    <option value="{{ $doctor->id }}" {{ old('doctor_id') == $doctor->id ? 'selected' : '' }}>{{ $doctor->user->name }}</option>
+                @endforeach
+            </select>
+            @error('doctor_id')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Pilih Tanggal & Waktu</label>
+            <select class="form-select @error('appointment_time') is-invalid @enderror" name="appointment_time" id="schedule-select" required>
+                <!-- Options akan diisi oleh jQuery -->
+            </select>
+            @error('appointment_time')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+    <div class="card-footer text-end">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
 
-              </form>
             </div>
 @endsection
+
+@section('script')
+    <script>
+    $(document).ready(function () {
+        $('#doctor-select').on('change', function () {
+            var doctorId = this.value;
+            $("#schedule-select").html('');
+            $.ajax({
+                url: "{{url('api/fetch-doctor-schedules')}}",
+                type: "POST",
+                data: {
+                    doctor_id: doctorId,
+                    _token: '{{ csrf_token() }}'  // Pastikan token CSRF disertakan jika menggunakan POST
+                },
+                dataType: 'json',
+                success: function (result) {
+                    $('#schedule-select').html('<option value="">-- Pilih jadwal --</option>');
+                    $.each(result.schedules, function (key, value) {
+                        $("#schedule-select").append('<option value="' + value.available_time + '">' + value.available_time + '</option>');
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                    alert('Gagal memuat jadwal');
+                }
+            });
+        });
+    });
+</script>
+
+@endsection
+
+

@@ -47,27 +47,5 @@ class PegawaiController extends Controller
     public function createJanjiTemu(){
         return view('content.pegawai.create_janji_temu');
     }
-    public function storeJanjiTemu(Request $request){
-        $request->validate([
-            'name' => 'required',
-            'phone' => 'required',
-            'address' => 'required',
-            'appointments_time' => 'required',
-            'employee_id' => 'required',
-            'doctor_id' => 'required',
-        ]);
 
-        DB::transaction(function () use ($request) {
-           Appointment::Create(
-              ['name' => $request->get('name'),
-                  'phone' => $request->get('phone'),
-                  'address' => $request->get('address'),
-                  'appointments_time' => $request->get('appointments_time'),
-                  'employee_id' => $request->get('employee_id'),
-                  'doctor_id' => $request->get('doctor_id'),]
-           );
-        });
-
-        return redirect()->back()->with('success', 'Jadwal temu berhasil ditambahkan');
-    }
 }

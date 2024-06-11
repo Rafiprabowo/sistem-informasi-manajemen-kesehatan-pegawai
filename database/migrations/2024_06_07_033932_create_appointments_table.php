@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone');
             $table->foreignId('employee_id');
             $table->foreignId('doctor_id');
-            $table->dateTime('appointments_time');
+            $table->dateTime('appointment_time');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         });

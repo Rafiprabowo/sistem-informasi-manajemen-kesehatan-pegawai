@@ -1,10 +1,12 @@
 @extends('template')
 @section('aside')
-    @include('partials.aside.dokter')
+    @include('partials.aside.admin')
 @endsection
+
 @section('content-header')
-    @include('partials.content-header.dokter.profile')
+    @include('partials.content-header.admin.profile')
 @endsection
+
 @section('content')
               <div class="row row-cards">
                    @if(session()->has('success'))
@@ -19,10 +21,10 @@
         </div>
         @endif
                 <div class="col-lg-10">
-                  <form action="/dokter/profile" class="card" method="post" >
+                  <form action="/admin/profile" class="card" method="post" >
                       @csrf
                     <div class="card-body">
-                      <h3 class="card-title">Show profile dokter</h3>
+                      <h3 class="card-title">Show profile admin</h3>
                       <div class="row row-cards">
                         <div class="col-md-5">
                           <div class="mb-3">
@@ -59,15 +61,6 @@
                             <label class="form-label ">Phone</label>
                             <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="+62xx" value="{{old('phone', $user->phone ?? '')}}">
                             @error('phone')
-                              <div class="invalid-feedback">{{$message}}</div>
-                              @enderror
-                          </div>
-                        </div>
-                        <div class="col-sm-6 col-md-4">
-                          <div class="mb-3">
-                            <label class="form-label ">Spesialisasi</label>
-                            <input type="text" name="spesialisasi" class="form-control @error('spesialisasi') is-invalid @enderror" placeholder="Spesialisasi" value="{{old('spesialisasi', $user->doctor->spesialisasi ?? '')}}">
-                            @error('spesialisasi')
                               <div class="invalid-feedback">{{$message}}</div>
                               @enderror
                           </div>

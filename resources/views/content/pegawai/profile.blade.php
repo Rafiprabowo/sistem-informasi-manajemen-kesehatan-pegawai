@@ -23,12 +23,12 @@
                   <form action="/pegawai/profile" class="card" method="post" >
                       @csrf
                     <div class="card-body">
-                      <h3 class="card-title">Edit Profile</h3>
+                      <h3 class="card-title">Show profile pegawai</h3>
                       <div class="row row-cards">
                         <div class="col-md-5">
                           <div class="mb-3">
                             <label class="form-label">Nama</label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Nama" value="{{old('name', auth()->user()->name)}}" >
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Nama" value="{{old('name', $user->name)}}" >
                             @error('name')
                               <div class="invalid-feedback">{{$message}}</div>
                               @enderror
@@ -37,19 +37,19 @@
                         <div class="col-sm-6 col-md-3">
                           <div class="mb-3">
                             <label class="form-label " >Username</label>
-                            <input type="text" name="username" class="form-control" placeholder="Username" disabled value="{{auth()->user()->username}}">
+                            <input type="text" name="username" class="form-control" placeholder="Username" disabled value="{{$user->username}}">
                           </div>
                         </div>
                         <div class="col-sm-6 col-md-4">
                           <div class="mb-3">
                             <label class="form-label ">Email</label>
-                            <input type="email" name="email" class="form-control" placeholder="Email" disabled value="{{auth()->user()->email}}">
+                            <input type="email" name="email" class="form-control" placeholder="Email" disabled value="{{$user->email}}">
                           </div>
                         </div>
                         <div class="col-sm-6 col-md-6">
                           <div class="mb-3">
                             <label class="form-label ">Alamat</label>
-                            <input type="text" name="address" class="form-control @error('address') is-invalid @enderror " placeholder="Address" value="{{old('address', auth()->user()->address)}}" >
+                            <input type="text" name="address" class="form-control @error('address') is-invalid @enderror " placeholder="Address" value="{{old('address', $user->address ?? '')}}" >
                             @error('address')
                               <div class="invalid-feedback">{{$message}}</div>
                               @enderror
@@ -58,7 +58,7 @@
                         <div class="col-sm-6 col-md-6">
                           <div class="mb-3">
                             <label class="form-label ">Phone</label>
-                            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="+62xx" value="{{old('phone', auth()->user()->phone)}}">
+                            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="+62xx" value="{{old('phone', $user->phone ?? '')}}">
                             @error('phone')
                               <div class="invalid-feedback">{{$message}}</div>
                               @enderror

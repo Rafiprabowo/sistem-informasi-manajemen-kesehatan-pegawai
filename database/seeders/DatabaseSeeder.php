@@ -25,6 +25,10 @@ class DatabaseSeeder extends Seeder
              'role' => 'dokter'
          ]);
 
+         \App\Models\User::factory(1)->create([
+            'role' => 'admin'
+         ]);
+
 
 
     }

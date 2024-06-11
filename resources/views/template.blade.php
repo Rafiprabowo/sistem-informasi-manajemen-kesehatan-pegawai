@@ -19,7 +19,8 @@
     <link href="{{asset('./dist/css/tabler-payments.min.css?1684106062')}}" rel="stylesheet"/>
     <link href="{{asset('./dist/css/tabler-vendors.min.css?1684106062')}}" rel="stylesheet"/>
     <link href="{{asset('./dist/css/demo.min.css?1684106062')}}" rel="stylesheet"/>
-    <style>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+     <style>
       @import url('https://rsms.me/inter/inter.css');
       :root {
       	--tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
@@ -79,6 +80,7 @@
         </footer>
       </div>
     </div>
+    @yield('script')
     <!-- Libs JS -->
     <script src="{{asset('./dist/libs/apexcharts/dist/apexcharts.min.js?1684106062')}}" defer></script>
     <script src="{{asset('./dist/libs/jsvectormap/dist/js/jsvectormap.min.js?1684106062')}}" defer></script>

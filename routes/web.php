@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\PegawaiController;
+use \App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,10 +30,12 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::prefix('/dokter')->group(function () {
     Route::controller(DoctorController::class)->group(function () {
-        Route::get('/', 'dashboard')->name('doctor.dashboard');
+        Route::get('/', 'dashboard')->name('dokter.dashboard');
         Route::get('/profile', 'profile')->name('doctor.profile');
     });
     Route::post('/profile', [DoctorController::class, 'updateProfile']);
+    Route::get('/jadwal', [DoctorController::class, 'createJadwal'])->name('dokter.createJadwal');
+    Route::post('/jadwal', [DoctorController::class, 'storeJadwal'])->name('dokter.storeJadwal');
 });
 
 Route::prefix('/pegawai')->group(function () {
@@ -41,9 +44,24 @@ Route::prefix('/pegawai')->group(function () {
         Route::get('/profile', 'profile')->name('pegawai.profile');
         Route::post('/profile', [PegawaiController::class, 'updateProfile']);
         Route::get('/janji-temu', [PegawaiController::class, 'createJanjiTemu']);
-        Route::post('/janji-temu', [PegawaiController::class, 'storeJanjiTemu']);
     });
 });
+
+Route::prefix('/admin')->group(function () {
+   Route::controller(AdminController::class)->group(function () {
+       Route::get('/', 'dashboard')->name('admin.dashboard');
+       Route::get('/profile', 'profile')->name('admin.profile');
+
+   });
+   Route::post('/profile', [AdminController::class,'updateProfile']);
+});
+
+Route::post('api/fetch-doctor-schedules', function(\Illuminate\Http\Request $request){
+   $data['schedules'] = \App\Models\Schedule::where('doctor_id', $request->get('doctor_id'))->get(['doctor_id', 'available_time']);
+    return response()->json($data);
+});
+
+Route::post('api/store-janjiTemu', [\App\Http\Controllers\AppointmentsController::class, 'storeJanjiTemu']);
 
 
 
