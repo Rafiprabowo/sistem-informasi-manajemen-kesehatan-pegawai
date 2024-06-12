@@ -72,17 +72,18 @@ Route::middleware('auth')->group(function () {
 
 
     Route::post('api/fetch-doctor-schedules', function (\Illuminate\Http\Request $request) {
-    $doctorId = $request->input('doctor_id');
-    $now = \Carbon\Carbon::now('Asia/Jakarta');
-    // Fetch schedules
-    $schedules = \App\Models\Schedule::where('doctor_id', $doctorId)
-        ->where('available_time', '>', $now) // Hanya jadwal di masa depan
-        ->where('is_available', true) // Jadwal yang tersedia
-        ->orderBy('available_time') // Urutkan berdasarkan waktu
-        ->get(['doctor_id', 'available_time']);
+        $doctorId = $request->input('doctor_id');
+        // Fetch schedules
+        $schedules = \App\Models\Schedule::class::where('doctor_id', $doctorId)
+            ->where('available_time', '>', now()) // Hanya jadwal di masa depan
+            ->where('is_available', true) // Jadwal yang tersedia
+            ->orderBy('available_time') // Urutkan berdasarkan waktu
+            ->get(['doctor_id', 'available_time']);
 
-    return response()->json(['schedules' => $schedules]);
-});
+        return response()->json(['schedules' => $schedules]);
+    });
+
+
 
     Route::post('api/approve-appointment/{id}', function ($id) {
         $appointment = Appointment::findOrFail($id);

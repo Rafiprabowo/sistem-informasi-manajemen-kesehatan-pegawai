@@ -24,7 +24,7 @@ class AppointmentController extends Controller
     public function create()
     {
         //
-        return view('content.appointment.create');
+        return view('content.appointment.create_appointment');
     }
 
     /**

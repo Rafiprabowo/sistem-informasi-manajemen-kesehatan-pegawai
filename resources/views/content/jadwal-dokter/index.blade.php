@@ -49,17 +49,14 @@
                                 <td><span class="text-muted">{{$index + 1}}</span></td>
                                 <td><a href="#" class="text-reset" tabindex="-1">{{$schedule->available_time}}</a></td>
                                 <td>
-                                    <span class="badge {{$schedule->available_time > $now && $schedule->is_available === true ? 'bg-success' :($schedule->available_time < $now ? 'bg-warning' :($schedule->is_available === false ? 'bg-danger' : 'bg-secondary' ))}} me-1">
+                                    <span class="badge {{ $schedule->is_available ? 'bg-success' : 'bg-danger' }} me-1">
+                                        @if($schedule->is_available)
+                                            Jadwal bisa dipakai
+                                        @else
+                                            Jadwal telah terpakai
+                                        @endif
+</span>
 
-                                            @if($schedule->available_time > $now && $schedule->is_available === true)
-                                            Jadwal tersedia
-                                            @elseif($schedule->available_time < $now)
-                                            Jadwal expired
-                                            @elseif($schedule->is_available === false)
-                                            Jadwal sudah terpakai
-                                            @endif
-
-                                    </span>
                                 </td>
                                 <td class="text-end">
                                         <span class="dropdown">
