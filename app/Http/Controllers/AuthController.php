@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -55,6 +56,10 @@ class AuthController extends Controller
         $user = User::create($validated);
         $user->role = "pegawai";
         $user->save();
+
+        Employee::create([
+            'user_id' => $user->id
+        ]);
 
         Auth::login($user);
 

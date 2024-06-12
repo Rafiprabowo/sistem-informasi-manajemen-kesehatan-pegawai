@@ -24,7 +24,7 @@ Route::get('/create-diagnosis', function (){
     return view('content.dokter.create_diagnosis');
 });
 
-Route::get('/', function (){return view('template');});
+Route::get('/', function (){return view('template');})->middleware('auth');
 Route::get('/login', function() {
     return view('content.authentication.login');
 })->name('login');
@@ -71,11 +71,12 @@ Route::middleware('auth')->group(function () {
     });
 
 
-    Route::post('api/fetch-doctor-schedules', function (\Illuminate\Http\Client\Request $request) {
+    Route::post('api/fetch-doctor-schedules', function (\Illuminate\Http\Request $request) {
     $doctorId = $request->input('doctor_id');
+    $now = \Carbon\Carbon::now('Asia/Jakarta');
     // Fetch schedules
-    $schedules = \App\Models\Schedule::class::where('doctor_id', $doctorId)
-        ->where('available_time', '>', now()) // Hanya jadwal di masa depan
+    $schedules = \App\Models\Schedule::where('doctor_id', $doctorId)
+        ->where('available_time', '>', $now) // Hanya jadwal di masa depan
         ->where('is_available', true) // Jadwal yang tersedia
         ->orderBy('available_time') // Urutkan berdasarkan waktu
         ->get(['doctor_id', 'available_time']);

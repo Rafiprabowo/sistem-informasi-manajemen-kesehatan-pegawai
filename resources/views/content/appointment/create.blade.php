@@ -79,41 +79,38 @@
 @section('script')
     <script>
     $(document).ready(function() {
-    // Fungsi untuk mengambil jadwal dokter
-    function fetchDoctorSchedules() {
-        var doctorId = $('#doctor-select').val();
-        if (doctorId) {
-            $.ajax({
-                url: "{{ url('api/fetch-doctor-schedules') }}",
-                type: "POST",
-                data: {
-                    doctor_id: doctorId,
-                    _token: '{{ csrf_token() }}' // Sertakan token CSRF untuk keamanan
-                },
-                dataType: 'json',
-                success: function(result) {
-                    $('#schedule-select').html('<option value="">-- Pilih jadwal --</option>');
-                    $.each(result.schedules, function(key, value) {
-                        $('#schedule-select').append('<option value="' + value.available_time + '">' + value.available_time + '</option>');
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.log(xhr.responseText);
-                    alert('Gagal memuat jadwal');
-                }
-            });
-        } else {
-            $('#schedule-select').html('<option value="">-- Pilih jadwal --</option>');
+        // Fungsi untuk mengambil jadwal dokter
+        function fetchDoctorSchedules() {
+            var doctorId = $('#doctor-select').val();
+            if (doctorId) {
+                $.ajax({
+                    url: "{{ url('api/fetch-doctor-schedules') }}",
+                    type: "POST",
+                    data: {
+                        doctor_id: doctorId,
+                        _token: '{{ csrf_token() }}' // Sertakan token CSRF untuk keamanan
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        $('#schedule-select').html('<option value="">-- Pilih jadwal --</option>');
+                        $.each(result.schedules, function (key, value) {
+                            $('#schedule-select').append('<option value="' + value.available_time + '">' + value.available_time + '</option>');
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText);
+                        alert('gagal memuat jadwal')
+                    }
+                });
+            } else {
+                $('#schedule-select').html('<option value="">-- Jadwal tidak tersedia --</option>');
+            }
         }
-    }
 
-    // Setiap kali dokter dipilih, panggil fetchDoctorSchedules
-    $('#doctor-select').change(function() {
-        fetchDoctorSchedules();
-    });
-
-    // Set interval untuk fetching jadwal setiap detik (1000 ms)
-    setInterval(fetchDoctorSchedules, 1000);
+        // Setiap kali dokter dipilih, panggil fetchDoctorSchedules
+        $('#doctor-select').change(function () {
+            fetchDoctorSchedules();
+        });
     });
 </script>
 

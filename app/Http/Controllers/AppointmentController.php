@@ -15,7 +15,7 @@ class AppointmentController extends Controller
     public function index()
     {
         //
-        return view('content.appointment.index');
+        return view('content.appointment.appointment_history');
     }
 
     /**

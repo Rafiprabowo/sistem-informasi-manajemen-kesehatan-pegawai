@@ -61,7 +61,7 @@
               <input type="text" name="address" class="form-control" placeholder="Enter address">
             </div>
             <div class="mb-3">
-              <label class="form-label">Name</label>
+              <label class="form-label">Phone</label>
               <input type="text" name="phone" class="form-control" placeholder="+62xxxx">
             </div>
             <div class="mb-3">

@@ -35,7 +35,6 @@ class MedicineController extends Controller
         $request->validate([
             'name' => 'required',
             'description' => 'required',
-            'categories_id' => 'required'
         ]);
 
         Medicine::create([

@@ -1,17 +1,14 @@
-@extends('template')
-
-    @section('aside')
-        @include('partials.aside.dokter')
-    @endsection
-    @section('content-header')
-        @include('partials.content-header.jadwal-dokter.index')
-    @endsection
-
+@section('aside')
+    @include('partials.aside.dokter')
+@endsection
+@section('content-header')
+    @include('partials.content-header.appointment.index')
+@endsection
 @section('content')
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Jadwal dokter</h3>
+                <h3 class="card-title">Appointments</h3>
             </div>
             <div class="card-body border-bottom py-3">
                 <div class="d-flex">
@@ -36,36 +33,39 @@
                     <tr>
                         <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select all invoices"></th>
                         <th>No</th>
-                        <th>Jadwal</th>
+                        <th>Nama</th>
+                        <th>Alamat</th>
+                        <th>Phone</th>
+                        <th>Appointment time</th>
                         <th>Status</th>
-                        <th>Action</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
-                    @if($user->doctor->schedules)
-                        @foreach($user->doctor->schedules as $index => $schedule)
+                    @if($user->doctor->appointments)
+                        @foreach($user->doctor->appointments as $index => $appointment)
                             <tr>
                                 <td><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select invoice"></td>
                                 <td><span class="text-muted">{{$index + 1}}</span></td>
-                                <td><a href="#" class="text-reset" tabindex="-1">{{$schedule->available_time}}</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">{{$appointment->name}}</a></td>
+                                <td>{{$appointment->address}}</td>
+                                <td>{{$appointment->phone}}</td>
+                                <td>{{$appointment->appointment_time}}</td>
                                 <td>
-                                    <span class="badge {{$schedule->available_time > $now && $schedule->is_available === true ? 'bg-success' :($schedule->available_time < $now ? 'bg-warning' :($schedule->is_available === false ? 'bg-danger' : 'bg-secondary' ))}} me-1">
-
-                                            @if($schedule->available_time > $now && $schedule->is_available === true)
-                                            Jadwal tersedia
-                                            @elseif($schedule->available_time < $now)
-                                            Jadwal expired
-                                            @elseif($schedule->is_available === false)
-                                            Jadwal sudah terpakai
-                                            @endif
-
+                                    <span class="badge {{$appointment->status === 'pending' ? 'bg-warning':($appointment->status === 'approved' ? 'bg-success' :($appointment->status === 'rejected' ? 'bg-danger':'bg-secondary'))}} me-1">
+                                        {{$appointment->status}}
                                     </span>
                                 </td>
                                 <td class="text-end">
                                         <span class="dropdown">
                                           <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
                                           <div class="dropdown-menu dropdown-menu-end">
-                                              <a id="delete" class="dropdown-item" data-id="{{$schedule->id}}">Delete</a>
+                                              @if($appointment->status === "approved")
+                                                  <a id="diagnosa" class="dropdown-item" data-id="{{$appointment->id}}">Diagnosa</a>
+                                              @elseif($appointment->status === "pending")
+                                                  <a id="approve" class="dropdown-item" data-id="{{$appointment->id}}">Approve</a>
+                                              @endif
+                                              <a id="delete" class="dropdown-item" data-id="{{$appointment->id}}">Delete</a>
                                           </div>
                                         </span>
                                 </td>
@@ -78,7 +78,9 @@
                             <td></td>
                             <td></td>
                             <td></td>
-
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     @endif
 
@@ -115,34 +117,53 @@
 @section('script')
     <script>
         $(document).ready( function (){
+            $('#approve').click(function (){
+                // get appointment id
+                var appointmentId = $(this).data('id')
+                $.ajax({
+                    url:'/api/approve-appointment/'+appointmentId,
+                    type: 'POST',
+                    data:{
+                        _token:'{{csrf_token()}}'
+                    },
+                    success: function (response){
+                        if(response.success){
+                            location.reload()
+                            alert('Appointment approved successfully!')
+                        }else {
+                            alert('Failed to approve appointment')
+                        }
+                    },
+                    error:function (xhr){
+                        alert('An error occured: ' + xhr.responseText)
+                    }
+                });
+            });
 
-            {{--$('#delete').click(function(){--}}
-            {{--    var appointmentId = $(this).data('id')--}}
-            {{--    if(confirm('Are you sure wanto delete this appointment?')){--}}
-            {{--        $.ajax({--}}
-            {{--            url:'/api/delete-appointment/'+appointmentId,--}}
-            {{--            type:'DELETE',--}}
-            {{--            data:{--}}
-            {{--                _token:'{{csrf_token()}}'--}}
-            {{--            },--}}
-            {{--            success:function (response){--}}
-            {{--                if(response.success){--}}
-            {{--                    location.reload()--}}
-            {{--                    alert('Appopintment deleted successfully!')--}}
-            {{--                }else {--}}
-            {{--                    alert('Failed to delete appointment')--}}
-            {{--                }--}}
-            {{--            },--}}
-            {{--            error: function (xhr){--}}
-            {{--                alert('An error occured : ' + xhr.responseText)--}}
-            {{--            }--}}
+            $('#delete').click(function(){
+                var appointmentId = $(this).data('id')
+                if(confirm('Are you sure wanto delete this appointment?')){
+                    $.ajax({
+                        url:'/api/delete-appointment/'+appointmentId,
+                        type:'DELETE',
+                        data:{
+                            _token:'{{csrf_token()}}'
+                        },
+                        success:function (response){
+                            if(response.success){
+                                location.reload()
+                                alert('Appopintment deleted successfully!')
+                            }else {
+                                alert('Failed to delete appointment')
+                            }
+                        },
+                        error: function (xhr){
+                            alert('An error occured : ' + xhr.responseText)
+                        }
 
-            {{--        })--}}
-            {{--    }--}}
-            {{--})--}}
+                    })
+                }
+            })
         });
     </script>
 @endsection
-
-
-

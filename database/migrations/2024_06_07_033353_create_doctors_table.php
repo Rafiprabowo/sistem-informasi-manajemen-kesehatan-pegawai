@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('doctors', function (Blueprint $table) {
             $table->id();
-            $table->string('spesialisasi');
+            $table->string('spesialisasi')->nullable();
             $table->foreignId('user_id')->nullable();
             $table->timestamps();
         });

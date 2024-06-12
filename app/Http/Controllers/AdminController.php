@@ -69,7 +69,6 @@ class AdminController extends Controller
 
             $selectedUser->role = $newRole;
             $selectedUser->save();
-
             // Delete related data based on old role
             if ($oldRole === 'apoteker') {
                 Pharmacist::where('user_id', $selectedUser->id)->delete();
@@ -77,6 +76,14 @@ class AdminController extends Controller
                 Doctor::where('user_id', $selectedUser->id)->delete();
             } elseif ($oldRole === 'employee') {
                 Employee::where('user_id', $selectedUser->id)->delete();
+            }
+            // Buat data baru di tabel terkait berdasarkan peran baru
+            if ($newRole === 'apoteker') {
+                Pharmacist::create(['user_id' => $selectedUser->id]);
+            } elseif ($newRole === 'doctor') {
+                Doctor::create(['user_id' => $selectedUser->id]);
+            } elseif ($newRole === 'employee') {
+                Employee::create(['user_id' => $selectedUser->id]);
             }
         });
 
