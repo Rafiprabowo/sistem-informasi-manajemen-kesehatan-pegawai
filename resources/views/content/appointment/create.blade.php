@@ -1,10 +1,11 @@
 @extends('template')
-@section('aside')
-    @include('partials.aside.pegawai')
-@endsection
 @section('content-header')
-    @include('partials.content-header.pegawai.create_janji_temu')
+    @include('partials.content-header.appointment.create')
 @endsection
+@if($user->role === "pegawai")
+    @section('aside')
+        @include('partials.aside.pegawai')
+    @endsection
 @section('content')
     <div class="col-md-6">
         @if(session()->has('success'))
@@ -18,7 +19,7 @@
           <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
         </div>
         @endif
-            <form class="card" action="/api/store-janjiTemu" method="post">
+            <form class="card" action="{{route('appointment.store')}}" method="post">
     @csrf
     <div class="card-header">
         <h3 class="card-title">Form Janji Temu</h3>
@@ -26,21 +27,21 @@
     <div class="card-body">
         <div class="mb-3">
             <label class="form-label">Nama</label>
-            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Nama" value="{{ old('name', $user->name) }}">
+            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Nama" value="{{  $user->name }}">
             @error('name')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
         <div class="mb-3">
             <label class="form-label">Alamat</label>
-            <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" placeholder="Alamat" value="{{ old('address', $user->address) }}">
+            <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" placeholder="Alamat" value="{{ $user->address }}" >
             @error('address')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
         <div class="mb-3">
             <label class="form-label">Phone</label>
-            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="+62xx" value="{{ old('phone', $user->phone) }}">
+            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="+62xx" value="{{ $user->phone}}" >
             @error('phone')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -77,33 +78,46 @@
 
 @section('script')
     <script>
-    $(document).ready(function () {
-        $('#doctor-select').on('change', function () {
-            var doctorId = this.value;
-            $("#schedule-select").html('');
+    $(document).ready(function() {
+    // Fungsi untuk mengambil jadwal dokter
+    function fetchDoctorSchedules() {
+        var doctorId = $('#doctor-select').val();
+        if (doctorId) {
             $.ajax({
-                url: "{{url('api/fetch-doctor-schedules')}}",
+                url: "{{ url('api/fetch-doctor-schedules') }}",
                 type: "POST",
                 data: {
                     doctor_id: doctorId,
-                    _token: '{{ csrf_token() }}'  // Pastikan token CSRF disertakan jika menggunakan POST
+                    _token: '{{ csrf_token() }}' // Sertakan token CSRF untuk keamanan
                 },
                 dataType: 'json',
-                success: function (result) {
+                success: function(result) {
                     $('#schedule-select').html('<option value="">-- Pilih jadwal --</option>');
-                    $.each(result.schedules, function (key, value) {
-                        $("#schedule-select").append('<option value="' + value.available_time + '">' + value.available_time + '</option>');
+                    $.each(result.schedules, function(key, value) {
+                        $('#schedule-select').append('<option value="' + value.available_time + '">' + value.available_time + '</option>');
                     });
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     console.log(xhr.responseText);
                     alert('Gagal memuat jadwal');
                 }
             });
-        });
+        } else {
+            $('#schedule-select').html('<option value="">-- Pilih jadwal --</option>');
+        }
+    }
+
+    // Setiap kali dokter dipilih, panggil fetchDoctorSchedules
+    $('#doctor-select').change(function() {
+        fetchDoctorSchedules();
+    });
+
+    // Set interval untuk fetching jadwal setiap detik (1000 ms)
+    setInterval(fetchDoctorSchedules, 1000);
     });
 </script>
 
 @endsection
+@endif
 
 

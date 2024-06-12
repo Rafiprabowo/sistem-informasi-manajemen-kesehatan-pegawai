@@ -3,7 +3,7 @@
     @include('partials.aside.dokter')
 @endsection
 @section('content-header')
-    @include('partials.content-header.dokter.create_jadwal')
+    @include('partials.content-header.jadwal-dokter.create')
 @endsection
 @section('content')
     <div class="col-md-6">
@@ -23,7 +23,7 @@
                 <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
             </div>
         @endif
-       <form class="card" action="{{ route('jadwal.store') }}" method="post">
+       <form class="card" action="{{ route('schedule.store') }}" method="post">
     @csrf
     <div class="card-header">
         <h3 class="card-title">Tambah jadwal</h3>

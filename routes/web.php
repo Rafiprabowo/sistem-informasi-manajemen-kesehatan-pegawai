@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MedicineController;
+use App\Models\Appointment;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\PegawaiController;
 use \App\Http\Controllers\AdminController;
 use App\Http\Controllers\PharmachistController;
-use App\Http\Controllers\AppointmentsController;
+use App\Http\Controllers\AppointmentsControllers;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -41,41 +44,67 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DoctorController::class, 'dashboard'])->name('doctor.dashboard');
         Route::get('/profile', [DoctorController::class, 'profile'])->name('doctor.profile');
         Route::post('/profile', [DoctorController::class, 'updateProfile'])->name('doctor.update');
-        Route::get('/jadwal', [DoctorController::class, 'createJadwal'])->name('jadwal.create');
-        Route::post('/jadwal', [DoctorController::class, 'storeJadwal'])->name('jadwal.store');
+        Route::resource('/schedule', \App\Http\Controllers\ScheduleController::class);
     });
 
     Route::prefix('/pegawai')->group(function () {
         Route::get('/', [PegawaiController::class, 'dashboard'])->name('pegawai.dashboard');
         Route::get('/profile', [PegawaiController::class, 'profile'])->name('pegawai.profile');
         Route::post('/profile', [PegawaiController::class, 'updateProfile']);
-        Route::get('/janji-temu', [PegawaiController::class, 'createJanjiTemu']);
+        Route::resource('/appointment', \App\Http\Controllers\AppointmentController::class);
+
+
     });
 
     Route::prefix('/admin')->group(function () {
-
         Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
         Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
         Route::post('/profile', [AdminController::class, 'updateProfile']);
+        Route::get('/role-user', [AdminController::class, 'changeRole'])->name('admin.changeRole');
+        Route::post('/role-user', [AdminController::class, 'updateRole'])->name('admin.updateRole');
     });
 
     Route::prefix('/apoteker')->group(function () {
-        Route::get('/', [PharmachistController::class,])->name('apoteker.dashboard',);
-        Route::get('/obat', [PharmachistController::class, 'showMedicines'])->name('medicines.show');
-        Route::get('/obat/create', [PharmachistController::class, 'createMedicine'])->name('medicine.create');
-        Route::get('/kategori', [PharmachistController::class, 'showCategories'])->name('categories.show');
-        Route::get('/kategori/create', [PharmachistController::class, 'createCategory'])->name('category.create');
-        Route::post('/obat', [PharmachistController::class, 'storeMedicine'])->name('medicines.store');
+        Route::get('/', [PharmachistController::class,'dashboard'])->name('apoteker.dashboard',);
+        Route::resource('/obat', MedicineController::class);
+        Route::resource('/kategori-obat', \App\Http\Controllers\MedicineCategoriesController::class);
     });
 
 
-    Route::post('api/fetch-doctor-schedules', function (\Illuminate\Http\Request $request) {
-        $data['schedules'] = \App\Models\Schedule::where('doctor_id', $request->get('doctor_id'))->get(['doctor_id', 'available_time']);
-        return response()->json($data);
+    Route::post('api/fetch-doctor-schedules', function (\Illuminate\Http\Client\Request $request) {
+    $doctorId = $request->input('doctor_id');
+    // Fetch schedules
+    $schedules = \App\Models\Schedule::class::where('doctor_id', $doctorId)
+        ->where('available_time', '>', now()) // Hanya jadwal di masa depan
+        ->where('is_available', true) // Jadwal yang tersedia
+        ->orderBy('available_time') // Urutkan berdasarkan waktu
+        ->get(['doctor_id', 'available_time']);
+
+    return response()->json(['schedules' => $schedules]);
+});
+
+    Route::post('api/approve-appointment/{id}', function ($id) {
+        $appointment = Appointment::findOrFail($id);
+        if($appointment) {
+            if ($appointment->doctor_id != Auth::user()->doctor->id) {
+                return response()->json(['success' => false, 'message' =>'You are not authorized to access this page.'], 403);
+            }
+            $appointment->status = 'approved';
+            $appointment->save();
+            return response()->json(['success' => 'Appointment successfully approved.']);
+        }
+        return response()->json(['success' => false, 'message' => 'Appointment not found.']);
+
+
     });
-
-    Route::post('api/store-janjiTemu', [AppointmentsController::class, 'storeJanjiTemu']);
-
+    Route::delete('api/delete-appointment/{id}', function ($id) {
+        $appointment = Appointment::findOrFail($id);
+        if ($appointment) {
+            $appointment->delete();
+            return response()->json(['success' => true, 'message' => 'Appointment deleted.']);
+        }
+        return response()->json(['success' => false, 'message' => 'Appointment not found.']);
+    });
 });
 
 

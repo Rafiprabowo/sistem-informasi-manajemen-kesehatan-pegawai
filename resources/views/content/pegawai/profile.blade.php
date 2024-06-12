@@ -28,7 +28,7 @@
                         <div class="col-md-5">
                           <div class="mb-3">
                             <label class="form-label">Nama</label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Nama" value="{{old('name', $user->name)}}" >
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Nama" readonly value="{{$user->name}}" >
                             @error('name')
                               <div class="invalid-feedback">{{$message}}</div>
                               @enderror
@@ -37,19 +37,19 @@
                         <div class="col-sm-6 col-md-3">
                           <div class="mb-3">
                             <label class="form-label " >Username</label>
-                            <input type="text" name="username" class="form-control" placeholder="Username" disabled value="{{$user->username}}">
+                            <input type="text" name="username" class="form-control" placeholder="Username" readonly value="{{$user->username}}">
                           </div>
                         </div>
                         <div class="col-sm-6 col-md-4">
                           <div class="mb-3">
                             <label class="form-label ">Email</label>
-                            <input type="email" name="email" class="form-control" placeholder="Email" disabled value="{{$user->email}}">
+                            <input type="email" name="email" class="form-control" placeholder="Email" readonly value="{{$user->email}}">
                           </div>
                         </div>
                         <div class="col-sm-6 col-md-6">
                           <div class="mb-3">
                             <label class="form-label ">Alamat</label>
-                            <input type="text" name="address" class="form-control @error('address') is-invalid @enderror " placeholder="Address" value="{{old('address', $user->address ?? '')}}" >
+                            <input type="text" name="address" class="form-control @error('address') is-invalid @enderror " placeholder="Address" readonly value="{{$user->address ?? ''}}" >
                             @error('address')
                               <div class="invalid-feedback">{{$message}}</div>
                               @enderror
@@ -58,7 +58,7 @@
                         <div class="col-sm-6 col-md-6">
                           <div class="mb-3">
                             <label class="form-label ">Phone</label>
-                            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="+62xx" value="{{old('phone', $user->phone ?? '')}}">
+                            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="+62xx" readonly value="{{$user->phone ?? ''}}">
                             @error('phone')
                               <div class="invalid-feedback">{{$message}}</div>
                               @enderror

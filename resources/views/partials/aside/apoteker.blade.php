@@ -26,15 +26,15 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M15 15l3.35 3.35" /><path d="M9 15l-3.35 3.35" /><path d="M5.65 5.65l3.35 3.35" /><path d="M18.35 5.65l-3.35 3.35" /></svg>
                   </span>
                         <span class="nav-link-title">
-                    Manajemen Obat
+                    Manajemen obat
                   </span>
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{route('medicines.show')}}" >
-                            Lihat obat
+                        <a class="dropdown-item" href="{{route('obat.index')}}" >
+                            Lihat daftar obat
                         </a>
-                        <a class="dropdown-item" href="{{route('categories.show')}}" >
-                            Manajemen Kategori
+                        <a class="dropdown-item" href="{{route('kategori-obat.index')}}" >
+                            Lihat daftar kategori obat
                         </a>
 
                     </div>
@@ -51,7 +51,7 @@
                     <div class="dropdown-menu">
                         <div class="dropdown-menu-columns">
                             <div class="dropdown-menu-column">
-                                <a class="dropdown-item" href="/dokter/profile">
+                                <a class="dropdown-item" href="/apoteker/profile">
                                     Show Profile
                                 </a>
                                 <form action="/logout" method="post">

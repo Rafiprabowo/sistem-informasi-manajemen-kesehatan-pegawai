@@ -1,11 +1,18 @@
 @extends('template')
-@section('aside')
-    @include('partials.aside.apoteker')
-@endsection
-@section('content-header')
-    @include('partials.content-header.apoteker.obat.index')
-@endsection
+@if($user->role === "admin")
+    @section('aside')
+        @include('partials.aside.admin')
+    @endsection
+@elseif($user->role === "apoteker")
+    @section('aside')
+        @include('partials.aside.apoteker')
+    @endsection
+@endif
+ @section('content-header')
+        @include('partials.content-header.obat.index')
+    @endsection
 @section('content')
+    <div class="col-md-8">
     <div class="card">
         <div class="card-body">
             @if(session()->has('success'))
@@ -23,11 +30,11 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th><button class="table-sort" data-sort="sort-name">No</button></th>
-                        <th><button class="table-sort" data-sort="sort-name">Nama</button></th>
-                        <th><button class="table-sort" data-sort="sort-city">Deskripsi</button></th>
-                        <th><button class="table-sort" data-sort="sort-type">Kategori</button></th>
-
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Deskripsi</th>
+                        <th>Kategori</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody class="table-tbody">
@@ -44,5 +51,6 @@
                 </table>
             </div>
         </div>
+    </div>
     </div>
 @endsection

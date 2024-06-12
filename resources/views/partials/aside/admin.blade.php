@@ -30,15 +30,11 @@
                   </span>
                 </a>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="https://tabler.io/docs" target="_blank" rel="noopener">
-                    Manajemen pegawai
+
+                  <a class="dropdown-item" href="{{route('admin.changeRole')}}">
+                    Ubah role user
                   </a>
-                  <a class="dropdown-item" href="#">
-                    Manajemen Dokter
-                  </a>
-                  <a class="dropdown-item" href="https://github.com/tabler/tabler" target="_blank" rel="noopener">
-                    Manajemen Apoteker
-                  </a>
+
 
                 </div>
               </li>

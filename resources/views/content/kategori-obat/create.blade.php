@@ -1,13 +1,20 @@
 @extends('template')
-@section('aside')
-    @include('partials.aside.apoteker')
-@endsection
+@if($user->role === "admin")
+    @section('aside')
+        @include('partials.aside.admin')
+    @endsection
+@elseif($user->role === "apoteker")
+    @section('aside')
+        @include('partials.aside.apoteker')
+    @endsection
+@endif
 @section('content-header')
-    @include('partials.content-header.apoteker.obat.kategori.create')
+    @include('partials.content-header.kategori-obat.create')
 @endsection
 @section('content')
     <div class="col-lg-8">
-        <form class="card">
+        <form class="card" action="{{route('kategori-obat.store')}}" method="post">
+            @csrf
             <div class="card-header">
                 <h3 class="card-title">Tambah kategori form</h3>
             </div>

@@ -17,4 +17,4 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/doctor-schedules/{doctor}', [\App\Http\Controllers\AppointmentsController::class, 'getDoctorSchedules']);
+Route::get('/doctor-schedules/{doctor}', [\App\Http\Controllers\AppointmentsControllers::class, 'getDoctorSchedules']);

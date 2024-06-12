@@ -3,11 +3,11 @@
             <div class="row g-2 align-items-center">
               <div class="col">
                 <!-- Page pre-title -->
-                <div class="page-pretitle mb-3">
+                <div class="page-pretitle">
                   Overview
                 </div>
                 <h2 class="page-title">
-                  Manajemen Jadwal
+                  Daftar jadwal dokter
                 </h2>
               </div>
               <!-- Page title actions -->

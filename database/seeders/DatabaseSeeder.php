@@ -31,15 +31,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'apoteker'
          ]);
 
-         $categories = MedicineCategories::create([
-             'name' => 'name',
-             'description' => 'description'
-         ]);
-         Medicine::create([
-             'name' => 'medicine test',
-             'description' => 'desc medicine test',
-             'categories_id' =>$categories->id
-         ]);
+
 
 
 

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('address');
             $table->string('phone');
-            $table->foreignId('employee_id');
-            $table->foreignId('doctor_id');
+            $table->foreignId('employee_id')->nullable();
+            $table->foreignId('doctor_id')->nullable();
             $table->dateTime('appointment_time');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();

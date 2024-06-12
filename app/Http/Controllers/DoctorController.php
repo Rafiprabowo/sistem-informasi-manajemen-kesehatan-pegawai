@@ -47,29 +47,6 @@ class DoctorController extends Controller
         return redirect()->back()->with('success', 'Profile updated successfully');
     }
 
-    public function createJadwal(){
-        return view('content.dokter.create_jadwal');
-    }
-
-    public function storeJadwal(Request $request)
-{
-    $validated = $request->validate([
-        'doctor_id' => 'required|integer|exists:doctors,id',
-        'available_time' => 'required|date_format:Y-m-d\TH:i',
-    ]);
-
-    Schedule::updateOrCreate(
-        ['available_time' => $validated['available_time']],
-        [
-        'doctor_id' => $validated['doctor_id'],
-        'available_time' => $validated['available_time'],
-        'is_available' => 1,
-        ]
-    );
-
-    return redirect()->back()->with('success', 'Jadwal dokter berhasil dibuat');
-}
-
 
 
 }

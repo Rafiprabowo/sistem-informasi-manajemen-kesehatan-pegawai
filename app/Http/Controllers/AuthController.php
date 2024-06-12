@@ -52,8 +52,13 @@ class AuthController extends Controller
             'password' => 'required|min:8',
         ]);
         $validated["password"] = Hash::make($validated["password"]);
-        User::create($validated);
-        $request->session()->flash('success', 'Register Berhasil');
+        $user = User::create($validated);
+        $user->role = "pegawai";
+        $user->save();
+
+        Auth::login($user);
+
+        $request->session()->flash('success', 'User registered successfully and role assigned.');
         return redirect('/login');
 
     }

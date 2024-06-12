@@ -1,5 +1,4 @@
 @extends('template')
-
 @section('aside')
     @include('partials.aside.admin')
 @endsection
@@ -218,6 +217,6 @@
                   </div>
                 </div>
               </div>
-     
+
             </div>
 @endsection

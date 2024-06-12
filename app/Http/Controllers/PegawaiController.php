@@ -44,8 +44,5 @@ class PegawaiController extends Controller
         return redirect()->back()->with('success', 'Profile updated successfully');
     }
 
-    public function createJanjiTemu(){
-        return view('content.pegawai.create_janji_temu');
-    }
 
 }

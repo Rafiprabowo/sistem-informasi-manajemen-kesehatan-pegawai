@@ -1,13 +1,19 @@
 @extends('template')
-@section('aside')
-    @include('partials.aside.apoteker')
-@endsection
+@if($user->role === "admin")
+    @section('aside')
+        @include('partials.aside.admin')
+    @endsection
+@elseif($user->role === "apoteker")
+    @section('aside')
+        @include('partials.aside.apoteker')
+    @endsection
+@endif
 @section('content-header')
-@include('partials.content-header.apoteker.obat.create')
-@endsection
+        @include('partials.content-header.obat.create')
+    @endsection
 @section('content')
     <div class="col-md-6">
-        <form class="card" action="{{route('medicines.store')}}" method="post">
+        <form class="card" action="{{route('obat.store')}}" method="post">
             @csrf
             <div class="card-header">
                 <h3 class="card-title">Tambah obat form</h3>
@@ -29,6 +35,7 @@
                     <label class="form-label">Pilih kategori</label>
                     <div>
                         <select class="form-select @error('categories_id') is-invalid @enderror" name="categories_id">
+                            <option value="">-- Pilih kategori obat --</option>
                             @if($categories)
                                 @foreach($categories as $category)
                                     <option value="{{$category->id}}">{{$category->name}}</option>

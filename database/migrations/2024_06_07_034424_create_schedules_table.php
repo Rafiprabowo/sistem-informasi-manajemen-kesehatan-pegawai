@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('doctor_id');
+            $table->foreignId('doctor_id')->nullable();
             $table->dateTime('available_time');
             $table->boolean('is_available');
             $table->timestamps();

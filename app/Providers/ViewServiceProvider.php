@@ -8,6 +8,7 @@ use App\Models\Doctor;
 use App\Models\Employee;
 use App\Models\Medicine;
 use App\Models\MedicineCategories;
+use App\Models\Schedule;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;

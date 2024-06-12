@@ -17,7 +17,7 @@ class Doctor extends Authenticatable
     {
         return $this->belongsTo(User::class);
     }
-    public function appointment():HasMany{
+    public function appointments():HasMany{
         return $this->hasMany(Appointment::class);
     }
     public function schedules(): HasMany{

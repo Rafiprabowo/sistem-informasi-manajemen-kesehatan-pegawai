@@ -1,11 +1,18 @@
 @extends('template')
-@section('aside')
-    @include('partials.aside.apoteker')
-@endsection
+@if($user->role === "admin")
+    @section('aside')
+        @include('partials.aside.admin')
+    @endsection
+@elseif($user->role === "apoteker")
+    @section('aside')
+        @include('partials.aside.apoteker')
+    @endsection
+@endif
 @section('content-header')
-    @include('partials.content-header.apoteker.obat.kategori.index')
+        @include('partials.content-header.kategori-obat.index')
 @endsection
 @section('content')
+    <div class="col-md-8">
     <div class="card">
         <div class="card-body">
             @if(session()->has('success'))
@@ -30,21 +37,20 @@
                     </tr>
                     </thead>
                     <tbody class="table-tbody">
-                    <tr>
-                        @foreach($categories as $index => $categorie)
+                    @foreach($categories as $index => $categorie)
+                        <tr>
                             <td>{{$index + 1}}</td>
                             <td class="sort-name">{{$categorie->name}}</td>
                             <td class="sort-name">{{$categorie->description}}</td>
                             <td>
-
                             </td>
+                        <tr>
                         @endforeach
-
-                    </tr>
 
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
     </div>
 @endsection
