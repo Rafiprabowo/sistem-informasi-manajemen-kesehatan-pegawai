@@ -38,13 +38,13 @@
                 <div class="mb-3">
                     <label class="form-label required">Nama</label>
                     <div>
-                        <input name="name" type="text" class="form-control"  placeholder="nama kategori">
+                        <input name="name" type="text" class="form-control @error('name') is-invalid @enderror"  placeholder="nama kategori">
                     </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label required">Deskripsi</label>
                     <div>
-                        <input type="text" name="description" class="form-control" placeholder="deskripsi kategori">
+                        <input type="text" name="description" class="form-control @error('description') is-invalid @enderror" placeholder="deskripsi kategori">
                     </div>
                 </div>
             </div>

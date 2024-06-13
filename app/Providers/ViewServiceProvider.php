@@ -37,15 +37,12 @@ class ViewServiceProvider extends ServiceProvider
             $users = User::all();
             $medicines = Medicine::all();
             $categories = MedicineCategories::all();
-            $appointments = Appointment::all();
-            $now = Carbon::now('Asia/Jakarta');
             $view->with('doctors', $doctors);
             $view->with('user', $user);
             $view->with('users', $users);
             $view->with('medicines', $medicines);
             $view->with('categories', $categories);
-            $view->with('appointments', $appointments);
-            $view->with('now',$now);
+
         });
     }
 }

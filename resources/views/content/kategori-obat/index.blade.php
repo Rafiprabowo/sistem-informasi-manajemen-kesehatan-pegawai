@@ -26,30 +26,65 @@
                     <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
                 </div>
             @endif
-            <div id="table-default" class="table-responsive">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Deskripsi</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody class="table-tbody">
-                    @foreach($categories as $index => $categorie)
+            <div class="d-flex">
+                    <div class="text-muted">
+                        Show
+                        <div class="mx-2 d-inline-block">
+                            <input type="text" class="form-control form-control-sm" value="8" size="3" aria-label="Invoices count">
+                        </div>
+                        entries
+                    </div>
+                    <div class="ms-auto text-muted">
+                        Search:
+                        <div class="ms-2 d-inline-block">
+                            <input type="text" class="form-control form-control-sm" aria-label="Search invoice">
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table card-table table-vcenter text-nowrap datatable">
+                        <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>Deskripsi</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if(count($medicines) > 0)
+                            @foreach($categories as $index => $categorie)
                         <tr>
                             <td>{{$index + 1}}</td>
                             <td class="sort-name">{{$categorie->name}}</td>
                             <td class="sort-name">{{$categorie->description}}</td>
                             <td>
+                                <span class="dropdown">
+                                    <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                                    <div class="dropdown-menu">
+                                         <a id="edit" class="dropdown-item" data-id="{{$categorie->id}}">Edit</a>
+                                        <a id="hapus" class="dropdown-item" data-id="{{$categorie->id}}">Hapus</a>
+
+                                    </div>
+                                </span>
                             </td>
                         <tr>
-                        @endforeach
+                    @endforeach
+                        @else
+                            <tr>
+                                <td>data tidak tersedia</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        @endif
 
-                    </tbody>
-                </table>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
+
+
+
         </div>
     </div>
     </div>

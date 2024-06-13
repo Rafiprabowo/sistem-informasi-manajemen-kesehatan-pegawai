@@ -38,7 +38,6 @@
                         <a class="dropdown-item" href="{{route('appointment.index')}}">
                             History appointment
                         </a>
-
                     </div>
                 </div>
             </div>

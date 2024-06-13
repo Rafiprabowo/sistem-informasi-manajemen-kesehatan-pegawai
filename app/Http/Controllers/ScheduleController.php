@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Doctor;
 use App\Models\Schedule;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ScheduleController extends Controller
 {
@@ -13,7 +17,13 @@ class ScheduleController extends Controller
     public function index()
     {
         //
-        return view('content.jadwal-dokter.index');
+        $user = Auth::user();
+        $doctor = $user->doctor;
+        $schedules = $doctor->schedules;
+        foreach ($schedules as $schedule) {
+            Carbon::parse($schedule->available_time)->format('H:i');
+        }
+        return view('content.jadwal-dokter.index', compact('schedules'));
     }
 
     /**
@@ -31,21 +41,22 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         //
-         $validated = $request->validate([
-        'doctor_id' => 'required|integer|exists:doctors,id',
-        'available_time' => 'required|date_format:Y-m-d\TH:i',
-    ]);
+            $user = Auth::user();
+            $request->validate([
+                'available_time' => 'required|date|after:now',
+            ]);
 
-    Schedule::updateOrCreate(
-        ['available_time' => $validated['available_time']],
-        [
-        'doctor_id' => $validated['doctor_id'],
-        'available_time' => $validated['available_time'],
-        'is_available' => 1,
-        ]
-    );
 
-    return redirect()->back()->with('success', 'Jadwal dokter berhasil dibuat');
+         DB::transaction(function () use ($request, $user){
+             Schedule::updateOrCreate(
+                [
+                'doctor_id' => $user->doctor->id,
+                'available_time' => $request->input('available_time')
+                ],
+                ['is_available' => 1]);
+         });
+
+        return back()->with(['success' => 'Jadwal dokter berhasil dibuat!']);
     }
 
     /**

@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [DoctorController::class, 'profile'])->name('doctor.profile');
         Route::post('/profile', [DoctorController::class, 'updateProfile'])->name('doctor.update');
         Route::resource('/schedule', \App\Http\Controllers\ScheduleController::class);
+        Route::resource('/appointment', \App\Http\Controllers\AppointmentController::class);
     });
 
     Route::prefix('/pegawai')->group(function () {
@@ -52,8 +53,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [PegawaiController::class, 'profile'])->name('pegawai.profile');
         Route::post('/profile', [PegawaiController::class, 'updateProfile']);
         Route::resource('/appointment', \App\Http\Controllers\AppointmentController::class);
-
-
     });
 
     Route::prefix('/admin')->group(function () {
@@ -75,15 +74,11 @@ Route::middleware('auth')->group(function () {
         $doctorId = $request->input('doctor_id');
         // Fetch schedules
         $schedules = \App\Models\Schedule::class::where('doctor_id', $doctorId)
-            ->where('available_time', '>', now()) // Hanya jadwal di masa depan
             ->where('is_available', true) // Jadwal yang tersedia
-            ->orderBy('available_time') // Urutkan berdasarkan waktu
             ->get(['doctor_id', 'available_time']);
 
         return response()->json(['schedules' => $schedules]);
     });
-
-
 
     Route::post('api/approve-appointment/{id}', function ($id) {
         $appointment = Appointment::findOrFail($id);

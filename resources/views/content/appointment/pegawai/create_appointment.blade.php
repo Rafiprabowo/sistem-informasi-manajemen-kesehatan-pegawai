@@ -27,21 +27,21 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label class="form-label">Nama</label>
-                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="Nama" value="{{  $user->name }}">
+                        <input type="text" name="name" class="form-control" value="{{ $user->name }}"  readonly>
                         @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Alamat</label>
-                        <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" placeholder="Alamat" value="{{ $user->address }}" >
+                        <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" readonly value="{{ $user->address }}" >
                         @error('address')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Phone</label>
-                        <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" placeholder="+62xx" value="{{ $user->phone}}" >
+                        <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" readonly value="{{ $user->phone}}" >
                         @error('phone')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
