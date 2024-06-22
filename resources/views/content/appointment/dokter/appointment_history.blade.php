@@ -45,7 +45,7 @@
                                           <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
                                           <div class="dropdown-menu dropdown-menu-end">
                                               @if($appointment->status === "approved")
-                                                  <a id="diagnosa" class="dropdown-item" data-id="{{$appointment->id}}">Diagnosa</a>
+                                                  <a id="diagnosa" class="dropdown-item" href="{{route('diagnose.create' , $appointment->id)}}" >Diagnosa</a>
                                               @elseif($appointment->status === "pending")
                                                   <a id="approve" class="dropdown-item" data-id="{{$appointment->id}}">Approve</a>
                                               @endif

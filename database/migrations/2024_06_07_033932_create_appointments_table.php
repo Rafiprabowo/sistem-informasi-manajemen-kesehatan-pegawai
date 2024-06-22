@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('employee_id')->nullable();
             $table->foreignId('doctor_id')->nullable();
             $table->dateTime('appointment_time');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected']);
             $table->timestamps();
         });
     }

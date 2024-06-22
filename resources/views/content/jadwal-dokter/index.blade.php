@@ -28,13 +28,13 @@
                         @foreach($schedules as $index => $schedule)
                             <tr>
                                 <td><span class="text-muted">{{$index + 1}}</span></td>
-                                <td><a href="#" class="text-reset" tabindex="-1">{{$schedule->available_time}}</a></td>
+                                <td><a href="#" class="text-reset" tabindex="-1">{{$schedule->available_time ?? ''}}</a></td>
                                 <td>
-                                    <span class="badge {{$schedule->is_available == true ? 'bg-success' :($schedule->is_available == false ? 'bg-danger':'bg-warning') }}   me-1">
+                                    <span class="badge {{$schedule->is_available ?? $schedule->is_available == true ? 'bg-success' :($schedule->is_available?? $schedule->is_available == false ? 'bg-danger':'bg-warning') }}  me-1">
                                         @if($schedule->is_available)
                                             Jadwal tersedia
                                         @else
-                                            Jadwal telah kadaluarsa
+                                            Jadwal tidak tersedia
                                         @endif
                                     </span>
                                 </td>

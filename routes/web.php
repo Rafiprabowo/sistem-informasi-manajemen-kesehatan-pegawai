@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MedicineController;
 use App\Models\Appointment;
+use App\Models\Medicine;
+use App\Models\MedicineCategories;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DoctorController;
@@ -20,9 +22,7 @@ use App\Http\Controllers\AppointmentsControllers;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/create-diagnosis', function (){
-    return view('content.dokter.create_diagnosis');
-});
+
 
 Route::get('/', function (){return view('template');})->middleware('auth');
 Route::get('/login', function() {
@@ -46,6 +46,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/profile', [DoctorController::class, 'updateProfile'])->name('doctor.update');
         Route::resource('/schedule', \App\Http\Controllers\ScheduleController::class);
         Route::resource('/appointment', \App\Http\Controllers\AppointmentController::class);
+        Route::get('/appointment/{id}/create-diagnose', [\App\Http\Controllers\DiagnosesController::class, 'createDiagnose'])->name('diagnose.create');
+        Route::post('/appointment/{id}/diagnose', [\App\Http\Controllers\DiagnosesController::class, 'storeDiagnose'])->name('diagnose.store');
     });
 
     Route::prefix('/pegawai')->group(function () {
@@ -72,11 +74,12 @@ Route::middleware('auth')->group(function () {
 
     Route::post('api/fetch-doctor-schedules', function (\Illuminate\Http\Request $request) {
         $doctorId = $request->input('doctor_id');
+        $now = \Carbon\Carbon::now();
         // Fetch schedules
         $schedules = \App\Models\Schedule::class::where('doctor_id', $doctorId)
             ->where('is_available', true) // Jadwal yang tersedia
+                ->where('available_time', '>=', $now)
             ->get(['doctor_id', 'available_time']);
-
         return response()->json(['schedules' => $schedules]);
     });
 
@@ -94,6 +97,7 @@ Route::middleware('auth')->group(function () {
 
 
     });
+
     Route::delete('api/delete-appointment/{id}', function ($id) {
         $appointment = Appointment::findOrFail($id);
         if ($appointment) {
@@ -101,6 +105,107 @@ Route::middleware('auth')->group(function () {
             return response()->json(['success' => true, 'message' => 'Appointment deleted.']);
         }
         return response()->json(['success' => false, 'message' => 'Appointment not found.']);
+    });
+
+    Route::get('/api/fetch-medicine-category/{id}', function ($id) {
+        $medicineCategories = MedicineCategories::findOrFail($id);
+        if($medicineCategories) {
+            return response()->json(['medicineCategories' => $medicineCategories]);
+        }
+        return response()->json(['medicineCategories' => null]);
+    });
+
+    Route::post('/api/medicine-categories', function (\Illuminate\Http\Request $request) {
+        $categoryId = $request->input('category_id');
+        if (!$categoryId) {
+            return response()->json(['success' => false, 'message' => 'Category id is required.']);
+        }
+        $medicineCategory = MedicineCategories::findOrFail($categoryId);
+        $medicineCategory->name = $request->input('new_name');
+        $medicineCategory->description = $request->input('new_description');
+        $medicineCategory->save();
+        return response()->json(['success' => true, 'medicineCategory' => $medicineCategory]);
+    });
+
+
+    Route::get('/api/medicine/{id}', function ($id) {
+        $medicine = Medicine::findOrFail($id);
+        if(!$medicine){
+            return response()->json(['success' => false, 'message' => 'Medicine not found.']);
+        }
+        return response()->json(['medicine' => $medicine]);
+    });
+
+    Route::post('/api/updateMedicine', function (\Illuminate\Http\Request $request) {
+        /** @var
+         * $validator = Validator::make($request->all(), [
+         *  'medicine_id' => 'required',
+         * 'new_name' => 'required',
+         * 'new_description' => 'required',
+         * 'new_category_id' => 'required'
+         * ]);
+         *
+         * if($validator->fails()){
+         *     return response()->json($validator->errors(),422);
+         * }
+         * Medicine::updateOrCreate(
+         *     ['id' => $request->medicine_id],
+         *      ['name' => $request->new_name,
+         *         'description' => $request->new_description,
+         *          'categories_id' => $request->new_category_id
+         *      ]
+         * );
+         * return response()->json(['success' => true, 'message' => 'Medicine updated successfully', '')
+         */
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+           'medicine_id' => 'required',
+           'new_name' => 'required',
+           'new_description' => 'required',
+           'new_category_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()], 422);
+        }
+
+        $medicine = Medicine::findOrFail($request->medicine_id);
+        if(!$medicine){
+            return response()->json(['success' => false, 'message' => 'Medicine not found.']);
+        }
+        $category = MedicineCategories::findOrFail($request->new_category_id);
+        if(!$category){
+            return response()->json(['success' => false, 'message' => 'Medicine not found.']);
+        }
+        $medicine->name = $request->new_name;
+        $medicine->description = $request->new_description;
+        $medicine->categories_id = $category->id;
+        $medicine->save();
+        return response()->json(['success' => true, 'medicine' => $medicine, 'category_name' => $category->name]);
+    });
+
+    Route::post('/api/delete-medicine', function (\Illuminate\Http\Request $request) {
+       $medicineId = $request->get('medicine_id');
+       if (!$medicineId) {
+           return response()->json(['success' => false, 'message' => 'Medicine id is required.']);
+       }
+       $medicine = Medicine::findOrFail($medicineId);
+       if(!$medicine){
+           return response()->json(['success' => false, 'message' => 'Medicine not found.']);
+       }
+       $medicine->delete();
+       return response()->json(['success' => true, 'message' => 'Medicine deleted.']);
+    });
+
+    Route::post('/api/delete-medicine-category', function (\Illuminate\Http\Request $request) {
+       $categoryId = $request->get('category_id');
+       if (!$categoryId) {
+           return response()->json(['success' => false, 'message' => 'Category id is required.']);
+       }
+       $category = MedicineCategories::findOrFail($categoryId);
+       if(!$category){
+           return response()->json(['success' => false, 'message' => 'Category not found.']);
+       }
+       $category->delete();
+       return response()->json(['success' => true, 'message' => 'Category deleted.']);
     });
 });
 

@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Diagnoses extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class);
+    }
 }

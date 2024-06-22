@@ -41,6 +41,10 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $attributes = [
+        "role" => 'pegawai'
+    ];
+
     public function doctor():HasOne
     {
         return $this->hasOne(Doctor::class);

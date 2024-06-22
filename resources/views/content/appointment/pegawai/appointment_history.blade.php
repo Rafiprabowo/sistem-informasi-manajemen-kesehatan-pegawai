@@ -12,12 +12,12 @@
                 <table class="table card-table table-vcenter text-nowrap datatable">
                     <thead>
                     <tr>
-                        <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select all invoices"></th>
                         <th>No</th>
                         <th>Nama</th>
                         <th>Alamat</th>
                         <th>Phone</th>
                         <th>Appointment time</th>
+                        <th>Nama dokter</th>
                         <th>Status</th>
                         <th></th>
                     </tr>
@@ -26,25 +26,30 @@
                     @if($user->employee->appointments)
                         @foreach($user->employee->appointments as $index => $appointment)
                             <tr>
-                                <td><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select invoice"></td>
                                 <td><span class="text-muted">{{$index + 1}}</span></td>
-                                <td><a href="#" class="text-reset" tabindex="-1">{{$appointment->name}}</a></td>
+                                <td>{{$appointment->name}}</td>
                                 <td>{{$appointment->address}}</td>
                                 <td>{{$appointment->phone}}</td>
                                 <td>{{$appointment->appointment_time}}</td>
+                                <td>{{$appointment->doctor->user->name}}</td>
                                 <td>
                                     <span class="badge {{$appointment->status === 'pending' ? 'bg-warning':($appointment->status === 'approved' ? 'bg-success' :($appointment->status === 'rejected' ? 'bg-danger':'bg-secondary'))}} me-1">
                                         {{$appointment->status}}
                                     </span>
                                 </td>
                                 <td class="text-end">
-                                        <span class="dropdown">
-                                          <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                                          <div class="dropdown-menu dropdown-menu-end">
-                                              <a id="delete" class="dropdown-item" data-id="{{$appointment->id}}">Delete</a>
-                                          </div>
-                                        </span>
-                                </td>
+                            <span class="dropdown">
+                              <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                              <div class="dropdown-menu">
+                                <a id="delete" class="dropdown-item" href="#" data-id="{{$appointment->id}}">
+                                  Delete
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                  Another action
+                                </a>
+                              </div>
+                            </span>
+                          </td>
                             </tr>
                         @endforeach
                     @else

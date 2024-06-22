@@ -18,11 +18,7 @@ class ScheduleController extends Controller
     {
         //
         $user = Auth::user();
-        $doctor = $user->doctor;
-        $schedules = $doctor->schedules;
-        foreach ($schedules as $schedule) {
-            Carbon::parse($schedule->available_time)->format('H:i');
-        }
+        $schedules = Schedule::where('doctor_id',$user->doctor->id)->get();
         return view('content.jadwal-dokter.index', compact('schedules'));
     }
 

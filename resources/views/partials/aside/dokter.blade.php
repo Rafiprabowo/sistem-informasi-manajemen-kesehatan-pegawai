@@ -39,9 +39,6 @@
                   <a class="dropdown-item" href="{{route('appointment.index')}}">
                     Lihat appointment
                   </a>
-                    <a class="dropdown-item" href="/create-diagnosis">
-                        Buat diagnosis
-                    </a>
 
                 </div>
               </li>
