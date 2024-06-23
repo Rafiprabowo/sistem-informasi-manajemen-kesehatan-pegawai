@@ -40,6 +40,7 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/notifications/mark-as-read/{id}', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::prefix('/dokter')->group(function () {
         Route::get('/', [DoctorController::class, 'dashboard'])->name('doctor.dashboard');
         Route::get('/profile', [DoctorController::class, 'profile'])->name('doctor.profile');
@@ -115,12 +116,19 @@ Route::middleware('auth')->group(function () {
         return response()->json(['medicineCategories' => null]);
     });
 
-    Route::post('/api/medicine-categories', function (\Illuminate\Http\Request $request) {
-        $categoryId = $request->input('category_id');
-        if (!$categoryId) {
-            return response()->json(['success' => false, 'message' => 'Category id is required.']);
+    Route::post('/api/update-medicine-categories', function (\Illuminate\Http\Request $request) {
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'category_id' => 'required',
+            'new_name' => 'required',
+            'new_description' => 'required',
+        ]);
+
+         if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()], 422);
         }
-        $medicineCategory = MedicineCategories::findOrFail($categoryId);
+
+        $medicineCategory = MedicineCategories::findOrFail($request->category_id);
         $medicineCategory->name = $request->input('new_name');
         $medicineCategory->description = $request->input('new_description');
         $medicineCategory->save();

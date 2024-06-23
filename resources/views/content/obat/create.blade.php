@@ -51,17 +51,12 @@
                     <label class="form-label">Pilih kategori</label>
                     <div>
                         <select class="form-select @error('categories_id') is-invalid @enderror" name="categories_id">
-                            <option value="">-- Pilih kategori obat --</option>
-                            @if($categories)
-                                @foreach($categories as $category)
-                                    <option value="{{$category->id}}">{{$category->name}}</option>
-                                @endforeach
-                            @endif
-                            @error('categories_id')
-                                <div class="invalid-feedback">
-                                    {{$message}}
-                                </div>
-                            @enderror
+
+                            @forelse($categories as $category)
+                                <option value="{{$category->id}}">{{$category->name}}</option>
+                            @empty
+                                <option value="">-- Pilih kategori obat --</option>
+                            @endforelse
                         </select>
                     </div>
                 </div>

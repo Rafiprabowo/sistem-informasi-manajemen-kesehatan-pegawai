@@ -43,9 +43,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if(count($categories) > 0)
-                        @foreach($categories as $index => $category)
-                            <tr>
+                @forelse($categories as $index => $category)
+                    <tr>
                                 <td data-label="No">{{ $index + 1 }}</td>
                                 <td data-label="Name" id="name-{{ $category->id }}">{{ $category->name }}</td>
                                 <td class="text-muted" id="description-{{ $category->id }}" data-label="Deskripsi">{{ $category->description }}</td>
@@ -67,8 +66,13 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
-                    @endif
+                @empty
+                    <tr>
+                        <td>
+                            Data kategori masih kosong
+                        </td>
+                    </tr>
+                @endforelse
                 </tbody>
             </table>
         </div>
@@ -123,7 +127,7 @@
     <script>
         $(document).ready(function () {
             var kategoriId;
-
+            var token = $("meta[name='csrf-token']").attr("content");
             $('.button-edit').on('click', function () {
                 kategoriId = $(this).attr('data-id');
                 $.ajax({
@@ -147,13 +151,13 @@
                 var newDescription = $('#modal-new-description').val();
 
                 $.ajax({
-                    url: '/api/medicine-categories',
+                    url: '/api/update-medicine-categories',
                     type: 'POST',
                     data: {
                         category_id: kategoriId,
                         new_name: newName,
                         new_description: newDescription,
-                        _token: '{{ csrf_token() }}'
+                        _token: token
                     },
                     dataType: 'json',
                     success: function (result) {
@@ -161,9 +165,15 @@
                         $(`#description-${kategoriId}`).text(result.medicineCategory.description);
                         alert('Category updated successfully');
                     },
-                    error: function (xhr, status, error) {
-                        console.log(xhr.responseText);
-                        alert('Failed to update');
+                    error: function (xhr) {
+                       if(xhr.status === 422){
+                           let errors = xhr.responseJSON.message;
+                           let errorMessages = '';
+                           $.each(errors, function (key, value){
+                               errorMessages += value[0] + '\n';
+                           })
+                           alert(errorMessages)
+                       }
                     }
                 });
             });

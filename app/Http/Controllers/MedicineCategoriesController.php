@@ -13,7 +13,9 @@ class MedicineCategoriesController extends Controller
     public function index()
     {
         //
-        return view('content.kategori-obat.index');
+
+        $categories = MedicineCategories::all();
+        return view('content.kategori-obat.index', compact('categories'));
     }
 
     /**

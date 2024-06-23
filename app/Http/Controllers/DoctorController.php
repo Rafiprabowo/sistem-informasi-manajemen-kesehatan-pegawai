@@ -12,7 +12,10 @@ class DoctorController extends Controller
 {
     //
     public function dashboard(){
-        return view('content.dokter.dashboard');
+        $user = Auth::user();
+        $notifications = $user->notifications;
+        $unreadNotifications = $user->unreadNotifications;
+        return view('content.dokter.dashboard', compact('user', 'notifications', 'unreadNotifications'));
     }
     public function profile()
     {

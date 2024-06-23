@@ -33,15 +33,9 @@ class ViewServiceProvider extends ServiceProvider
         //
         View::composer('*', function ($view) {
             $doctors = Doctor::all();
-            $user = Auth::user();
             $users = User::all();
-            $medicines = Medicine::all();
-            $categories = MedicineCategories::all();
             $view->with('doctors', $doctors);
-            $view->with('user', $user);
             $view->with('users', $users);
-            $view->with('medicines', $medicines);
-            $view->with('categories', $categories);
 
         });
     }

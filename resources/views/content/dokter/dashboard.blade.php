@@ -3,6 +3,35 @@
     @include('partials.aside.dokter')
 @endsection
 @section('content')
+<div>
+    <h1>Notifikasi Dokter</h1>
+    <h2>Notifikasi Belum Dibaca</h2>
+    <ul>
+        @forelse($unreadNotifications as $notification)
+            <li><strong>{{$notification->data["employee_name"]}}</strong>
+            {{$notification->data["appointment_time"]}}
+            (<a href="{{route('notifications.markAsRead', $notification->id)}}">Tandai sebagai dibaca</a>)
+            </li>
+        @empty
+        <li>Tidak ada notifikasi belum dibaca</li>
+        @endforelse
+    </ul>
+    <h2>Semua Notifikasi</h2>
+    <ul>
+        @forelse($notifications as $notification)
+            <li>
+                <strong>{{$notification->data["employee_name"]}}</strong> - {{$notification->data['appointment_time']}}
+                @if(is_null($notification->read_at))
+                    (<a href="{{route('notifications.markAsRead', $notification->id)}}">Tandai sebagai dibaca</a>)
+                @else
+                    (Dibaca)
+                @endif
+            </li>
+        @empty
+            <li>Tidak ada notifikasi</li>
+        @endforelse
+    </ul>
+</div>
 <div class="row row-deck row-cards">
      <div class="col-sm-6 col-lg-3">
                 <div class="card">

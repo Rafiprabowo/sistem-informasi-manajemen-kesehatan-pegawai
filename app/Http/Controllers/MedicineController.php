@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Medicine;
+use App\Models\MedicineCategories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,9 @@ class MedicineController extends Controller
     public function index()
     {
         //
-        return view('content.obat.index');
+        $medicines = Medicine::with('categories')->get();
+        $categories = MedicineCategories::all();
+        return view('content.obat.index', compact('medicines', 'categories'));
     }
 
     /**
@@ -23,7 +26,8 @@ class MedicineController extends Controller
     public function create()
     {
         //
-        return view('content.obat.create');
+        $categories = MedicineCategories::all();
+        return view('content.obat.create', compact('categories'));
     }
 
     /**

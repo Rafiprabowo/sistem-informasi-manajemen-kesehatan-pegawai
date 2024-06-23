@@ -40,9 +40,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if(count($medicines) > 0)
-                    @foreach($medicines as $index => $medicine)
-                    <tr>
+                @forelse($medicines as $index => $medicine)
+                      <tr>
                         <td data-label="No">{{ $index + 1 }}</td>
                         <td data-label="Name" id="name-{{ $medicine->id }}">{{ $medicine->name }}</td>
                         <td data-label="Deskripsi" id="description-{{ $medicine->id }}">{{ $medicine->description }}</td>
@@ -61,8 +60,11 @@
                             </div>
                         </td>
                     </tr>
-                    @endforeach
-                    @endif
+                @empty
+                    <tr>
+                        <td>Data obat masih kosong</td>
+                    </tr>
+                @endforelse
                 </tbody>
             </table>
         </div>
@@ -87,11 +89,12 @@
                 <div class="mb-3">
                     <label class="form-label">Kategori</label>
                     <select id="select-categories" class="form-select ">
-                        @if(count($categories) > 0)
-                        @foreach($categories as $category)
+
+                        @forelse($categories as $category)
                         <option class="categories" value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
-                        @endif
+                        @empty
+                             <option value="">--Pilih kategori obat--</option>
+                        @endforelse
                     </select>
                 </div>
             </div>
