@@ -43,7 +43,7 @@
                                  <td class="text-end">
                                         <span class="dropdown">
                                           <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                                          <div class="dropdown-menu dropdown-menu-end">
+                                          <div class="dropdown-menu">
                                               @if($appointment->status === "approved")
                                                   <a href="{{route('diagnose.create' , $appointment->id)}}" class="dropdown-item"  >Diagnosa</a>
 {{--                                                  <a href="{{route('cancel-appointment', $appointment->id)}}" id="cancel" class="dropdown-item">Cancel</a>--}}

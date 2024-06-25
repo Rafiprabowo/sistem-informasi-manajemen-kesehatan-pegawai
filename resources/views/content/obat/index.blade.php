@@ -47,7 +47,7 @@
                                     <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
                                         Actions
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-end">
+                                    <div class="dropdown-menu">
                                         <a class="dropdown-item delete-dropdown"  href="#" data-id="{{$medicine->id}}" data-bs-target="#modal-delete" data-bs-toggle="modal">Delete</a>
                                     </div>
                                 </div>

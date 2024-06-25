@@ -42,7 +42,7 @@
                             <td class="text-sm-center">
                                 <span class="dropdown">
                                     <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                                    <div class="dropdown-menu dropdown-menu-start">
+                                    <div class="dropdown-menu">
                                         <a class="dropdown-item" href="{{ route('doctor-schedules.edit', $schedule->id) }}">
                                             Edit
                                         </a>
