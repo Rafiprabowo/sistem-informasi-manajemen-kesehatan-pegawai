@@ -2,7 +2,6 @@
 @section('aside')
     @include('partials.aside.dokter')
 @endsection
-
 @section('content')
     <div class="col-12">
         <div class="card">

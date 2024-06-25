@@ -21,30 +21,9 @@ class AppointmentsControllers extends Controller
      * Display a listing of the resource.
      */
     public function index()
-{
-    // Periksa apakah pengguna sudah terautentikasi
-    if (Auth::check()) {
-        $user = Auth::user();
-        // Cek peran pengguna dan kembalikan view yang sesuai
-        switch ($user->role) {
-            case 'dokter':
-                $user->load(['doctor.appointments' => function ($query) {
-                    $query->with('employee.user');
-                }]);
-                return view('content.appointment.dokter.appointment_history', compact('user'));
+    {
 
-            case 'pegawai':
-                     $user->load(['employee.appointments' => function($query) {
-                        $query->with('doctor.user');
-                     }]);
-                return view('content.appointment.pegawai.appointment_history', compact('user'));
-                default:
-                return abort(403, 'Unauthorized action.');
-        }
     }
-    // Jika pengguna belum login, arahkan ke halaman login
-    return redirect()->route('login');
-}
 
     /**
      * Show the form for creating a new resource.

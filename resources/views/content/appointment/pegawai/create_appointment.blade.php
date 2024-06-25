@@ -7,7 +7,7 @@
         @include('partials.aside.pegawai')
     @endsection
     @section('content')
-        <div class="col-lg-8">
+        <div class="col-lg-12">
             @if(session()->has('success'))
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <div>

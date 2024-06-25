@@ -42,6 +42,14 @@ class DoctorController extends Controller
 
     }
 
+    public function myAppointment(){
+        $user = Auth::user()->load('doctor');
+        $user->load(['doctor.appointments' => function ($query) {
+                    $query->with('employee.user');
+                }]);
+        return view('content.appointment.dokter.appointment_history', compact('user'));
+    }
+
 
 
 }

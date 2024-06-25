@@ -30,7 +30,7 @@
                   </span>
                 </a>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="{{route('appointment.index')}}">
+                  <a class="dropdown-item" href="{{route('doctor.myAppointment')}}">
                     Lihat appointment
                   </a>
 

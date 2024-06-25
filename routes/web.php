@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/appointment/{id}/create-diagnose', [\App\Http\Controllers\DiagnosesController::class, 'createDiagnose'])->name('diagnose.create');
         Route::post('/appointment/{id}/diagnose', [\App\Http\Controllers\DiagnosesController::class, 'storeDiagnose'])->name('diagnose.store');
         Route::resource('/doctor-schedules', DoctorScheduleController::class);
+        Route::get('/my-appointment', [DoctorController::class, 'myAppointment'])->name('doctor.myAppointment');
     });
 
     Route::prefix('/pegawai')->group(function () {
@@ -58,6 +59,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [PegawaiController::class, 'profile'])->name('profilePegawai');
         Route::post('/profile', [PegawaiController::class, 'updateProfileEmployee'])->name('updateProfileEmployee');
         Route::resource('/appointment', AppointmentsControllers::class);
+        Route::get('/my-appointment', [PegawaiController::class, 'myAppointment'])->name('pegawai.myAppointment');
     });
 
     Route::prefix('/admin')->group(function () {

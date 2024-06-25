@@ -35,7 +35,7 @@
                         <a class="dropdown-item" href="{{route('appointment.create')}}">
                             Buat appointment
                         </a>
-                        <a class="dropdown-item" href="{{route('appointment.index')}}">
+                        <a class="dropdown-item" href="{{route('pegawai.myAppointment')}}">
                             History appointment
                         </a>
                     </div>
