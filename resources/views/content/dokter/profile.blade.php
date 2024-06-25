@@ -99,8 +99,6 @@
         event.preventDefault();
         $('#specialization-select-container').toggle(); // Menampilkan/menyembunyikan select
     });
-
-
 });
 
     </script>

@@ -80,7 +80,7 @@ Route::middleware('auth')->group(function () {
         $doctorId = $request->input('doctor_id');
         $now = \Carbon\Carbon::now();
         // Fetch schedules
-        $schedules = \App\Models\Schedule::class::where('doctor_id', $doctorId)
+        $schedules = \App\Models\DoctorSchedule::class::where('doctor_id', $doctorId)
             ->where('is_available', true) // Jadwal yang tersedia
                 ->where('available_time', '>=', $now)
             ->get(['doctor_id', 'available_time']);
