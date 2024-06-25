@@ -40,12 +40,16 @@ class NewAppointmentNotification extends Notification
      */
     public function toArray($notifiable)
     {
-        return [
-            //
-            'appointment_id' => $this->appointment->id,
-            'employee_name' =>$this->appointment->name,
-            'appointment_time' => $this->appointment->appointment_time
+        $employee = $this->appointment->employee;
+        $user = $employee ? $employee->user : null;
 
+        return [
+            'appointment_id' => $this->appointment->id,
+            'employee_name' => $user ? $user->first_name . ' ' . $user->last_name : 'N/A',
+            'appointment_date' => $this->appointment->appointment_date,
+            'appointment_start_time' => $this->appointment->appointment_start_time,
+            'appointment_end_time' => $this->appointment->appointment_end_time,
+            'appointment_note' => $this->appointment->note,
         ];
     }
 }

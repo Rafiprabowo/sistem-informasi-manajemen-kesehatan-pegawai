@@ -34,15 +34,15 @@
                     <div class="col g-3">
                       <div class="col-md-6">
                         <div class="form-label">Nama</div>
-                        <p>{{$appointment->name}}</p>
+                        <p>{{$appointment->employee->user->first_name}}</p>
                       </div>
                       <div class="col-md-6">
                         <div class="form-label">Alamat</div>
-                        <p>{{$appointment->address}}</p>
+                        <p>{{$appointment->employee->user->address}}</p>
                       </div>
                       <div class="col-md-6">
                         <div class="form-label">No Hp</div>
-                        <p>{{$appointment->phone}}</p>
+                        <p>{{$appointment->employee->user->phone}}</p>
                       </div>
                     </div>
                     <h3 class="card-title mt-4">Diagnosis</h3>

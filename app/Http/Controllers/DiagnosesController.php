@@ -12,9 +12,11 @@ class DiagnosesController extends Controller
     //
     public function createDiagnose($id){
         $appointment = Appointment::find($id);
+
         if(!$appointment){
             return redirect()->back()->with('error', 'Appointment Not Found');
         }
+        $appointment->load('employee.user', 'doctor.user');
         return view('content.diagnose.create_diagnose', compact('appointment'));
     }
     public function storeDiagnose(Request $request, $id){

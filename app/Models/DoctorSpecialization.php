@@ -7,14 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Schedule extends Model
+class DoctorSpecialization extends Model
 {
     use HasFactory;
-
     protected $guarded = [];
-
-    public function doctor(): BelongsTo
+    public function doctor(): HasMany
     {
-        return $this->belongsTo(Doctor::class);
+        return $this->hasMany(Doctor::class);
     }
 }

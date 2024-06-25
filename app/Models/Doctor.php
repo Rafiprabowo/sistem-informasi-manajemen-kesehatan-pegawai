@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,6 +14,7 @@ class Doctor extends Authenticatable
     use HasFactory, Notifiable;
     protected $guarded = [];
 
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -21,7 +23,12 @@ class Doctor extends Authenticatable
         return $this->hasMany(Appointment::class);
     }
     public function schedules(): HasMany{
-        return $this->hasMany(Schedule::class);
+        return $this->hasMany(DoctorSchedule::class);
     }
+    public function speciality(): BelongsTo
+    {
+        return $this->belongsTo(DoctorSpecialization::class);
+    }
+
 
 }

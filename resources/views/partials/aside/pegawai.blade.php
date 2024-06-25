@@ -54,7 +54,7 @@
                 <div class="dropdown-menu">
                   <div class="dropdown-menu-columns">
                     <div class="dropdown-menu-column">
-                      <a class="dropdown-item" href="/pegawai/profile">
+                      <a class="dropdown-item" href="{{route('profilePegawai')}}">
                         Show Profile
                       </a>
                         <form action="/logout" method="post">
@@ -63,7 +63,6 @@
                             Logout
                         </button>
                         </form>
-
                     </div>
                   </div>
                 </div>

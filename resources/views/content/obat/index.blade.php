@@ -1,13 +1,7 @@
 @extends('template')
-@if($user->role === "admin")
-    @section('aside')
-        @include('partials.aside.admin')
-    @endsection
-@elseif($user->role === "apoteker")
-    @section('aside')
+@section('aside')
         @include('partials.aside.apoteker')
     @endsection
-@endif
 @section('content-header')
     @include('partials.content-header.obat.index')
 @endsection

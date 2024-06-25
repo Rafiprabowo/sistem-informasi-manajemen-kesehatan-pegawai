@@ -1,13 +1,7 @@
 @extends('template')
-@if($user->role === "admin")
-    @section('aside')
-        @include('partials.aside.admin')
-    @endsection
-@elseif($user->role === "apoteker")
-    @section('aside')
+ @section('aside')
         @include('partials.aside.apoteker')
     @endsection
-@endif
 @section('content-header')
         @include('partials.content-header.obat.create')
     @endsection
@@ -61,8 +55,10 @@
                     </div>
                 </div>
             </div>
-            <div class="card-footer text-end">
-                <button type="submit" class="btn btn-primary">Submit</button>
+
+            <div class="card-footer d-flex justify-content-between">
+                <a href="{{route('obat.index')}}" class="btn btn-secondary">Kembali</a>
+                <button type="submit" class="btn btn-primary ">Submit</button>
             </div>
         </form>
     </div>

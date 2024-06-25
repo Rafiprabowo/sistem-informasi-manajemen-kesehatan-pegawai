@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateEmployeeProfileRequest;
 use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Employee;
@@ -9,6 +10,7 @@ use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class PegawaiController extends Controller
 {
@@ -18,32 +20,51 @@ class PegawaiController extends Controller
         return view('content.pegawai.dashboard');
     }
     public function profile(){
-        return view('content.pegawai.profile');
+        $user = Auth::user()->load('employee');
+        return view('content.pegawai.profile', compact('user'));
     }
-    public function updateProfile(Request $request){
-        $user = Auth::user();
+     public function updateProfileEmployee(UpdateEmployeeProfileRequest $request)
+    {
+        $validated = $request->validated();
 
-    $request->validate([
-        'name' => 'required',
-        'phone' => 'required',
-        'address' => 'required',
-    ]);
+        try {
+            $employee = DB::transaction(function () use ($validated) {
+                $employee = Employee::findOrFail($validated['employee_id']);
 
-        DB::transaction(function () use ($user, $request) {
-        // Update user data
-        $user->name = $request->get('name');
-        $user->address = $request->get('address');
-        $user->phone = $request->get('phone');
-        $user->save();
+                $employee->update([
+                    'date_of_birth' => $validated['date_of_birth'],
+                    'gender' => $validated['gender'],
+                    'position' => $validated['position'],
+                    'emergency_contact_name' => $validated['emergency_contact_name'],
+                    'emergency_contact_number' => $validated['emergency_contact_number'],
+                    'emergency_contact_relationship' => $validated['emergency_contact_relationship'],
+                    'emergency_contact_address' => $validated['emergency_contact_address'],
+                ]);
+                return $employee;
+            });
 
-        // Update or create doctor data
-        Employee::updateOrCreate(
-            ['user_id' => $user->id]
-        );
+            $formattedEmployee = $this->formatEmployee($employee);
+            return response()->json(['status' => 'success', 'data' => $formattedEmployee]);
 
-        });
-        return redirect()->back()->with('success', 'Profile updated successfully');
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'errors' => $e->getMessage()], 500);
+        }
     }
+
+    private function formatEmployee(Employee $employee)
+    {
+        return [
+            'employee_id' => $employee->id,
+            'date_of_birth' => $employee->date_of_birth,
+            'gender' => $employee->gender,
+            'position' => $employee->position,
+            'emergency_contact_name' => $employee->emergency_contact_name,
+            'emergency_contact_number' => $employee->emergency_contact_number,
+            'emergency_contact_relationship' => $employee->emergency_contact_relationship,
+            'emergency_contact_address' => $employee->emergency_contact_address,
+        ];
+    }
+
 
 public function showAppointments()
 {

@@ -13,13 +13,13 @@
                     <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama</th>
-                        <th>Alamat</th>
-                        <th>Phone</th>
-                        <th>Appointment time</th>
-                        <th>Nama dokter</th>
+                        <th>Nama Pegawai</th>
+                        <th>Appointment Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Nama Dokter</th>
+                        <th>Keluhan</th>
                         <th>Status</th>
-                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -27,29 +27,17 @@
                         @foreach($user->employee->appointments as $index => $appointment)
                             <tr>
                                 <td><span class="text-muted">{{$index + 1}}</span></td>
-                                <td>{{$appointment->name}}</td>
-                                <td>{{$appointment->address}}</td>
-                                <td>{{$appointment->phone}}</td>
-                                <td>{{$appointment->appointment_time}}</td>
-                                <td>{{$appointment->doctor->user->name}}</td>
+                                <td>{{$user->first_name}} {{$user->last_name}}</td>
+                                <td>{{\Carbon\Carbon::parse($appointment->date)->format('d-m-Y')}}</td>
+                                <td>{{\Carbon\Carbon::parse($appointment->start_time)->format('H:i')}}</td>
+                                <td>{{\Carbon\Carbon::parse($appointment->end_time)->format('H:i')}}</td>
+                                <td>{{$appointment->doctor->user->first_name}} {{$appointment->doctor->user->last_name}}</td>
+                                <td>{{$appointment->note}}</td>
                                 <td>
                                     <span class="badge {{$appointment->status === 'pending' ? 'bg-warning':($appointment->status === 'approved' ? 'bg-success' :($appointment->status === 'rejected' ? 'bg-danger':'bg-secondary'))}} me-1">
                                         {{$appointment->status}}
                                     </span>
                                 </td>
-                                <td class="text-end">
-                            <span class="dropdown">
-                              <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                              <div class="dropdown-menu">
-                                <a id="delete" class="dropdown-item" href="#" data-id="{{$appointment->id}}">
-                                  Delete
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                  Another action
-                                </a>
-                              </div>
-                            </span>
-                          </td>
                             </tr>
                         @endforeach
                     @else

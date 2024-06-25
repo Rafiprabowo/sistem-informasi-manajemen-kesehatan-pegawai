@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DoctorScheduleController;
 use App\Http\Controllers\MedicineController;
 use App\Models\Appointment;
 use App\Models\Medicine;
@@ -44,18 +45,19 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/dokter')->group(function () {
         Route::get('/', [DoctorController::class, 'dashboard'])->name('doctor.dashboard');
         Route::get('/profile', [DoctorController::class, 'profile'])->name('doctor.profile');
-        Route::post('/profile', [DoctorController::class, 'updateProfile'])->name('doctor.update');
+        Route::post('/profile', [DoctorController::class, 'updateProfile'])->name('profile.update');
         Route::resource('/schedule', \App\Http\Controllers\ScheduleController::class);
-        Route::resource('/appointment', \App\Http\Controllers\AppointmentController::class);
+        Route::resource('/appointment', AppointmentsControllers::class);
         Route::get('/appointment/{id}/create-diagnose', [\App\Http\Controllers\DiagnosesController::class, 'createDiagnose'])->name('diagnose.create');
         Route::post('/appointment/{id}/diagnose', [\App\Http\Controllers\DiagnosesController::class, 'storeDiagnose'])->name('diagnose.store');
+        Route::resource('/doctor-schedules', DoctorScheduleController::class);
     });
 
     Route::prefix('/pegawai')->group(function () {
-        Route::get('/', [PegawaiController::class, 'dashboard'])->name('pegawai.dashboard');
-        Route::get('/profile', [PegawaiController::class, 'profile'])->name('pegawai.profile');
-        Route::post('/profile', [PegawaiController::class, 'updateProfile']);
-        Route::resource('/appointment', \App\Http\Controllers\AppointmentController::class);
+        Route::get('/', [PegawaiController::class, 'dashboard'])->name('pegawaiDashboard');
+        Route::get('/profile', [PegawaiController::class, 'profile'])->name('profilePegawai');
+        Route::post('/profile', [PegawaiController::class, 'updateProfileEmployee'])->name('updateProfileEmployee');
+        Route::resource('/appointment', AppointmentsControllers::class);
     });
 
     Route::prefix('/admin')->group(function () {
@@ -72,7 +74,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('/kategori-obat', \App\Http\Controllers\MedicineCategoriesController::class);
     });
 
-
+    Route::post('api/fetch-specialization-doctor', [\App\Http\Controllers\DoctorSpecializationController::class, 'fetchSpecializationsWithDoctor'])->name('fetchSpecializationsWithDoctor');
+    Route::post('api/fetch-doctor-schedule', [\App\Http\Controllers\DoctorScheduleController::class, 'fetchDoctorSchedule'])->name('fetchDoctorSchedule');
     Route::post('api/fetch-doctor-schedules', function (\Illuminate\Http\Request $request) {
         $doctorId = $request->input('doctor_id');
         $now = \Carbon\Carbon::now();
@@ -84,20 +87,12 @@ Route::middleware('auth')->group(function () {
         return response()->json(['schedules' => $schedules]);
     });
 
-    Route::post('api/approve-appointment/{id}', function ($id) {
+    Route::get('api/approve-appointment/{id}', function ($id) {
         $appointment = Appointment::findOrFail($id);
-        if($appointment) {
-            if ($appointment->doctor_id != Auth::user()->doctor->id) {
-                return response()->json(['success' => false, 'message' =>'You are not authorized to access this page.'], 403);
-            }
-            $appointment->status = 'approved';
-            $appointment->save();
-            return response()->json(['success' => 'Appointment successfully approved.']);
-        }
-        return response()->json(['success' => false, 'message' => 'Appointment not found.']);
-
-
-    });
+        $appointment->status = 'approved';
+        $appointment->save();
+        return response()->json(['success' => 'Appointment successfully approved.']);
+    })->name('approve-appointment');
 
     Route::delete('api/delete-appointment/{id}', function ($id) {
         $appointment = Appointment::findOrFail($id);
@@ -107,6 +102,14 @@ Route::middleware('auth')->group(function () {
         }
         return response()->json(['success' => false, 'message' => 'Appointment not found.']);
     });
+//    Route::get('api/cancel-appointment/{id}', function ($id) {
+//        $appointment = Appointment::findOrFail($id);
+//        $appointment->update([
+//            'status' => 'cancelled'
+//        ]);
+//        $appointment->save();
+//        return response()->json(['success' => true, 'message' => 'Appointment cancelled.']);
+//    })->name('cancel-appointment');
 
     Route::get('/api/fetch-medicine-category/{id}', function ($id) {
         $medicineCategories = MedicineCategories::findOrFail($id);

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Doctor;
+use App\Models\DoctorSpecialization;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class DoctorController extends Controller
 {
@@ -19,35 +21,25 @@ class DoctorController extends Controller
     }
     public function profile()
     {
-
-        return view('content.dokter.profile');
+        $user = Auth::user();
+        $specializations = DoctorSpecialization::all();
+        return view('content.dokter.profile', compact('user','specializations' ));
     }
 
     public function updateProfile(Request $request)
     {
-        $user = Auth::user();
-
-        $request->validate([
-            'name' => 'required',
-            'phone' => 'required',
-            'address' => 'required',
-            'spesialisasi' => 'required',
+        $validator = Validator::make($request->all(), [
+            'speciality_id' => 'required',
         ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        $user = Auth::user();
+        Doctor::where('user_id', $user->id)->update([
+           'speciality_id' => $validator->validated()['speciality_id'],
+        ]);
+        return redirect()->back()->with(['success' => 'Profile updated successfully']);
 
-        DB::transaction(function () use ($user, $request) {
-            // Update user data
-            $user->name = $request->get('name');
-            $user->address = $request->get('address');
-            $user->phone = $request->get('phone');
-            $user->save();
-
-            // Update or create doctor data
-            Doctor::updateOrCreate(
-                ['user_id' => $user->id],
-                ['spesialisasi' => $request->get('spesialisasi')]
-            );
-        });
-        return redirect()->back()->with('success', 'Profile updated successfully');
     }
 
 

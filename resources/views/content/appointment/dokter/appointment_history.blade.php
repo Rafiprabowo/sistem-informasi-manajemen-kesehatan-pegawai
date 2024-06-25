@@ -2,9 +2,7 @@
 @section('aside')
     @include('partials.aside.dokter')
 @endsection
-@section('content-header')
-    @include('partials.content-header.appointment.index')
-@endsection
+
 @section('content')
     <div class="col-12">
         <div class="card">
@@ -12,42 +10,46 @@
                 <h3 class="card-title">Appointments</h3>
             </div>
             <div class="table-responsive">
+                <div class="table-responsive">
                 <table class="table card-table table-vcenter text-nowrap datatable">
                     <thead>
                     <tr>
-                        <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select all invoices"></th>
                         <th>No</th>
-                        <th>Nama</th>
-                        <th>Alamat</th>
-                        <th>Phone</th>
-                        <th>Appointment time</th>
+                        <th>Nama Pegawai</th>
+                        <th>Appointment Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Nama Dokter</th>
+                        <th>Keluhan</th>
                         <th>Status</th>
-                        <th></th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
                     @if($user->doctor->appointments)
                         @foreach($user->doctor->appointments as $index => $appointment)
                             <tr>
-                                <td><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select invoice"></td>
                                 <td><span class="text-muted">{{$index + 1}}</span></td>
-                                <td><a href="#" class="text-reset" tabindex="-1">{{$appointment->name}}</a></td>
-                                <td>{{$appointment->address}}</td>
-                                <td>{{$appointment->phone}}</td>
-                                <td>{{$appointment->appointment_time}}</td>
+                                <td>{{$appointment->employee->user->first_name}} {{$appointment->employee->user->last_name}}</td>
+                                <td>{{\Carbon\Carbon::parse($appointment->date)->format('d-m-Y')}}</td>
+                                <td>{{\Carbon\Carbon::parse($appointment->start_time)->format('H:i')}}</td>
+                                <td>{{\Carbon\Carbon::parse($appointment->end_time)->format('H:i')}}</td>
+                                <td>{{$user->first_name}} {{$user->last_name}} {{$user->doctor->speciality->name ?? ''}}</td>
+                                <td>{{$appointment->note}}</td>
                                 <td>
                                     <span class="badge {{$appointment->status === 'pending' ? 'bg-warning':($appointment->status === 'approved' ? 'bg-success' :($appointment->status === 'rejected' ? 'bg-danger':'bg-secondary'))}} me-1">
                                         {{$appointment->status}}
                                     </span>
                                 </td>
-                                <td class="text-end">
+                                 <td class="text-end">
                                         <span class="dropdown">
                                           <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
                                           <div class="dropdown-menu dropdown-menu-end">
                                               @if($appointment->status === "approved")
-                                                  <a id="diagnosa" class="dropdown-item" href="{{route('diagnose.create' , $appointment->id)}}" >Diagnosa</a>
+                                                  <a href="{{route('diagnose.create' , $appointment->id)}}" class="dropdown-item"  >Diagnosa</a>
+{{--                                                  <a href="{{route('cancel-appointment', $appointment->id)}}" id="cancel" class="dropdown-item">Cancel</a>--}}
                                               @elseif($appointment->status === "pending")
-                                                  <a id="approve" class="dropdown-item" data-id="{{$appointment->id}}">Approve</a>
+                                                  <a href="{{route('approve-appointment', $appointment->id)}}" id="approve" class="dropdown-item">Approve</a>
                                               @endif
                                               <a id="delete" class="dropdown-item" data-id="{{$appointment->id}}">Delete</a>
                                           </div>
@@ -71,6 +73,7 @@
                     </tbody>
                 </table>
             </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -78,15 +81,11 @@
 @section('script')
     <script>
         $(document).ready( function (){
+             var token = $("meta[name='csrf-token']").attr("content");
             $('#approve').click(function (){
-                // get appointment id
-                var appointmentId = $(this).data('id')
                 $.ajax({
-                    url:'/api/approve-appointment/'+appointmentId,
-                    type: 'POST',
-                    data:{
-                        _token:'{{csrf_token()}}'
-                    },
+                    url:$(this).attr('href'),
+                    type: 'GET',
                     success: function (response){
                         if(response.success){
                             location.reload()
@@ -100,10 +99,26 @@
                     }
                 });
             });
-
+            $('#cancel').click(function (){
+                $.ajax({
+                    url: $(this).attr('href'),
+                    type: 'GET',
+                    success: function (response){
+                        if(response.success){
+                            location.reload()
+                            alert('Appointment cancelled successfully!')
+                        }else {
+                            alert('Failed to cancel appointment')
+                        }
+                    },
+                    error: function (xhr){
+                        alert('An error occured: ' + xhr.responseText)
+                    }
+                })
+            })
             $('#delete').click(function(){
-                var appointmentId = $(this).data('id')
-                if(confirm('Are you sure wanto delete this appointment?')){
+                let appointmentId = $(this).data('id')
+                if(confirm('Are you sure want to delete this appointment?')){
                     $.ajax({
                         url:'/api/delete-appointment/'+appointmentId,
                         type:'DELETE',

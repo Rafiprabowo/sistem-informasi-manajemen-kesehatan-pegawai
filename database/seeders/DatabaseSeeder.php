@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Admin;
 use App\Models\Doctor;
+use App\Models\DoctorSpecialization;
 use App\Models\Employee;
 use App\Models\Medicine;
 use App\Models\MedicineCategories;
@@ -19,9 +20,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        DoctorSpecialization::factory()->count(5)->create();
+
          $userAdmin = \App\Models\User::factory()->create([
              'role' => 'admin'
          ]);
+
 
          Admin::create([
              'user_id' => $userAdmin->id

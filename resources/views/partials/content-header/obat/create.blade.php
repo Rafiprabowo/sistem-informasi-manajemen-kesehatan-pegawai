@@ -11,7 +11,6 @@
                 </h2>
             </div>
             <!-- Page title actions -->
-
         </div>
     </div>
 </div>

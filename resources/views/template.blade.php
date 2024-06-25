@@ -36,6 +36,7 @@
     <div class="page">
       <!-- Sidebar -->
       @yield('aside')
+        @yield('navbar')
       <div class="page-wrapper">
         <!-- Page content-header -->
          @yield('content-header')

@@ -16,8 +16,10 @@ class Kernel extends ConsoleKernel
     {
 
          $schedule->call(function (){
-             \App\Models\Schedule::truncate();
-         })->daily();
+             $now = Carbon::now();
+             DB::table('doctor-schedules')
+             ->where('date', '<', $now->toDateString())->delete();
+         })->dailyAt('00:01');
 
     }
 
