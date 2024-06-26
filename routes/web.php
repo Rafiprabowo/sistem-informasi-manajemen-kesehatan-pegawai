@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DoctorScheduleController;
+use App\Http\Controllers\MedicalCheckUpController;
 use App\Http\Controllers\MedicineController;
 use App\Models\Appointment;
+use App\Models\Employee;
 use App\Models\Medicine;
 use App\Models\MedicineCategories;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +15,7 @@ use App\Http\Controllers\PegawaiController;
 use \App\Http\Controllers\AdminController;
 use App\Http\Controllers\PharmachistController;
 use App\Http\Controllers\AppointmentsControllers;
+use App\Http\Controllers\PemeriksaanMinorController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,6 +45,7 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/notifications/mark-as-read/{id}', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
     Route::prefix('/dokter')->group(function () {
         Route::get('/', [DoctorController::class, 'dashboard'])->name('doctor.dashboard');
         Route::get('/profile', [DoctorController::class, 'profile'])->name('doctor.profile');
@@ -52,7 +56,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/appointment/{id}/diagnose', [\App\Http\Controllers\DiagnosesController::class, 'storeDiagnose'])->name('diagnose.store');
         Route::resource('/doctor-schedules', DoctorScheduleController::class);
         Route::get('/my-appointment', [DoctorController::class, 'myAppointment'])->name('doctor.myAppointment');
-    });
+        Route::resource('/medical-check-up', MedicalCheckUpController::class);
+        });
 
     Route::prefix('/pegawai')->group(function () {
         Route::get('/', [PegawaiController::class, 'dashboard'])->name('pegawaiDashboard');
@@ -76,6 +81,48 @@ Route::middleware('auth')->group(function () {
         Route::resource('/kategori-obat', \App\Http\Controllers\MedicineCategoriesController::class);
     });
 
+    Route::get('/api/fetch-get-all-employee',function (){
+        $employees = Employee::all()->load('user');
+        $formattedEmployees = $employees->map(function($employee){
+           return [
+             'id' => $employee->id,
+             'name' => $employee->user->first_name.' '.$employee->user->last_name,
+             'address' => $employee->user->address,
+             'phone' => $employee->user->phone,
+             'position' => $employee->user->position,
+             'gender' => $employee->user->gender,
+             'date_of_birth' => $employee->user->date_of_birth,
+           ];
+        });
+        return response()->json(['success' => true, 'data' => $formattedEmployees]);
+    })->name('fetch-all-employee');
+
+    Route::get('/api/fetch-employee/{id}', function ($id) {
+        // Find the employee
+        $employee = Employee::find($id);
+
+        // Check if employee exists
+        if (!$employee) {
+            return response()->json(['success' => false, 'message' => 'Employee not found'], 404);
+        }
+
+        // Load the 'user' relationship
+        $employee->load('user');
+
+        // Format the employee data
+        $formattedEmployee = [
+            'id' => $employee->id,
+            'name' => $employee->user->first_name . ' ' . $employee->user->last_name,
+            'address' => $employee->user->address,
+            'phone' => $employee->user->phone,
+            'position' => $employee->position,
+            'gender' => $employee->gender,
+            'date_of_birth' => $employee->date_of_birth,
+        ];
+
+        // Return the formatted data as a JSON response
+        return response()->json(['success' => true, 'data' => $formattedEmployee]);
+    })->name('fetch-employee-by-id');
     Route::post('api/fetch-specialization-doctor', [\App\Http\Controllers\DoctorSpecializationController::class, 'fetchSpecializationsWithDoctor'])->name('fetchSpecializationsWithDoctor');
     Route::post('api/fetch-doctor-schedule', [\App\Http\Controllers\DoctorScheduleController::class, 'fetchDoctorSchedule'])->name('fetchDoctorSchedule');
     Route::post('api/fetch-doctor-schedules', function (\Illuminate\Http\Request $request) {
@@ -112,7 +159,6 @@ Route::middleware('auth')->group(function () {
 //        $appointment->save();
 //        return response()->json(['success' => true, 'message' => 'Appointment cancelled.']);
 //    })->name('cancel-appointment');
-
     Route::get('/api/fetch-medicine-category/{id}', function ($id) {
         $medicineCategories = MedicineCategories::findOrFail($id);
         if($medicineCategories) {
@@ -139,7 +185,6 @@ Route::middleware('auth')->group(function () {
         $medicineCategory->save();
         return response()->json(['success' => true, 'medicineCategory' => $medicineCategory]);
     });
-
 
     Route::get('/api/medicine/{id}', function ($id) {
         $medicine = Medicine::findOrFail($id);
@@ -207,7 +252,6 @@ Route::middleware('auth')->group(function () {
        $medicine->delete();
        return response()->json(['success' => true, 'message' => 'Medicine deleted.']);
     });
-
     Route::post('/api/delete-medicine-category', function (\Illuminate\Http\Request $request) {
        $categoryId = $request->get('category_id');
        if (!$categoryId) {
@@ -220,6 +264,8 @@ Route::middleware('auth')->group(function () {
        $category->delete();
        return response()->json(['success' => true, 'message' => 'Category deleted.']);
     });
+    Route::get('/api/fetch-pemeriksaan-minor/{id}', [PemeriksaanMinorController::class, 'getPemeriksaanMinorById'])->name('fetch-pemeriksaan-minor-by-id');
+    Route::post('api/submit-all-pemeriksaan', [MedicalCheckUpController::class, 'submitAllPemeriksaan']);
 });
 
 

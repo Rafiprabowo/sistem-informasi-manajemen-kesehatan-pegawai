@@ -1,0 +1,320 @@
+@extends('template')
+@section('aside')
+    @include('partials.aside.dokter')
+@endsection
+@section('content')
+    <input type="hidden" id="id_doctor" value="{{\Illuminate\Support\Facades\Auth::user()->doctor->id}}" >
+    <div class="col-lg-auto d-inline-block mb-3 mt-3 ">
+        <a id="submit-all" href="#" class="btn btn-primary">Simpan semua data</a>
+    </div>
+    <div class="col-lg-auto d-inline-block mx-3">
+        <a href="#" class="btn btn-secondary">Kembali</a>
+    </div>
+            <div class="col-lg-auto">
+                <div class="card">
+                  <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs nav-fill" data-bs-toggle="tabs">
+                      <li class="nav-item">
+                        <a href="#tabs-profile-7" class="nav-link active" data-bs-toggle="tab"><!-- Download SVG icon from http://tabler-icons.io/i/user -->
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+                          Profile</a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="#tabs-activity-7" class="nav-link " data-bs-toggle="tab"><!-- Download SVG icon from http://tabler-icons.io/i/activity -->
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12h4l3 8l4 -16l3 8h4" /></svg>
+                          Activity</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="card-body">
+                    <div class="tab-content">
+                      <div class="tab-pane active show" id="tabs-profile-7">
+                        <label class="form-label">Pilih Pegawai</label>
+                         <select name="id_employee" id="select-employee" class="form-select mb-3"></select>
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title">Profile pegawai</h3>
+                            </div>
+                            <div class="card-body">
+                                <input id="employee_id" name="employee_id" type="hidden">
+                              <div class="mb-3">
+                                <label class="form-label ">Nama</label>
+                                <div>
+                                  <input id="name" type="text" class="form-control" disabled>
+                                </div>
+                              </div>
+                                <div class="mb-3">
+                                <label class="form-label ">Alamat</label>
+                                <div>
+                                  <input id="address" type="text" class="form-control" disabled>
+                                </div>
+                              </div>
+                                <div class="mb-3">
+                                <label class="form-label ">No Hp</label>
+                                <div>
+                                  <input id="phone" type="text" class="form-control" disabled>
+                                </div>
+                              </div>
+                                <div class="mb-3">
+                                <label class="form-label ">Jabatan</label>
+                                <div>
+                                  <input id="position" type="email" class="form-control" disabled>
+                                </div>
+                              </div>
+                                <div class="mb-3">
+                                <label class="form-label ">Jenis Kelamin</label>
+                                <div>
+                                  <input id="gender" type="text" class="form-control" disabled>
+                                </div>
+                              </div>
+                                <div class="mb-3">
+                                <label class="form-label ">Tanggal Lahir</label>
+                                <div>
+                                  <input id="date_of_birth" type="text" class="form-control" disabled >
+                                </div>
+                              </div>
+                            </div>
+                            <div class="card-footer text-end">
+                              <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="tab-pane" id="tabs-activity-7">
+                            <div class="mb-3">
+                                <label class="form-label">Tambah Pemeriksaan</label>
+                                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-report">
+                                Input Pemeriksaan
+                                </a>
+                            </div>
+                            <div class="card">
+                                  <div class="table-responsive">
+                                    <table class="table table-vcenter card-table">
+                                      <thead>
+                                        <tr>
+                                          <th>Nama</th>
+                                          <th>Proses</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody id="list-pemeriksaan-minor">
+
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                            <div class="modal modal-blur fade" id="modal-report" tabindex="-1" role="dialog" aria-hidden="true">
+                              <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Pemeriksaan Minor</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="card">
+                                      <div class="table-responsive">
+                                        <table
+                            class="table table-vcenter card-table">
+                                          <thead>
+                                            <tr>
+                                              <th>No</th>
+                                              <th>Pemeriksaan Minor</th>
+                                              <th>Gender Oriented</th>
+                                              <th></th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            @forelse($pemeriksaanMinors as $index => $minor)
+                                                <tr>
+                                                    <td>{{$index + 1}}</td>
+                                                    <td>{{$minor->name}}</td>
+                                                    <td>{{$minor->is_gender_oriented == true ? 'Ya' : 'Tidak'}}</td>
+                                                    <td>
+                                                        <a data-id="{{$minor->id}}" class="add-pemeriksaan-minor btn btn-primary"  >
+                                                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                                                            Tambah
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td>Tidak ada data pemeriksaan minor</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>
+
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                  <div class="modal-footer">
+                                    <a href="#" class="btn btn-primary ms-auto" data-bs-dismiss="modal">
+                                      Simpan
+                                    </a>
+                                  </div>
+                                </div>
+                              </div>
+                           </div>
+                      </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+@endsection
+@section('script')
+    <script>
+        $(document).ready(function (){
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+            var token = $("meta[name='csrf-token']").attr("content");
+            fetchAllEmployee()
+
+            $('#select-employee').on('change', function(){
+            let employeeId = $(this).val();
+            fetchGetEmployeeById(employeeId);
+            });
+
+            $('.add-pemeriksaan-minor').click(function(event) {
+                event.preventDefault();
+                let minorId = $(this).data('id');
+                fetchGetPemeriksaanMinorById(minorId);
+            });
+
+             $('#list-pemeriksaan-minor').on('click', '.remove-minor', function(event) {
+                event.preventDefault();
+                $(this).closest('tr').remove();
+            });
+            $('#submit-all').click(function (e){
+                e.preventDefault();
+                if(confirm('Apakah anda yakin ingin menyimpan data medical check up semuanya ?')){
+                    let id_employee = $('#select-employee').val();
+                    let id_doctor = $('#id_doctor').val();
+                    let pemeriksaanData = [];
+                    $('#list-pemeriksaan-minor tr').each(function (){
+                        let id = $(this).data('id');
+                        if (!pemeriksaanData.includes(id)) {
+                            pemeriksaanData.push(id);
+                        }
+                    });
+
+                    // Send data to the server
+                    $.ajax({
+                        url: '/api/submit-all-pemeriksaan', // Adjust URL to your endpoint
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            id_employee: id_employee,
+                            id_doctor: id_doctor,
+                            pemeriksaanData: pemeriksaanData
+                        }),
+                        success: function(response) {
+                            if(response.status === 'success') {
+                                alert('Data submitted successfully');
+                                // Optionally clear the list
+                                $('#list-pemeriksaan-minor').empty();
+                            } else {
+                                alert('Error: ' + response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Request failed:', status, error);
+                            alert('An error occurred. Check the console for details.');
+                        }
+                    });
+                }
+            });
+        });
+            function fetchGetPemeriksaanMinorById(minorId) {
+        $.ajax({
+            url: '/api/fetch-pemeriksaan-minor/' + minorId,
+            type: "GET",
+            dataType: "json",
+            success: function(response) {
+                if(response.status === 'success' && response.data) {
+                    console.log(response.data);
+
+                    let listPemeriksaanMinor = $('#list-pemeriksaan-minor');
+                    // Check if the minorId already exists in the table
+                    if (listPemeriksaanMinor.find(`tr[data-id="${response.data.id}"]`).length === 0) {
+                        // Append the new row if not exists
+                        listPemeriksaanMinor.append(
+                            `<tr data-id="${response.data.id}">
+                                <td>${response.data.name}</td>
+                                <td>
+                                    <a data-id="${response.data.id}" class="remove-minor btn btn-danger">Hapus</a>
+                                </td>
+                            </tr>`
+                        );
+                    } else {
+                        alert('Pemeriksaan minor sudah ada di daftar.');
+                    }
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Request failed:', status, error);
+                alert('An error occurred. Check the console for details.');
+            }
+        });
+    }
+            function fetchAllEmployee (){
+                    $.ajax({
+                        url: '{{route('fetch-all-employee')}}',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (response){
+                            console.log(response)
+                            if(response.success && response.data.length > 0){
+                                let selectEmployee = $('#select-employee')
+                                selectEmployee.empty()
+                                selectEmployee.html('<option value="">--Pilih Pegawai--</option>')
+                                $.each(response.data, function (key, employee) {
+                                    selectEmployee.append(
+                                        `<option value="${employee.id}">${employee.name}</option>`
+                                    )
+                                });
+                            }else {
+                                alert('Error : ' +response.message )
+                            }
+                        },
+                        error: function (){
+                            console.error('Request failed:', status, error);
+                            alert('An error occurred. Check the console for details.');
+
+                        }
+                    })
+                }
+            function fetchGetEmployeeById(employeeId){
+                    $.ajax({
+                        url: '/api/fetch-employee/' + employeeId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response){
+                            console.log(response);
+                            if(response.success && response.data){
+                            $('#employee_id').val(response.data.id)
+                            $('#name').val(response.data.name);
+                            $('#address').val(response.data.address);
+                            $('#phone').val(response.data.phone);
+                            $('#position').val(response.data.position);
+                            $('#gender').val(response.data.gender);
+                            $('#date_of_birth').val(response.data.date_of_birth);
+                            } else {
+                                alert('Error: ' + response.message);
+                            }
+                        },
+                        error: function(xhr, status, error){
+                            console.error('Request failed:', status, error);
+                            alert('An error occurred. Check the console for details.');
+                        }
+                    });
+                }
+    </script>
+@endsection
