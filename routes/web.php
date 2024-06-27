@@ -29,18 +29,13 @@ use App\Http\Controllers\PemeriksaanMinorController;
 
 
 Route::get('/', function (){return view('template');})->middleware('auth');
-Route::get('/login', function() {
-    return view('content.authentication.login');
-})->name('login');
-
-Route::get('/register', function() {
-    return view('content.authentication.register');
-});
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    Route::get('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/register', [AuthController::class, 'attemptRegister'])->name('attempt.register');
+    Route::post('/login', [AuthController::class, 'attemptLogin'])->name('attempt.login');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('attempt.logout');
 });
 
 Route::middleware('auth')->group(function () {
@@ -82,6 +77,11 @@ Route::middleware('auth')->group(function () {
         Route::resource('/kategori-obat', \App\Http\Controllers\MedicineCategoriesController::class);
     });
 
+    /**
+     * Api Fetch Employee
+     * /api/fetch-get-all-employee
+     * /api/fetch-employee/{id}
+     */
     Route::get('/api/fetch-get-all-employee',function (){
         $employees = Employee::all()->load('user');
         $formattedEmployees = $employees->map(function($employee){
@@ -92,12 +92,11 @@ Route::middleware('auth')->group(function () {
              'phone' => $employee->user->phone,
              'position' => $employee->position,
              'gender' => $employee->gender,
-             'date_of_birth' => \Carbon\Carbon::parse($employee->date_of_birth)->format('d-m-Y'),
+             'age' => $employee->age
            ];
         });
         return response()->json(['success' => true, 'data' => $formattedEmployees]);
     })->name('fetch-all-employee');
-
     Route::get('/api/fetch-employee/{id}', function ($id) {
         // Find the employee
         $employee = Employee::find($id);
@@ -118,12 +117,19 @@ Route::middleware('auth')->group(function () {
             'phone' => $employee->user->phone,
             'position' => $employee->position,
             'gender' => $employee->gender,
-            'date_of_birth' => \Carbon\Carbon::parse($employee->user->date_of_birth)->format('d-m-Y'),
+            'age' => $employee->age
         ];
 
         // Return the formatted data as a JSON response
         return response()->json(['success' => true, 'data' => $formattedEmployee]);
     })->name('fetch-employee-by-id');
+
+    /**
+     * Api Fetch Doctor, Specialization and Schedule
+     * api/fetch-specialization-doctor
+     * api/fetch-doctor-schedule
+     * api/fetch-doctor-schedules
+     */
     Route::post('api/fetch-specialization-doctor', [\App\Http\Controllers\DoctorSpecializationController::class, 'fetchSpecializationsWithDoctor'])->name('fetchSpecializationsWithDoctor');
     Route::post('api/fetch-doctor-schedule', [\App\Http\Controllers\DoctorScheduleController::class, 'fetchDoctorSchedule'])->name('fetchDoctorSchedule');
     Route::post('api/fetch-doctor-schedules', function (\Illuminate\Http\Request $request) {
@@ -137,13 +143,23 @@ Route::middleware('auth')->group(function () {
         return response()->json(['schedules' => $schedules]);
     });
 
+    /**
+     * Api Fetch Pemeriksaan
+     * /api/fetch-pemeriksaan-minor/{id}
+     * api/submit-all-pemeriksaan
+     */
+
+    Route::get('/api/fetch-pemeriksaan-minor/{id}', [PemeriksaanMinorController::class, 'getPemeriksaanMinorById'])->name('fetch-pemeriksaan-minor-by-id');
+    Route::post('api/submit-all-pemeriksaan', [MedicalCheckUpController::class, 'submitAllPemeriksaan']);
+
+
+
     Route::get('api/approve-appointment/{id}', function ($id) {
         $appointment = Appointment::findOrFail($id);
         $appointment->status = 'approved';
         $appointment->save();
         return response()->json(['success' => 'Appointment successfully approved.']);
     })->name('approve-appointment');
-
     Route::delete('api/delete-appointment/{id}', function ($id) {
         $appointment = Appointment::findOrFail($id);
         if ($appointment) {
@@ -167,7 +183,6 @@ Route::middleware('auth')->group(function () {
         }
         return response()->json(['medicineCategories' => null]);
     });
-
     Route::post('/api/update-medicine-categories', function (\Illuminate\Http\Request $request) {
 
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
@@ -186,7 +201,6 @@ Route::middleware('auth')->group(function () {
         $medicineCategory->save();
         return response()->json(['success' => true, 'medicineCategory' => $medicineCategory]);
     });
-
     Route::get('/api/medicine/{id}', function ($id) {
         $medicine = Medicine::findOrFail($id);
         if(!$medicine){
@@ -194,7 +208,6 @@ Route::middleware('auth')->group(function () {
         }
         return response()->json(['medicine' => $medicine]);
     });
-
     Route::post('/api/updateMedicine', function (\Illuminate\Http\Request $request) {
         /** @var
          * $validator = Validator::make($request->all(), [
@@ -240,7 +253,6 @@ Route::middleware('auth')->group(function () {
         $medicine->save();
         return response()->json(['success' => true, 'medicine' => $medicine, 'category_name' => $category->name]);
     });
-
     Route::post('/api/delete-medicine', function (\Illuminate\Http\Request $request) {
        $medicineId = $request->get('medicine_id');
        if (!$medicineId) {
@@ -265,8 +277,7 @@ Route::middleware('auth')->group(function () {
        $category->delete();
        return response()->json(['success' => true, 'message' => 'Category deleted.']);
     });
-    Route::get('/api/fetch-pemeriksaan-minor/{id}', [PemeriksaanMinorController::class, 'getPemeriksaanMinorById'])->name('fetch-pemeriksaan-minor-by-id');
-    Route::post('api/submit-all-pemeriksaan', [MedicalCheckUpController::class, 'submitAllPemeriksaan']);
+
 });
 
 

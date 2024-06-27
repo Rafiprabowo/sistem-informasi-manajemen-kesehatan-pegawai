@@ -20,7 +20,7 @@ class EmployeeFactory extends Factory
             //
             'position' => $this->faker->jobTitle(),
             'date_of_birth' => $this->faker->date(),
-            'gender' => $this->faker->randomElement(['male', 'female']),
+            'gender' => $this->faker->randomElement(['L', 'P']),
             'emergency_contact_name' => $this->faker->name(),
             'emergency_contact_number' => $this->faker->phoneNumber(),
             'emergency_contact_relationship' => $this->faker->jobTitle(),

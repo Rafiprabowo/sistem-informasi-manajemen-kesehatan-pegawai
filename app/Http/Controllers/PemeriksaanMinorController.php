@@ -64,11 +64,25 @@ class PemeriksaanMinorController extends Controller
     }
 
     public function getPemeriksaanMinorById($id){
-        $pemeriksaanMinor = PemeriksaanMinor::find($id);
+        $pemeriksaanMinor = PemeriksaanMinor::with(['nilaiRujukan', 'pemeriksaanMajor'])->find($id);
         if(!$pemeriksaanMinor){
             return response()->json(['message' => 'Data tidak ditemukan'], 404);
         }
-        return response()->json(['status' => 'success', 'data' => $pemeriksaanMinor], 200);
+        $formattedPemeriksaanMinor = [
+            'id' => $pemeriksaanMinor->id,
+            'name' => $pemeriksaanMinor->name,
+            'is_gender_oriented' => $pemeriksaanMinor->is_gender_oriented,
+            'nilai_rujukan' => $pemeriksaanMinor->nilaiRujukan->map(function ($nilai){
+                return [
+                    'id' => $nilai->id,
+                    'gender'=>$nilai->gender,
+                    'reference_value' =>  $nilai->reference_value,
+                    'satuan' => $nilai->satuan,
+                ];
+            }),
+            'pemeriksaanMajor' => $pemeriksaanMinor->pemeriksaanMajor->name,
+        ];
+        return response()->json(['status' => 'success', 'data' => $formattedPemeriksaanMinor], 200);
     }
 
 }

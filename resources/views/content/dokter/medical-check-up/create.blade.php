@@ -67,6 +67,12 @@
                                   <input id="gender" type="text" class="form-control" disabled>
                                 </div>
                               </div>
+                                <div class="mb-3">
+                                <label class="form-label ">Umur</label>
+                                <div>
+                                  <input id="age" type="text" class="form-control" disabled>
+                                </div>
+                              </div>
                             </div>
 
                           </div>
@@ -83,8 +89,10 @@
                                     <table class="table table-vcenter card-table">
                                       <thead>
                                         <tr>
-                                          <th>Nama</th>
+                                            <th>Nama</th>
+                                            <th>Pemeriksaan Major</th>
                                             <th>Nilai</th>
+                                            <th>Nilai Rujukan </th>
                                           <th>Proses</th>
                                         </tr>
                                       </thead>
@@ -160,12 +168,12 @@
 @section('script')
     <script>
         $(document).ready(function (){
-                $.ajaxSetup({
+            $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
-            var token = $("meta[name='csrf-token']").attr("content");
+            let pemeriksaanData = {};
             fetchAllEmployee()
 
             $('#select-employee').on('change', function(){
@@ -173,44 +181,56 @@
             fetchGetEmployeeById(employeeId);
             });
 
+            // Event listener for adding pemeriksaan minor
             $('.add-pemeriksaan-minor').click(function(event) {
                 event.preventDefault();
                 let minorId = $(this).data('id');
                 fetchGetPemeriksaanMinorById(minorId);
             });
 
-             $('#list-pemeriksaan-minor').on('click', '.remove-minor', function(event) {
-                event.preventDefault();
-                $(this).closest('tr').remove();
+             // Event listener for input changes on dynamically added fields
+            $('#list-pemeriksaan-minor').on('input', '.nilai-pemeriksaan', function () {
+                let id = $(this).data('id');
+                let value = $(this).val();
+                pemeriksaanData[id] = value; // Update the value in the object
             });
+
+             // Remove row and delete from pemeriksaanData
+            $('#list-pemeriksaan-minor').on('click', '.remove-minor', function () {
+                let id = $(this).data('id');
+                $(`tr[data-id="${id}"]`).remove();
+                delete pemeriksaanData[id]; // Remove from the object
+            });
+
+
+           // Submit all data
             $('#submit-all').click(function (e){
                 e.preventDefault();
                 if(confirm('Apakah anda yakin ingin menyimpan data medical check up semuanya ?')){
                     let id_employee = $('#select-employee').val();
                     let id_doctor = $('#id_doctor').val();
-                    let pemeriksaanData = [];
-                    $('#list-pemeriksaan-minor tr').each(function (){
-                        let id = $(this).data('id');
-                        if (!pemeriksaanData.includes(id)) {
-                            pemeriksaanData.push(id);
-                        }
-                    });
+
+                    // Convert pemeriksaanData to array of objects
+                    let pemeriksaanArray = Object.keys(pemeriksaanData).map(id => ({
+                        id: id,
+                        nilai: pemeriksaanData[id]
+                    }));
 
                     // Send data to the server
                     $.ajax({
-                        url: '/api/submit-all-pemeriksaan', // Adjust URL to your endpoint
+                        url: '/api/submit-all-pemeriksaan',
                         type: "POST",
                         contentType: "application/json",
                         data: JSON.stringify({
                             id_employee: id_employee,
                             id_doctor: id_doctor,
-                            pemeriksaanData: pemeriksaanData
+                            pemeriksaanData: pemeriksaanArray
                         }),
                         success: function(response) {
                             if(response.status === 'success') {
                                 alert('Data submitted successfully');
-                                // Optionally clear the list
                                 $('#list-pemeriksaan-minor').empty();
+                                pemeriksaanData = {}; // Reset the data object
                             } else {
                                 alert('Error: ' + response.message);
                             }
@@ -222,46 +242,54 @@
                     });
                 }
             });
-        });
+            // Fetch data for pemeriksaan minor by ID
             function fetchGetPemeriksaanMinorById(minorId) {
-        $.ajax({
-            url: '/api/fetch-pemeriksaan-minor/' + minorId,
-            type: "GET",
-            dataType: "json",
-            success: function(response) {
-                if(response.status === 'success' && response.data) {
-                    console.log(response.data);
+                $.ajax({
+                    url: '/api/fetch-pemeriksaan-minor/' + minorId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(response) {
+                        if(response.status === 'success' && response.data) {
+                            let listPemeriksaanMinor = $('#list-pemeriksaan-minor');
 
-                    let listPemeriksaanMinor = $('#list-pemeriksaan-minor');
+                            // Check if the minorId already exists in the table
+                            if (listPemeriksaanMinor.find(`tr[data-id="${response.data.id}"]`).length === 0) {
+                                // Append the new row if not exists
+                                listPemeriksaanMinor.append(
+                                    `<tr data-id="${response.data.id}">
+                                        <td>${response.data.name}</td>
+                                        <td>${response.data.pemeriksaanMajor}</td>
+                                        <td>
+                                            <input type="text" id="nilai-${response.data.id}" class="form-control nilai-pemeriksaan" data-id="${response.data.id}">
+                                        </td>
+                                        <td>
+                                            <ul class="list-group">
+                                                ${response.data.nilai_rujukan.map(item => `<li class="list-group-item">${item.gender} : ${item.reference_value}</li>`).join('')}
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <a data-id="${response.data.id}" class="remove-minor btn btn-danger">Hapus</a>
+                                        </td>
+                                    </tr>`
+                                );
 
-                    // Check if the minorId already exists in the table
-                    if (listPemeriksaanMinor.find(`tr[data-id="${response.data.id}"]`).length === 0) {
-                        // Append the new row if not exists
-                        listPemeriksaanMinor.append(
-                            `<tr data-id="${response.data.id}">
-                                <td>${response.data.name}</td>
-                                <td>
-                                    <input type="text" id="nilai-${response.data.id}" class="form-control">
-                                </td>
-
-                                <td>
-                                    <a data-id="${response.data.id}" class="remove-minor btn btn-danger">Hapus</a>
-                                </td>
-                            </tr>`
-                        );
-                    } else {
-                        alert('Pemeriksaan minor sudah ada di daftar.');
+                                // Add to pemeriksaanData object
+                                pemeriksaanData[response.data.id] = '';
+                            } else {
+                                alert('Pemeriksaan minor sudah ada di daftar.');
+                            }
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Request failed:', status, error);
+                        alert('An error occurred. Check the console for details.');
                     }
-                } else {
-                    alert('Error: ' + response.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Request failed:', status, error);
-                alert('An error occurred. Check the console for details.');
+                });
             }
         });
-    }
+
             function fetchAllEmployee (){
                     $.ajax({
                         url: '{{route('fetch-all-employee')}}',
@@ -303,6 +331,7 @@
                             $('#phone').val(response.data.phone);
                             $('#position').val(response.data.position);
                             $('#gender').val(response.data.gender);
+                            $('#age').val(response.data.age);
                             } else {
                                 alert('Error: ' + response.message);
                             }

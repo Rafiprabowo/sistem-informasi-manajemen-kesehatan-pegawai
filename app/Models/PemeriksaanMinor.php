@@ -16,6 +16,9 @@ class PemeriksaanMinor extends Model
                     ->withTimestamps();
     }
     public function nilaiRujukan(){
-        return $this->belongsTo(NilaiRujukan::class, 'id_nilai_rujukan' , 'id');
+        return $this->hasMany(NilaiRujukan::class, 'id_pemeriksaan_minor', 'id' );
+    }
+    public function pemeriksaanMajor(){
+         return $this->belongsTo(PemeriksaanMajor::class, 'id_pemeriksaan_major', 'id');
     }
 }

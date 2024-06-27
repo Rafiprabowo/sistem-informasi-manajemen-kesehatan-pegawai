@@ -9,8 +9,8 @@ class NilaiRujukan extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    public function pemeriksaanMinor ()
+    public function pemeriksaanMinor()
     {
-        return $this->hasMany(PemeriksaanMinor::class);
+        return $this->belongsTo(PemeriksaanMinor::class, 'id_pemeriksaan_minor','id');
     }
 }

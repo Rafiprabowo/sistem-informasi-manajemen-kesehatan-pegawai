@@ -13,7 +13,15 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     //
-    public function login(Request $request){
+    public function login()
+    {
+        return view('auth.login');
+    }
+    public function register()
+    {
+        return view('auth.register');
+    }
+    public function attemptLogin(Request $request){
     // Validasi input
     $validated = $request->validate([
         'email' => 'required|string|email',
@@ -43,7 +51,7 @@ class AuthController extends Controller
 }
 
 
-    public function register(Request $request){
+    public function attemptRegister(Request $request){
         $validated = $request->validate([
             'name' => 'required',
             'username' => 'required|unique:users',
