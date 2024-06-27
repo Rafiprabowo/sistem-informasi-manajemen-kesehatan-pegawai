@@ -29,6 +29,9 @@ class Doctor extends Authenticatable
     {
         return $this->belongsTo(DoctorSpecialization::class);
     }
+    public function medicalCheckups(): HasMany{
+        return $this->hasMany(MedicalCheckup::class);
+    }
 
 
 }

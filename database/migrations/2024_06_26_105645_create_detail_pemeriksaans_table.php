@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('detail_pemeriksaans', function (Blueprint $table) {
             $table->unsignedBigInteger('id_medical_check_up');
-            $table->foreign('id_medical_check_up')->references('id')->on('medical_check_ups');
+            $table->foreign('id_medical_check_up')->references('id')->on('medical_check_ups')->cascadeOnDelete();
             $table->unsignedBigInteger('id_pemeriksaan_minor');
-            $table->foreign('id_pemeriksaan_minor')->references('id')->on('pemeriksaan_minors');
+            $table->foreign('id_pemeriksaan_minor')->references('id')->on('pemeriksaan_minors')->cascadeOnDelete();
             $table->string('result');
             $table->timestamps();
             $table->primary(['id_medical_check_up', 'id_pemeriksaan_minor']);

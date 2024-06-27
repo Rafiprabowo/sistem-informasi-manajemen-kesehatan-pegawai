@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pemeriksaan_minors', function (Blueprint $table) {
+        Schema::create('pemeriksaan_majors', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('is_gender_oriented')->default(false);
-            $table->unsignedBigInteger('id_pemeriksaan_major')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pemeriksaan_minors');
+        Schema::dropIfExists('pemeriksaan_majors');
     }
 };

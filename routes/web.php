@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('/doctor-schedules', DoctorScheduleController::class);
         Route::get('/my-appointment', [DoctorController::class, 'myAppointment'])->name('doctor.myAppointment');
         Route::resource('/medical-check-up', MedicalCheckUpController::class);
+        Route::get('/medical-record', [MedicalCheckUpController::class, 'indexMedicalRecord'])->name('medical-record.index');
         });
 
     Route::prefix('/pegawai')->group(function () {
@@ -89,9 +90,9 @@ Route::middleware('auth')->group(function () {
              'name' => $employee->user->first_name.' '.$employee->user->last_name,
              'address' => $employee->user->address,
              'phone' => $employee->user->phone,
-             'position' => $employee->user->position,
-             'gender' => $employee->user->gender,
-             'date_of_birth' => $employee->user->date_of_birth,
+             'position' => $employee->position,
+             'gender' => $employee->gender,
+             'date_of_birth' => \Carbon\Carbon::parse($employee->date_of_birth)->format('d-m-Y'),
            ];
         });
         return response()->json(['success' => true, 'data' => $formattedEmployees]);
@@ -117,7 +118,7 @@ Route::middleware('auth')->group(function () {
             'phone' => $employee->user->phone,
             'position' => $employee->position,
             'gender' => $employee->gender,
-            'date_of_birth' => $employee->date_of_birth,
+            'date_of_birth' => \Carbon\Carbon::parse($employee->user->date_of_birth)->format('d-m-Y'),
         ];
 
         // Return the formatted data as a JSON response

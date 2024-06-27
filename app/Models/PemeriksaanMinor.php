@@ -9,7 +9,13 @@ class PemeriksaanMinor extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    public function pemeriksaan(){
-        return $this->hasMany(DetailPemeriksaan::class , 'id_pemeriksaan_minor' , 'id');
+     public function medicalCheckUps()
+    {
+        return $this->belongsToMany(MedicalCheckUp::class, 'detail_pemeriksaans', 'id_pemeriksaan_minor', 'id_medical_check_up')
+                    ->withPivot('result')
+                    ->withTimestamps();
+    }
+    public function nilaiRujukan(){
+        return $this->belongsTo(NilaiRujukan::class, 'id_nilai_rujukan' , 'id');
     }
 }

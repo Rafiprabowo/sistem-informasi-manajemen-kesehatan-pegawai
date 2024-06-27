@@ -18,6 +18,7 @@ class MedicalCheckUpController extends Controller
     public function index()
     {
         //
+
     }
 
     /**
@@ -52,6 +53,8 @@ class MedicalCheckUpController extends Controller
     public function edit(string $id)
     {
         //
+
+
     }
 
     /**
@@ -68,6 +71,11 @@ class MedicalCheckUpController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    public function indexMedicalRecord()
+    {
+        $medicalCheckUps = MedicalCheckUp::with('pemeriksaanMinors')->get();
+        return view('content.dokter.medical-check-up.update', compact('medicalCheckUps'));
     }
 
     public function submitAllPemeriksaan(Request $request)

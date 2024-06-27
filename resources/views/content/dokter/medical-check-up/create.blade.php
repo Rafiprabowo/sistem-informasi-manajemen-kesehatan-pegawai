@@ -67,16 +67,8 @@
                                   <input id="gender" type="text" class="form-control" disabled>
                                 </div>
                               </div>
-                                <div class="mb-3">
-                                <label class="form-label ">Tanggal Lahir</label>
-                                <div>
-                                  <input id="date_of_birth" type="text" class="form-control" disabled >
-                                </div>
-                              </div>
                             </div>
-                            <div class="card-footer text-end">
-                              <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
+
                           </div>
                       </div>
                       <div class="tab-pane" id="tabs-activity-7">
@@ -92,6 +84,7 @@
                                       <thead>
                                         <tr>
                                           <th>Nama</th>
+                                            <th>Nilai</th>
                                           <th>Proses</th>
                                         </tr>
                                       </thead>
@@ -240,12 +233,17 @@
                     console.log(response.data);
 
                     let listPemeriksaanMinor = $('#list-pemeriksaan-minor');
+
                     // Check if the minorId already exists in the table
                     if (listPemeriksaanMinor.find(`tr[data-id="${response.data.id}"]`).length === 0) {
                         // Append the new row if not exists
                         listPemeriksaanMinor.append(
                             `<tr data-id="${response.data.id}">
                                 <td>${response.data.name}</td>
+                                <td>
+                                    <input type="text" id="nilai-${response.data.id}" class="form-control">
+                                </td>
+
                                 <td>
                                     <a data-id="${response.data.id}" class="remove-minor btn btn-danger">Hapus</a>
                                 </td>
@@ -305,7 +303,6 @@
                             $('#phone').val(response.data.phone);
                             $('#position').val(response.data.position);
                             $('#gender').val(response.data.gender);
-                            $('#date_of_birth').val(response.data.date_of_birth);
                             } else {
                                 alert('Error: ' + response.message);
                             }
