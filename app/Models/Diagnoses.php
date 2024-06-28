@@ -13,4 +13,10 @@ class Diagnoses extends Model
     {
         return $this->belongsTo(Appointment::class);
     }
+
+    public function medicines()
+    {
+        return $this->belongsToMany(Medicine::class, 'detail_diagnosas', 'id_diagnosis', 'id_medicine')
+                    ->withTimestamps();
+    }
 }
