@@ -4,6 +4,9 @@
 @endsection
 @section('content')
     <div class="col-12">
+        <div class="col-lg-auto d-inline-block mb-3">
+        <a href="{{route('doctor.dashboard')}}" class="btn btn-secondary">Kembali</a>
+    </div>
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Appointments</h3>
@@ -25,9 +28,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @if($user->doctor->appointments)
-                        @foreach($user->doctor->appointments as $index => $appointment)
-                            <tr>
+                    @forelse($user->doctor->appointments as $index => $appointment)
+                        <tr>
                                 <td><span class="text-muted">{{$index + 1}}</span></td>
                                 <td>{{$appointment->employee->user->first_name}} {{$appointment->employee->user->last_name}}</td>
                                 <td>{{\Carbon\Carbon::parse($appointment->date)->format('d-m-Y')}}</td>
@@ -55,8 +57,7 @@
                                         </span>
                                 </td>
                             </tr>
-                        @endforeach
-                    @else
+                    @empty
                         <tr>
                             <td>data tidak tersedia</td>
                             <td></td>
@@ -67,8 +68,7 @@
                             <td></td>
                             <td></td>
                         </tr>
-                    @endif
-
+                    @endforelse
                     </tbody>
                 </table>
             </div>

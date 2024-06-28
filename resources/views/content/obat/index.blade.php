@@ -30,7 +30,7 @@
                         <th>Nama</th>
                         <th>Deskripsi</th>
                         <th>Kategori</th>
-                        <th class="w-1"></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,7 +73,7 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Name</label>
+                    <label class="form-label">Nama</label>
                     <input type="text" id="modal-new-name" class="form-control ">
                 </div>
                 <div class="mb-3">

@@ -31,20 +31,20 @@
                   <form class="card" id="updateProfileEmployee" action="{{route('updateProfileEmployee')}}" method="post">
                       @csrf
                     <div class="card-body">
-                      <h3 class="card-title">Form Appointment</h3>
+                      <h3 class="card-title">Lengkapi Profil</h3>
                         <hr>
                       <div class="row row-cards">
                           <h3>Biodata pegawai</h3>
                           <input type="hidden" id="employee_id" name="employee_id" value="{{$user->employee->id}}">
                         <div class="col-sm-6 ">
                           <div class="mb-3">
-                            <label class="form-label">First Name</label>
+                            <label class="form-label">Nama depan</label>
                             <input type="text" class="form-control" disabled  value="{{$user->first_name}}">
                           </div>
                         </div>
                         <div class="col-sm-6 ">
                           <div class="mb-3">
-                            <label class="form-label">Last Name</label>
+                            <label class="form-label">Nama akhir</label>
                             <input type="text" class="form-control" disabled value="{{$user->last_name}}">
                           </div>
                         </div>
@@ -70,7 +70,7 @@
                         </div>
                           <div class="col-md-4">
                           <div class="mb-3">
-                            <label class="form-label">Gender</label>
+                            <label class="form-label">Jenis Kelamin</label>
                             <select class="form-select" id="gender" name="gender">
                                 <option value="">--Pilih jenis kelamin--</option>
                                 <option value="male" {{$user->employee->gender == "male" ? 'selected' : '' }}>Laki-laki</option>

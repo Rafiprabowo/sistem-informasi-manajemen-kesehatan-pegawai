@@ -42,13 +42,13 @@
                           <input type="hidden" id="employee_id" name="employee_id" value="{{$user->employee->id}}">
                         <div class="col-sm-6 ">
                           <div class="mb-3">
-                            <label class="form-label">First Name</label>
+                            <label class="form-label">Nama Depan</label>
                             <input type="text" class="form-control" disabled value="{{$user->first_name}}">
                           </div>
                         </div>
                         <div class="col-sm-6 ">
                           <div class="mb-3">
-                            <label class="form-label">Last Name</label>
+                            <label class="form-label">Nama Akhir</label>
                             <input type="text" class="form-control" disabled value="{{$user->last_name}}">
                           </div>
                         </div>
@@ -60,7 +60,7 @@
                         </div>
                           <div class="col-md-6">
                           <div class="mb-3">
-                            <label class="form-label">Gender</label>
+                            <label class="form-label">Jenis Kelamin</label>
                             <input type="text" class="form-control" disabled value="{{$user->employee->gender}}">
                           </div>
                         </div>

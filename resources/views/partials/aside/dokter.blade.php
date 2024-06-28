@@ -34,11 +34,9 @@
                     Input Medical Record
                   </a>
                     <a class="dropdown-item" href="{{route('medical-record.index')}}" >
-                    Data Medical Record
-                  </a>
-                  <a class="dropdown-item" href="{{route('medical-check-up.index')}}" >
                     Hasil Medical Record
                   </a>
+
 
                 </div>
               </li>

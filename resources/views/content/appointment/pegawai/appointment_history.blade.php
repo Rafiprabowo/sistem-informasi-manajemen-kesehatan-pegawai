@@ -14,9 +14,9 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Pegawai</th>
-                        <th>Appointment Date</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
+                        <th>Tanggal Janji Temu</th>
+                        <th>Waktu Mulai</th>
+                        <th>Waktu Selesai</th>
                         <th>Nama Dokter</th>
                         <th>Keluhan</th>
                         <th>Status</th>

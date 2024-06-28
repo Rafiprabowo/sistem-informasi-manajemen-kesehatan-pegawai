@@ -20,7 +20,7 @@
                         <th>No</th>
                         <th>Jadwal</th>
                         <th>Status</th>
-                        <th>Action</th>
+                        <th>Aksi</th>
                     </tr>
                     </thead>
                     <tbody>

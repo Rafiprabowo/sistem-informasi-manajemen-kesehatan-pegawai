@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\MedicalCheckUp;
 use App\Models\PemeriksaanMinor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,6 +19,7 @@ class MedicalCheckUpController extends Controller
     public function index()
     {
         //
+
 
     }
 
@@ -74,7 +76,11 @@ class MedicalCheckUpController extends Controller
     }
     public function indexMedicalRecord()
     {
-        $medicalCheckUps = MedicalCheckUp::with('pemeriksaanMinors')->get();
+        $medicalCheckUps = MedicalCheckUp::with(['pemeriksaanMinors' => function ($query) {
+            $query->with(['nilaiRujukan', 'pemeriksaanMajor']);
+        }])
+            ->where('id_doctor', Auth::user()->doctor->id)
+            ->get();
         return view('content.dokter.medical-check-up.update', compact('medicalCheckUps'));
     }
 

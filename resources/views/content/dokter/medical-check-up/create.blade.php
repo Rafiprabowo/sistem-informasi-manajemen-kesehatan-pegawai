@@ -8,7 +8,7 @@
         <a id="submit-all" href="#" class="btn btn-primary">Simpan semua data</a>
     </div>
     <div class="col-lg-auto d-inline-block mx-3">
-        <a href="#" class="btn btn-secondary">Kembali</a>
+        <a href="{{route('doctor.dashboard')}}" class="btn btn-secondary">Kembali</a>
     </div>
             <div class="col-lg-auto">
                 <div class="card">
@@ -22,7 +22,7 @@
                       <li class="nav-item">
                         <a href="#tabs-activity-7" class="nav-link " data-bs-toggle="tab"><!-- Download SVG icon from http://tabler-icons.io/i/activity -->
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12h4l3 8l4 -16l3 8h4" /></svg>
-                          Activity</a>
+                          MCU</a>
                       </li>
                     </ul>
                   </div>

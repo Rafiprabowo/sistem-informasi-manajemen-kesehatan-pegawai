@@ -20,6 +20,7 @@
     <link href="{{asset('./dist/css/tabler-payments.min.css?1684106062')}}" rel="stylesheet"/>
     <link href="{{asset('./dist/css/tabler-vendors.min.css?1684106062')}}" rel="stylesheet"/>
     <link href="{{asset('./dist/css/demo.min.css?1684106062')}}" rel="stylesheet"/>
+
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
      <style>
       @import url('https://rsms.me/inter/inter.css');

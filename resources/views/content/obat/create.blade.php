@@ -58,7 +58,7 @@
 
             <div class="card-footer d-flex justify-content-between">
                 <a href="{{route('obat.index')}}" class="btn btn-secondary">Kembali</a>
-                <button type="submit" class="btn btn-primary ">Submit</button>
+                <button type="submit" class="btn btn-primary ">Simpan</button>
             </div>
         </form>
     </div>

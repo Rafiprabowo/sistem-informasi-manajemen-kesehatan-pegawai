@@ -39,7 +39,7 @@ class DoctorScheduleController extends Controller
                 });
             })
             ->orderBy('date', 'asc')
-            ->get();
+            ->paginate(5);
         return view('content.doctor-schedules.index', compact('schedules'));
 }
 
@@ -90,30 +90,35 @@ class DoctorScheduleController extends Controller
     public function edit(string $id)
     {
         //
+        $schedule = DoctorSchedule::find($id);
+        $user = Auth::user()->load('doctor');
+        return view('content.doctor-schedules.edit', compact('user' , 'schedule'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-        $validator = Validator::make($request->all(), [
-           'doctor_id' => 'required|exists:doctors,id',
-           'date' => 'required|date',
-           'start_time' => 'required|date_format:H:i',
-           'end_time' => 'required|date_format:H:i|after:start_time',
-        ]);
+   public function update(Request $request, string $id)
+{
+    $validator = Validator::make($request->all(), [
+        'doctor_id' => 'required|exists:doctors,id',
+        'status' => 'required',
+        'date' => 'required|date_format:Y-m-d',
+        'start_time' => 'required|date_format:H:i',
+        'end_time' => 'required|date_format:H:i|after:start_time',
+    ]);
 
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-        $schedule = DoctorSchedule::findOrFail($id);
-        $schedule->update($request->all());
-
-        return redirect()->route('doctor-schedules.index')
-            ->with('success', 'Schedule updated successfully.');
+    if ($validator->fails()) {
+        return back()->withErrors($validator)->withInput();
     }
+
+    $schedule = DoctorSchedule::findOrFail($id);
+    $schedule->update($request->all());
+
+    return redirect()->route('doctor-schedules.index')
+        ->with('success', 'Schedule updated successfully.');
+}
+
 
     /**
      * Remove the specified resource from storage.
