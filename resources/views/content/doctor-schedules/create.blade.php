@@ -3,8 +3,11 @@
     @include('partials.aside.dokter')
 @endsection
 @section('content')
-    <h2>Tambah Jadwal Janji Temu</h2>
-    <form class="card" id="createScheduleForm" action="{{route('doctor-schedules.store')}}" method="post">
+    <h2>Tambah Jadwal Dokter</h2>
+    <div class="div">
+        <a href="{{route('doctor-schedules.index')}}" class="btn btn-secondary mb-3">Kembali</a>
+    </div>
+    <form class="card" action="{{route('doctor-schedules.store')}}" method="post">
         @csrf
         <div class="card-body">
             <input type="hidden" name="doctor_id" value="{{$user->doctor->id}}">
@@ -33,31 +36,4 @@
         </div>
     </form>
 @endsection
-@section('script')
-    <script>
-        $(document).ready(function (){
-            $('#createScheduleForm').submit(function (event) {
-                event.preventDefault();
-                $.ajax({
-                   url:$(this).attr('action'),
-                   type:'POST',
-                   data:$(this).serialize(),
-                   success: function (response){
-                       alert('Doctor schedule saved successfully.')
-                       window.location.href="{{route('doctor-schedules.index')}}"
-                   },
-                   error: function (xhr) {
-                       if(xhr.status === 422){
-                           let errors = xhr.responseJSON.message;
-                           let errorMessages = '';
-                           $.each(errors, function (key, value){
-                               errorMessages += value[0] + '\n';
-                           })
-                           alert(errorMessages)
-                       }
-                    }
-               })
-            })
-        })
-    </script>
-@endsection
+

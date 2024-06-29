@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreign('id_diagnosis')->references('id')->on('diagnoses');
             $table->unsignedBigInteger('id_medicine');
             $table->foreign('id_medicine')->references('id')->on('medicines');
+            $table->string('dosis_obat');
             $table->timestamps();
             $table->primary(['id_diagnosis', 'id_medicine']);
         });

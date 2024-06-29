@@ -1,6 +1,6 @@
 @extends('template')
 @section('aside')
-    @include('partials.aside.dokter')
+    @include('partials.aside.apoteker')
 @endsection
 @section('content')
     <div class="col-12">
@@ -20,22 +20,22 @@
         @endif
             <div class="d-flex">
                 <div class="mb-3">
-                <a href="{{route('doctor-schedules.create')}}" class="btn btn-primary">Tambah Jadwal</a>
+                <a href="{{route('obat.create')}}" class="btn btn-primary">Tambah Obat</a>
             </div>
             <div class="mx-3">
-            <a href="{{route('doctor.dashboard')}}" class="btn btn-secondary">Kembali</a>
+            <a href="{{route('apoteker.dashboard')}}" class="btn btn-secondary">Kembali</a>
         </div>
             </div>
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title">Data Jadwal</h3>
+                    <h3 class="card-title">Data Kategori obat</h3>
                   </div>
                   <div class="card-body border-bottom py-3">
                     <div class="d-flex">
                       <div class="text-muted">
                         Show
                         <div class="mx-2 d-inline-block">
-                          <input type="text" class="form-control form-control-sm" value="{{$schedules->total()}}" size="3" aria-label="Invoices count">
+                          <input type="text" class="form-control form-control-sm" value="{{$medicines->total()}}" size="3" aria-label="Invoices count">
                         </div>
                         entries
                       </div>
@@ -57,49 +57,48 @@
                   <div class="table-responsive">
                     <table class="table card-table table-vcenter text-nowrap datatable">
                       <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Tanggal</th>
-                                <th>Waktu Mulai</th>
-                                <th>Waktu Selesai</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
+                        <tr>
+                          <th>No</th>
+                          <th>Nama Obat</th>
+                          <th>Kategori Obat</th>
+                            <th>Deskripsi Obat</th>
+                          <th>Stok</th>
+                            <th>Aksi</th>
+                        </tr>
+                      </thead>
 
                       <tbody>
-                      @forelse($schedules as $index => $schedule)
-                           <tr>
-                                    <td>{{$index + 1}}</td>
-                                         <td>{{ \Carbon\Carbon::parse($schedule->date)->format('d-m-Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}</td>
-                                    <td>
-                                        <span class="badge {{ $schedule->status === 'available' ? 'bg-success' : ($schedule->status === 'reserved' ? 'bg-warning' : 'bg-danger') }}">
-                                            {{ ucfirst($schedule->status) }}
-                                        </span>
-                                    </td>
-                                      <td>
+                      @forelse($medicines as $index => $medicine)
+                          <tr>
+                              <td>{{$index + 1}}</td>
+                              <td>{{$medicine->name}}</td>
+                              <td>{{$medicine->categories->name}}</td>
+                              <td>{{$medicine->description}}</td>
+                              <td>{{$medicine->stock}}</td>
+                              <td>
                                   <div class="d-flex justify-content-start">
-                                             <form action="{{ route('doctor-schedules.destroy', $schedule->id) }}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger">Hapus</button>
-                                             </form>
-                                      </div>
+                                      <a href="" class="btn btn-primary mx-2">Lihat</a>
+                                  <a href="{{ route('obat.edit', $medicine->id) }}" class="btn btn-secondary mx-2">Edit</a>
+
+                                         <form action="{{ route('obat.destroy', $medicine->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus obat ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger mx-2">Hapus</button>
+                                        </form>
+                                  </div>
                               </td>
-                                </tr>
+                          </tr>
                       @empty
-                      <tr>
-                          <td>Tidak ada data yang tersedia</td>
-                      </tr>
+                          <tr>
+                              <td>Tidak ada data yang tersedia</td>
+                          </tr>
                       @endforelse
                       </tbody>
                     </table>
                   </div>
                      <div class="card-footer d-flex align-items-center">
-                <p class="m-0 text-muted">Showing {{ $schedules->firstItem() }} to {{ $schedules->lastItem() }} of {{ $schedules->total() }} entries</p>
-                {{ $schedules->links() }}
+                <p class="m-0 text-muted">Showing {{ $medicines->firstItem() }} to {{ $medicines->lastItem() }} of {{ $medicines->total() }} entries</p>
+                {{ $medicines->links() }}
             </div>
                 </div>
               </div>

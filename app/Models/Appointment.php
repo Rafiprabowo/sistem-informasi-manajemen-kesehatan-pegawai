@@ -17,24 +17,6 @@ class Appointment extends Model
         'status' => 'pending'
     ];
 
-    protected $casts = [
-        'appointment_date' => 'date',
-        'appointment_start_time' => 'datetime:H:i',
-        'appointment_end_time' => 'datetime:H:i',
-    ];
-
-    public function getAppointmentDateAttribute($value)
-    {
-        return Carbon::parse($value)->format('d-m-Y');
-    }
-
-    public function getAppointmentStartTimeAttribute($value){
-          return Carbon::parse($value)->format('H:i');
-    }
-
-    public function getAppointmentEndTimeAttribute($value){
-          return Carbon::parse($value)->format('H:i');
-    }
     public function employee()
     {
         return $this->belongsTo(Employee::class);
@@ -44,9 +26,9 @@ class Appointment extends Model
     {
         return $this->belongsTo(Doctor::class);
     }
-    public function diagnoses() : HasOne
+   public function diagnoses()
     {
-        return $this->hasOne(Diagnoses::class);
+        return $this->hasMany(Diagnoses::class);
     }
 
 

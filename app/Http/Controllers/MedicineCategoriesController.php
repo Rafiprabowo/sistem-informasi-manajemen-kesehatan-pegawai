@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\MedicineCategories;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MedicineCategoriesController extends Controller
 {
@@ -14,8 +16,9 @@ class MedicineCategoriesController extends Controller
     {
         //
 
-        $categories = MedicineCategories::all();
-        return view('content.kategori-obat.index', compact('categories'));
+       $categories = MedicineCategories::paginate(5);
+     return view('content.apoteker.kategori-obat.index', compact('categories'));
+
     }
 
     /**
@@ -24,7 +27,7 @@ class MedicineCategoriesController extends Controller
     public function create()
     {
         //
-        return view('content.kategori-obat.create');
+        return view('content.apoteker.kategori-obat.create');
     }
 
     /**
@@ -33,17 +36,24 @@ class MedicineCategoriesController extends Controller
     public function store(Request $request)
     {
         //
-        $request->validate([
-            'name' => 'required',
-            'description' => 'required',
-        ]);
+      $validator = Validator::make($request->all(), [
+        'name' => 'required|unique:medicine_categories,name',
+        'description' => 'required',
+    ], [
+        'name.required' => 'Nama kategori obat wajib diisi.',
+        'name.unique' => 'Nama kategori obat sudah ada, silakan gunakan nama lain.',
+        'description.required' => 'Deskripsi kategori obat wajib diisi.',
+    ]);
+        if ($validator->fails()) {
+    return redirect()->back()->withErrors($validator)->withInput();
+}
 
         MedicineCategories::create([
            'name'=> $request->get('name'),
            'description'=> $request->get('description'),
         ]);
 
-        return redirect()->back()->with('success', 'Data berhasil ditambah');
+        return redirect(route('kategori-obat.index'))->with('success', 'Data berhasil ditambah');
     }
 
     /**
@@ -60,21 +70,47 @@ class MedicineCategoriesController extends Controller
     public function edit(string $id)
     {
         //
+        $category = MedicineCategories::find($id);
+        return view('content.apoteker.kategori-obat.edit', compact('category'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        //
-    }
+{
+    // Validasi input
+    $request->validate([
+        'name' => 'required|unique:medicine_categories,name,' . $id, // Unik kecuali untuk kategori yang saat ini diupdate
+        'description' => 'required',
+    ], [
+        'name.required' => 'Nama kategori obat wajib diisi.',
+        'name.unique' => 'Nama kategori obat sudah ada, silakan gunakan nama lain.',
+        'description.required' => 'Deskripsi kategori obat wajib diisi.',
+    ]);
+
+    // Temukan kategori berdasarkan ID
+    $category = MedicineCategories::findOrFail($id);
+
+    // Perbarui data kategori
+    $category->update([
+        'name' => $request->input('name'),
+        'description' => $request->input('description'),
+    ]);
+
+    // Redirect ke index dengan pesan sukses
+    return redirect()->route('kategori-obat.index')->with('success', 'Kategori obat berhasil diperbarui.');
+}
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+   public function destroy($id)
+{
+    $category = MedicineCategories::findOrFail($id);
+
+    $category->delete();
+
+    return redirect()->route('kategori-obat.index')->with('success', 'Kategori obat berhasil dihapus.');
+}
 }

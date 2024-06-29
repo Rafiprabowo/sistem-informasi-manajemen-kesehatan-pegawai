@@ -20,24 +20,6 @@ class DoctorScheduleController extends Controller
     $doctorId = Auth::user()->doctor->id;
 
        $schedules = DoctorSchedule::where('doctor_id', $doctorId)
-            ->where(function ($query) {
-                $today = Carbon::today('Asia/Jakarta');
-                $now = Carbon::now('Asia/Jakarta');
-                $tomorrow = Carbon::today('Asia/Jakarta')->addDay();
-                $dayAfterTomorrow = Carbon::today('Asia/Jakarta')->addDays(2);
-
-                // Untuk hari ini
-                $query->where(function ($subQuery) use ($today, $now) {
-                    $subQuery->whereDate('date', $today)
-                             ->whereTime('start_time', '>', $now->format('H:i'));
-                });
-
-                // Untuk besok dan lusa
-                $query->orWhere(function ($subQuery) use ($tomorrow, $dayAfterTomorrow) {
-                    $subQuery->whereDate('date', '>=', $tomorrow)
-                             ->whereDate('date', '<=', $dayAfterTomorrow);
-                });
-            })
             ->orderBy('date', 'asc')
             ->paginate(5);
         return view('content.doctor-schedules.index', compact('schedules'));
@@ -57,24 +39,55 @@ class DoctorScheduleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+     public function store(Request $request)
     {
-        //
+        // Custom validation rule to check unique start_time and end_time for the same doctor and date
         $validator = Validator::make($request->all(), [
-           'doctor_id' => 'required|exists:doctors,id',
-           'date' => 'required|date|after_or_equal:today',
-           'start_time' => 'required|date_format:H:i',
-           'end_time' => 'required|date_format:H:i|after:start_time',
+            'date' => 'required|date',
+            'start_time' => [
+                'required',
+                'date_format:H:i',
+                function ($attribute, $value, $fail) use ($request) {
+                    $exists = DoctorSchedule::where('doctor_id', $request->doctor_id)
+                        ->where('date', $request->date)
+                        ->where(function ($query) use ($request) {
+                            $query->whereBetween('start_time', [$request->start_time, $request->end_time])
+                                ->orWhereBetween('end_time', [$request->start_time, $request->end_time])
+                                ->orWhere(function($query) use ($request) {
+                                    $query->where('start_time', '<', $request->start_time)
+                                          ->where('end_time', '>', $request->end_time);
+                                });
+                        })
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('The schedule overlaps with an existing one.');
+                    }
+                },
+            ],
+            'end_time' => 'required|date_format:H:i|after:start_time',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()], 422);
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
-        DoctorSchedule::create($request->all());
 
-        return redirect()->route('doctor-schedules.index')
-            ->with('success', 'Schedule created successfully.');
+        // If validation passes, create a new DoctorSchedule
+        DoctorSchedule::create([
+            'doctor_id' => $request->doctor_id,
+            'date' => $request->date,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'status' => 'available',
+        ]);
+
+        return redirect()->route('doctor-schedules.index')->with('success', 'Schedule added successfully');
     }
+
+
+
 
     /**
      * Display the specified resource.
@@ -103,7 +116,7 @@ class DoctorScheduleController extends Controller
     $validator = Validator::make($request->all(), [
         'doctor_id' => 'required|exists:doctors,id',
         'status' => 'required',
-        'date' => 'required|date_format:Y-m-d',
+        'date' => 'required',
         'start_time' => 'required|date_format:H:i',
         'end_time' => 'required|date_format:H:i|after:start_time',
     ]);
@@ -132,47 +145,32 @@ class DoctorScheduleController extends Controller
         return redirect()->route('doctor-schedules.index')
             ->with('success', 'Schedule deleted successfully.');
     }
-    public function fetchDoctorSchedule(Request $request){
-        $validator = Validator::make($request->all(), [
-            'doctor_id' => 'required|exists:doctors,id',
-        ]);
+    public function fetchDoctorSchedule(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'doctor_id' => 'required|exists:doctors,id',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()], 422);
-        }
-
-        $schedules = DoctorSchedule::where('doctor_id', $validator->validated()['doctor_id'])
-            ->where(function ($query) {
-                $today = Carbon::today('Asia/Jakarta');
-                $now = Carbon::now('Asia/Jakarta');
-                $tomorrow = Carbon::today('Asia/Jakarta')->addDay();
-                $dayAfterTomorrow = Carbon::today('Asia/Jakarta')->addDays(2);
-
-                // Untuk hari ini
-                $query->where(function ($subQuery) use ($today, $now) {
-                    $subQuery->whereDate('date', $today)
-                             ->whereTime('start_time', '>', $now->format('H:i'));
-                });
-
-                // Untuk besok dan lusa
-                $query->orWhere(function ($subQuery) use ($tomorrow, $dayAfterTomorrow) {
-                    $subQuery->whereDate('date', '>=', $tomorrow)
-                             ->whereDate('date', '<=', $dayAfterTomorrow);
-                });
-            })
-            ->where('status', 'available')
-            ->orderBy('date', 'asc')
-            ->get();
-
-
-        $formattedSchedules = $schedules->map(function($schedule){
-            return [
-                'id' => $schedule->id,
-                'date' => $schedule->date,
-                'start_time' => $schedule->start_time,
-                'end_time' => $schedule->end_time,
-            ];
-        });
-        return response()->json(['success' => true, 'data' => $formattedSchedules], 200);
+    if ($validator->fails()) {
+        return response()->json(['success' => false, 'message' => $validator->errors()], 422);
     }
+
+    $schedules = DoctorSchedule::where('doctor_id', $validator->validated()['doctor_id'])
+        ->where('status', 'available')
+        ->orderBy('date', 'asc')
+        ->get();
+
+    // Format schedules sesuai dengan kebutuhan
+    $formattedSchedules = $schedules->map(function ($schedule) {
+        return [
+            'id' => $schedule->id,
+            'date' => $schedule->date,
+            'start_time' => $schedule->start_time,
+            'end_time' => $schedule->end_time,
+        ];
+    });
+
+    return response()->json(['success' => true, 'data' => $formattedSchedules], 200);
+}
+
 }

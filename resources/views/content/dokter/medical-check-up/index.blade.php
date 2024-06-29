@@ -3,17 +3,42 @@
     @include('partials.aside.dokter')
 @endsection
 @section('content')
-        <div class="col-12">
-            <div class="col-lg-auto d-inline-block mb-3">
+    <div class="col-12">
+        <div class="col-lg-auto d-inline-block mb-3">
         <a href="{{route('doctor.dashboard')}}" class="btn btn-secondary">Kembali</a>
     </div>
-                        <div class="card">
-                          <div class="table-responsive">
-                            <table
-                class="table table-vcenter card-table">
-                              <thead>
-                              <tr>
-                                    <th>No Medical Record</th>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Hasil Medical Record</h3>
+        </div>
+        <div class="card-body border-bottom py-3">
+            <div class="d-flex">
+                <div class="text-muted">
+                    Show
+                    <div class="mx-2 d-inline-block">
+                        <input type="text" class="form-control form-control-sm" value="{{$medicalCheckUps->total()}}" size="3" aria-label="Invoices count">
+                    </div>
+                    entries
+                </div>
+                     <div class="ms-auto text-muted">
+                        Search:
+                        <div class="ms-2 d-inline-block">
+                              <div class="input-group mb-2 d-flex">
+                                  <form action="" method="post" class="d-flex">
+                                      @csrf
+                                      <input type="text" class="form-control" placeholder="Search for…">
+                                   <button class="btn btn-primary mx-1" type="submit">Cari</button>
+                                  </form>
+                              </div>
+                        </div>
+                      </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table card-table table-vcenter text-nowrap datatable">
+                <thead>
+                    <tr>
+                        <th>No Medical Record</th>
                                     <th>Nama Pegawai</th>
                                     <th>Jabatan</th>
                                     <th>Jenis Kelamin</th>
@@ -22,9 +47,9 @@
                                     <th>Alamat</th>
                                     <th>Tanggal MCU</th>
                                     <th>Hasil MCU</th>
-                                </tr>
-                              </thead>
-                                    <tbody>
+                    </tr>
+                </thead>
+                  <tbody>
                                 @forelse($medicalCheckUps as $mcu)
                                     <tr>
                                         <td>{{$mcu->id}}</td>
@@ -48,9 +73,12 @@
                                 @empty
                                 @endforelse
                                 </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-
+            </table>
+                   <div class="card-footer d-flex align-items-center">
+                <p class="m-0 text-muted">Showing {{ $medicalCheckUps->firstItem() }} to {{ $medicalCheckUps->lastItem() }} of {{ $medicalCheckUps->total() }} entries</p>
+                {{ $medicalCheckUps->links() }}
+        </div>
+    </div>
+</div>
 @endsection
+

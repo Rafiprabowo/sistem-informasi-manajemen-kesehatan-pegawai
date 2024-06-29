@@ -28,7 +28,7 @@
                   </div>
                   <div class="card-body">
                     <div class="tab-content">
-                      <div class="tab-pane active show" id="tabs-profile-7">
+                      <div class="tab-pane fade active show" id="tabs-profile-7">
                         <label class="form-label">Pilih Pegawai</label>
                          <select name="id_employee" id="select-employee" class="form-select mb-3"></select>
                         <div class="card">
@@ -77,7 +77,7 @@
 
                           </div>
                       </div>
-                      <div class="tab-pane" id="tabs-activity-7">
+                      <div class="tab-pane fade" id="tabs-activity-7">
                             <div class="mb-3">
                                 <label class="form-label">Tambah Pemeriksaan</label>
                                 <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-report">

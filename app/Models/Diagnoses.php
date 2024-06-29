@@ -14,9 +14,19 @@ class Diagnoses extends Model
         return $this->belongsTo(Appointment::class);
     }
 
-    public function medicines()
+  public function medicines()
     {
         return $this->belongsToMany(Medicine::class, 'detail_diagnosas', 'id_diagnosis', 'id_medicine')
+                    ->withPivot('dosis_obat')
                     ->withTimestamps();
+    }
+     public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class);
     }
 }

@@ -22,8 +22,10 @@
                         <th>Waktu Mulai</th>
                         <th>Waktu Selesai</th>
                         <th>Nama Dokter</th>
-                        <th>Keluhan</th>
+                        <th>Catatan Appointment</th>
+                        <th>Catatan Alergi Obat</th>
                         <th>Status</th>
+                        <th>Sudah Didiagnosa </th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -32,27 +34,27 @@
                         <tr>
                                 <td><span class="text-muted">{{$index + 1}}</span></td>
                                 <td>{{$appointment->employee->user->first_name}} {{$appointment->employee->user->last_name}}</td>
-                                <td>{{\Carbon\Carbon::parse($appointment->date)->format('d-m-Y')}}</td>
-                                <td>{{\Carbon\Carbon::parse($appointment->start_time)->format('H:i')}}</td>
-                                <td>{{\Carbon\Carbon::parse($appointment->end_time)->format('H:i')}}</td>
+                                <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d-m-Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appointment->appointment_start_time)->format('H:i') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appointment->appointment_end_time)->format('H:i') }}</td>
                                 <td>{{$user->first_name}} {{$user->last_name}} {{$user->doctor->speciality->name ?? ''}}</td>
                                 <td>{{$appointment->note}}</td>
+                                <td>{{$appointment->alergi_obat}}</td>
                                 <td>
                                     <span class="badge {{$appointment->status === 'pending' ? 'bg-warning':($appointment->status === 'approved' ? 'bg-success' :($appointment->status === 'rejected' ? 'bg-danger':'bg-secondary'))}} me-1">
                                         {{$appointment->status}}
                                     </span>
                                 </td>
+
+
                                  <td class="text-end">
                                         <span class="dropdown">
                                           <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
                                           <div class="dropdown-menu">
                                               @if($appointment->status === "approved")
-                                                  <a href="{{route('diagnose.create' , $appointment->id)}}" class="dropdown-item"  >Diagnosa</a>
-{{--                                                  <a href="{{route('cancel-appointment', $appointment->id)}}" id="cancel" class="dropdown-item">Cancel</a>--}}
                                               @elseif($appointment->status === "pending")
                                                   <a href="{{route('approve-appointment', $appointment->id)}}" id="approve" class="dropdown-item">Approve</a>
                                               @endif
-                                              <a id="delete" class="dropdown-item" data-id="{{$appointment->id}}">Delete</a>
                                           </div>
                                         </span>
                                 </td>

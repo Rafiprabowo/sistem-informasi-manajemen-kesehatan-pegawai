@@ -9,6 +9,7 @@ use App\Models\DoctorSchedule;
 use App\Models\DoctorSpecialization;
 use App\Models\Employee;
 use App\Models\Schedule;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,11 @@ class AppointmentsControllers extends Controller
     public function index()
     {
 
+                  $user = Auth::user()->load('doctor');
+
+                    $appointments = $user->doctor->appointments()->with('employee.user')->paginate(5);
+
+                    return view('content.appointment.dokter.index', compact('user', 'appointments'));
     }
 
     /**
@@ -48,7 +54,8 @@ public function store(Request $request)
         'doctor_id' => 'required|exists:doctors,id',
         'schedule_id' => 'required|exists:doctor_schedules,id',
         'appointment_type' => 'required',
-        'note' => 'required'
+        'note' => 'required',
+        'alergi_obat' => 'required'
     ]);
 
     if ($validator->fails()) {
@@ -68,6 +75,7 @@ public function store(Request $request)
                 'appointment_end_time' => $schedule->end_time,
                 'appointment_type' => $validated['appointment_type'],
                 'note' => $validated['note'],
+                'alergi_obat' => $validated['alergi_obat']
             ]);
 
             $schedule->update([

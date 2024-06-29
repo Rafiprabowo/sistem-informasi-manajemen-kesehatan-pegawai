@@ -32,7 +32,7 @@
                         <th>No</th>
                         <th>Nama</th>
                         <th>Deskripsi</th>
-                        <th class="w-1"></th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>

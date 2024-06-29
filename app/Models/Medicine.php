@@ -13,11 +13,12 @@ class Medicine extends Model
 
     public function categories()
     {
-        return $this->belongsTo(MedicineCategories::class);
+        return $this->belongsTo(MedicineCategories::class, 'category_id');
     }
     public function diagnoses()
     {
         return $this->belongsToMany(Diagnoses::class, 'detail_diagnosas', 'id_medicine', 'id_diagnosis')
+                    ->withPivot('dosis_obat')
                     ->withTimestamps();
     }
 }

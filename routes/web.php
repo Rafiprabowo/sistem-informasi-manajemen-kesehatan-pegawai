@@ -46,9 +46,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [DoctorController::class, 'profile'])->name('doctor.profile');
         Route::post('/profile', [DoctorController::class, 'updateProfile'])->name('profile.update');
         Route::resource('/schedule', \App\Http\Controllers\ScheduleController::class);
-        Route::resource('/appointment', AppointmentsControllers::class);
-        Route::get('/appointment/{id}/create-diagnose', [\App\Http\Controllers\DiagnosesController::class, 'createDiagnose'])->name('diagnose.create');
-        Route::post('/appointment/{id}/diagnose', [\App\Http\Controllers\DiagnosesController::class, 'storeDiagnose'])->name('diagnose.store');
+        Route::resource('/appointments', AppointmentsControllers::class);
+        Route::resource('/diagnosa', \App\Http\Controllers\DiagnosaController::class);
         Route::resource('/doctor-schedules', DoctorScheduleController::class);
         Route::get('/my-appointment', [DoctorController::class, 'myAppointment'])->name('doctor.myAppointment');
         Route::resource('/medical-check-up', MedicalCheckUpController::class);
@@ -56,11 +55,12 @@ Route::middleware('auth')->group(function () {
         });
 
     Route::prefix('/pegawai')->group(function () {
-        Route::get('/', [PegawaiController::class, 'dashboard'])->name('pegawaiDashboard');
+        Route::get('/', [PegawaiController::class, 'dashboard'])->name('pegawai.dashboard');
         Route::get('/profile', [PegawaiController::class, 'profile'])->name('profilePegawai');
         Route::post('/profile', [PegawaiController::class, 'updateProfileEmployee'])->name('updateProfileEmployee');
         Route::resource('/appointment', AppointmentsControllers::class);
         Route::get('/my-appointment', [PegawaiController::class, 'myAppointment'])->name('pegawai.myAppointment');
+        Route::get('/my-diagnosis', [PegawaiController::class, 'myDiagnosis'])->name('pegawai.myDiagnosis');
     });
 
     Route::prefix('/admin')->group(function () {
@@ -152,6 +152,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/fetch-pemeriksaan-minor/{id}', [PemeriksaanMinorController::class, 'getPemeriksaanMinorById'])->name('fetch-pemeriksaan-minor-by-id');
     Route::post('api/submit-all-pemeriksaan', [MedicalCheckUpController::class, 'submitAllPemeriksaan']);
 
+    /**
+     * Api tentang obat
+     * -Mengambil obat berdasarkan id
+     */
+
+    Route::get('/api/fetch-medicine/{id}', [MedicineController::class, 'getMedicineById'])->name('fetch-medicine-by-id');
+    Route::post('/api/submit-all-resep', [\App\Http\Controllers\DiagnosaController::class, 'submitAllResep'])->name('submit-all-resep');
 
 
     Route::get('api/approve-appointment/{id}', function ($id) {

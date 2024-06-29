@@ -19,7 +19,12 @@ class MedicalCheckUpController extends Controller
     public function index()
     {
         //
-
+         $medicalCheckUps = MedicalCheckUp::with(['pemeriksaanMinors' => function ($query) {
+            $query->with(['nilaiRujukan', 'pemeriksaanMajor']);
+        }])
+            ->where('id_doctor', Auth::user()->doctor->id)
+            ->paginate(10);
+        return view('content.dokter.medical-check-up.index', compact('medicalCheckUps'));
 
     }
 

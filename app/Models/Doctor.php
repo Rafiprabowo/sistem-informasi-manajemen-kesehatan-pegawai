@@ -32,6 +32,10 @@ class Doctor extends Authenticatable
     public function medicalCheckups(): HasMany{
         return $this->hasMany(MedicalCheckup::class);
     }
+      public function diagnoses()
+    {
+        return $this->hasMany(Diagnoses::class);
+    }
 
 
 }

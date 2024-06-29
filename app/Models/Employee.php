@@ -13,9 +13,16 @@ class Employee extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $casts = [
-        'date_of_birth' => 'date',
-    ];
+    protected $dates = ['date_of_birth']; // Pastikan date_of_birth dianggap sebagai tanggal
+
+    // Accessor untuk menghitung usia
+   public function getAgeAttribute()
+    {
+        if ($this->date_of_birth) {
+            return Carbon::parse($this->date_of_birth)->age;
+        }
+        return null;
+    }
 
     public function user():BelongsTo{
         return $this->belongsTo(User::class);
@@ -27,12 +34,11 @@ class Employee extends Model
     public function medicalCheckups(): HasMany{
         return $this->hasMany(MedicalCheckup::class);
     }
-
-    // Accessor for age
-    public function getAgeAttribute()
+     public function diagnoses()
     {
-        return Carbon::parse($this->date_of_birth)->age;
+        return $this->hasMany(Diagnoses::class);
     }
+
 
 
 }

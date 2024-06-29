@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Employee;
 use App\Models\Schedule;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,54 +24,60 @@ class PegawaiController extends Controller
         $user = Auth::user()->load('employee');
         return view('content.pegawai.profile', compact('user'));
     }
-     public function updateProfileEmployee(UpdateEmployeeProfileRequest $request)
+         public function updateProfileEmployee(Request $request)
     {
-        $validated = $request->validated();
+        // Validasi data yang dikirimkan
+             $request->validate([
+            'date_of_birth' => 'required|date',
+            'gender' => 'required|in:L,P',
+            'position' => 'required|string|max:255',
+            'emergency_contact_name' => 'required|string|max:255',
+            'emergency_contact_relationship' => 'required|string|max:255',
+            'emergency_contact_number' => 'required|string|max:255',
+            'emergency_contact_address' => 'required|string|max:255',
+            'medical_history' => 'required|string',
+        ]);
 
-        try {
-            $employee = DB::transaction(function () use ($validated) {
-                $employee = Employee::findOrFail($validated['employee_id']);
+        // Ambil user yang sedang login
+        $user = Auth::user();
 
-                $employee->update([
-                    'date_of_birth' => $validated['date_of_birth'],
-                    'gender' => $validated['gender'],
-                    'position' => $validated['position'],
-                    'emergency_contact_name' => $validated['emergency_contact_name'],
-                    'emergency_contact_number' => $validated['emergency_contact_number'],
-                    'emergency_contact_relationship' => $validated['emergency_contact_relationship'],
-                    'emergency_contact_address' => $validated['emergency_contact_address'],
-                ]);
-                return $employee;
-            });
+        // Update data employee
+        $employee = $user->employee;
+        $employee->date_of_birth = $request->date_of_birth;
+        $employee->gender = $request->gender;
+        $employee->position = $request->position;
+        $employee->emergency_contact_name = $request->emergency_contact_name;
+        $employee->emergency_contact_relationship = $request->emergency_contact_relationship;
+        $employee->emergency_contact_number = $request->emergency_contact_number;
+        $employee->emergency_contact_address = $request->emergency_contact_address;
+        $employee->medical_history = $request->medical_history;
 
-            $formattedEmployee = $this->formatEmployee($employee);
-            return response()->json(['status' => 'success', 'data' => $formattedEmployee]);
+        // Simpan perubahan ke database
+        $employee->save();
 
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'errors' => $e->getMessage()], 500);
-        }
+        // Redirect dengan pesan sukses
+        return redirect()->back()->with('success', 'Profil berhasil diperbarui.');
     }
 
-    private function formatEmployee(Employee $employee)
-    {
-        return [
-            'employee_id' => $employee->id,
-            'date_of_birth' => $employee->date_of_birth,
-            'gender' => $employee->gender,
-            'position' => $employee->position,
-            'emergency_contact_name' => $employee->emergency_contact_name,
-            'emergency_contact_number' => $employee->emergency_contact_number,
-            'emergency_contact_relationship' => $employee->emergency_contact_relationship,
-            'emergency_contact_address' => $employee->emergency_contact_address,
-        ];
-    }
     public function myAppointment()
     {
-         $user = Auth::user()->load('employee');
-         $user->load(['employee.appointments' => function($query) {
-                        $query->with('doctor.user');
-                     }]);
-                     return view('content.appointment.pegawai.appointment_history', compact('user'));
+                  $user = Auth::user()->load('employee');
+
+    if ($user->employee) {
+        $appointments = $user->employee->appointments()->with('doctor.user')->paginate(5);
+    } else {
+        $appointments = collect(); // empty collection if no employee is associated
+    }
+
+    return view('content.appointment.pegawai.index', compact('user', 'appointments'));
+    }
+    public function myDiagnosis(){
+         $user = Auth::user();
+    $appointments = $user->employee->appointments()
+        ->with('doctor.user', 'diagnoses.medicines')
+        ->paginate(5); // Ganti angka 10 dengan jumlah item yang diinginkan per halaman
+
+    return view('content.pegawai.diagnosa.index', compact('user', 'appointments'));
     }
 
 

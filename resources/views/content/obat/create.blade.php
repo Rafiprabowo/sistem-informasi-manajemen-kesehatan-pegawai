@@ -54,7 +54,14 @@
                         </select>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label required">Stok</label>
+                    <div>
+                        <input type="number" name="stok" class="form-control" placeholder="stok obat" required>
+                    </div>
+                </div>
             </div>
+
 
             <div class="card-footer d-flex justify-content-between">
                 <a href="{{route('obat.index')}}" class="btn btn-secondary">Kembali</a>

@@ -165,8 +165,14 @@
             </div>
             <div class="col-md-12">
                 <div class="mb-3 mb-0">
-                    <label class="form-label">Deskripsi Appointment</label>
-                    <textarea rows="5" class="form-control" id="note" name="note" placeholder="Deskripsi appointment"></textarea>
+                    <label class="form-label">Catatan Appointment</label>
+                    <textarea rows="5" class="form-control" id="note" name="note" placeholder="Sampaikan keluhan yang ingin diajukan pada dokter, jika tidak bisa dikosongkan"></textarea>
+                </div>
+            </div>
+                          <div class="col-md-12">
+                <div class="mb-3 mb-0">
+                    <label class="form-label">Catatan Alergi Obat</label>
+                    <textarea rows="5" class="form-control" id="alergi_obat" name="alergi_obat" placeholder="Silahkan diisi jika memiliki alergi pada obat tertentu, jika tidak bisa dikosongkan"></textarea>
                 </div>
             </div>
                       </div>
@@ -204,6 +210,7 @@
                 schedule_id: $('#select-schedule').val(),
                 appointment_type: $('#appointment_type').val(),
                 note: $('#note').val(),
+                alergi_obat: $('#alergi_obat').val(),
                 _token: token
             },
             success: function (response) {
@@ -215,10 +222,11 @@
                 $('#select-schedule').val('');
                 $('#appointment_type').val('');
                 $('#note').val('');
+                $('#alergi_obat').val('')
 
                 // Redirect after 2 seconds
                 setTimeout(function() {
-                    window.location.href = ''; // Ganti dengan URL tujuan
+                    window.location.href = '{{route('pegawai.myAppointment')}}'; // Ganti dengan URL tujuan
                 }, 2000);
             } else {
                 alert('Failed to create appointment');

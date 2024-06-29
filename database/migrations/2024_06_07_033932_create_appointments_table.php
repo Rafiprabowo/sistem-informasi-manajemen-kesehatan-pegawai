@@ -19,6 +19,7 @@ return new class extends Migration
             $table->time('appointment_start_time');
             $table->time('appointment_end_time');
             $table->text('note')->nullable();
+            $table->text('alergi_obat')->nullable();
             $table->enum('appointment_type', ['consultation', 'checkup']);
             $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled'])->default('pending');
             $table->timestamps();

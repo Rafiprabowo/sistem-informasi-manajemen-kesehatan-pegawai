@@ -24,7 +24,7 @@
         <form class="card" action="{{route('kategori-obat.store')}}" method="post">
             @csrf
             <div class="card-header">
-                <h3 class="card-title">Tambah kategori form</h3>
+                <h3 class="card-title">Tambah kategori obat form</h3>
             </div>
             <div class="card-body">
                 <div class="mb-3">
