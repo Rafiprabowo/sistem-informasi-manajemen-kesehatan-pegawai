@@ -30,9 +30,11 @@
   <h4 class="alert-title">{{session('error')}}</h4>
 </div>
         @endif
-        <div class="text-center mb-4">
-          <h3>Sistem Informasi Kesehatan Pegawai</h3>
-        </div>
+
+              <div class="text-center mb-4">
+                  <h3>Sistem Informasi Kesehatan Pegawai</h3>
+              </div>
+
         <div class="card card-md">
 
           <div class="card-body">
@@ -71,9 +73,9 @@
           </div>
 
         </div>
-        <div class="text-center text-muted mt-3">
-          Belum punya akun? <a href="{{route('register')}}" tabindex="-1">Daftar</a>
-        </div>
+{{--        <div class="text-center text-muted mt-3">--}}
+{{--          Belum punya akun? <a href="{{route('register')}}" tabindex="-1">Daftar</a>--}}
+{{--        </div>--}}
       </div>
     </div>
     <!-- Libs JS -->

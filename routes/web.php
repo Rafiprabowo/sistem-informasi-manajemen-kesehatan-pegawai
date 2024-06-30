@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminApotekerController;
+use App\Http\Controllers\AdminPegawaiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DoctorScheduleController;
 use App\Http\Controllers\MedicalCheckUpController;
@@ -8,6 +10,7 @@ use App\Models\Appointment;
 use App\Models\Employee;
 use App\Models\Medicine;
 use App\Models\MedicineCategories;
+use App\Models\Pharmacist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DoctorController;
@@ -27,21 +30,20 @@ use App\Http\Controllers\PemeriksaanMinorController;
 |
 */
 
+// Di web.php
+Route::view('/unauthorized', 'errors.unauthorized')->name('unauthorized');
+Route::get('/', function (){
+    return redirect('/login');
+})->middleware('auth');
 
-Route::get('/', function (){return view('template');})->middleware('auth');
-
-Route::controller(AuthController::class)->group(function () {
-    Route::get('/login', [AuthController::class, 'login'])->name('login');
+Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::get('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/register', [AuthController::class, 'attemptRegister'])->name('attempt.register');
     Route::post('/login', [AuthController::class, 'attemptLogin'])->name('attempt.login');
     Route::post('/logout', [AuthController::class, 'logout'])->name('attempt.logout');
-});
 
-Route::middleware('auth')->group(function () {
-    Route::get('/notifications/mark-as-read/{id}', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-
-    Route::prefix('/dokter')->group(function () {
+Route::middleware(['auth','role:dokter'])->group(function () {
+        Route::prefix('/dokter')->group(function () {
         Route::get('/', [DoctorController::class, 'dashboard'])->name('doctor.dashboard');
         Route::get('/profile', [DoctorController::class, 'profile'])->name('doctor.profile');
         Route::post('/profile', [DoctorController::class, 'updateProfile'])->name('profile.update');
@@ -142,9 +144,11 @@ Route::middleware('auth')->group(function () {
     return view('content.dokter.medical-check-up.index', compact('medicalCheckUps'));
 
         })->name('medical-check-up.search');
-        });
 
-    Route::prefix('/pegawai')->group(function () {
+    });
+    });
+Route::middleware(['auth', 'role:pegawai'])->group(function () {
+       Route::prefix('/pegawai')->group(function () {
         Route::get('/', [PegawaiController::class, 'dashboard'])->name('pegawai.dashboard');
         Route::get('/profile', [PegawaiController::class, 'profile'])->name('profilePegawai');
         Route::post('/profile', [PegawaiController::class, 'updateProfileEmployee'])->name('updateProfileEmployee');
@@ -191,16 +195,23 @@ Route::middleware('auth')->group(function () {
             return view('content.pegawai.diagnosa.index', compact('user', 'appointments'));
         })->name('diagnosaPegawai.search');
     });
-
-    Route::prefix('/admin')->group(function () {
+    });
+Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::prefix('/admin')->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
         Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
         Route::post('/profile', [AdminController::class, 'updateProfile']);
+        //crud user
+        Route::resource('/dokters', \App\Http\Controllers\AdminDokterController::class);
+        Route::resource('/apotekers', \App\Http\Controllers\AdminApotekerController::class);
+        Route::resource('/pegawais', \App\Http\Controllers\AdminPegawaiController::class);
+        Route::resource('/admins', \App\Http\Controllers\AdminAdminController::class);
         Route::get('/role-user', [AdminController::class, 'changeRole'])->name('admin.changeRole');
         Route::post('/role-user', [AdminController::class, 'updateRole'])->name('admin.updateRole');
     });
-
-    Route::prefix('/apoteker')->group(function () {
+    });
+Route::middleware(['auth', 'role:pegawai'])->group(function () {
+        Route::prefix('/apoteker')->group(function () {
         Route::get('/', [PharmachistController::class,'dashboard'])->name('apoteker.dashboard',);
         Route::resource('/obat', MedicineController::class);
         Route::resource('/kategori-obat', \App\Http\Controllers\MedicineCategoriesController::class);
@@ -220,7 +231,10 @@ Route::middleware('auth')->group(function () {
         return view('content.apoteker.obat.index', compact('medicines'));
         })->name('medicine.search');
     });
+    });
 
+Route::middleware('auth')->group(function () {
+    Route::get('/notifications/mark-as-read/{id}', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     /**
      * Api Fetch Employee
      * /api/fetch-get-all-employee
@@ -303,8 +317,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/api/fetch-medicine/{id}', [MedicineController::class, 'getMedicineById'])->name('fetch-medicine-by-id');
     Route::post('/api/submit-all-resep', [\App\Http\Controllers\DiagnosaController::class, 'submitAllResep'])->name('submit-all-resep');
-
-
     Route::get('api/approve-appointment/{id}', function ($id) {
         $appointment = Appointment::findOrFail($id);
         $appointment->status = 'approved';
@@ -319,14 +331,6 @@ Route::middleware('auth')->group(function () {
         }
         return response()->json(['success' => false, 'message' => 'Appointment not found.']);
     });
-//    Route::get('api/cancel-appointment/{id}', function ($id) {
-//        $appointment = Appointment::findOrFail($id);
-//        $appointment->update([
-//            'status' => 'cancelled'
-//        ]);
-//        $appointment->save();
-//        return response()->json(['success' => true, 'message' => 'Appointment cancelled.']);
-//    })->name('cancel-appointment');
     Route::get('/api/fetch-medicine-category/{id}', function ($id) {
         $medicineCategories = MedicineCategories::findOrFail($id);
         if($medicineCategories) {
