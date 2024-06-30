@@ -52,6 +52,31 @@ Route::middleware('auth')->group(function () {
         Route::get('/my-appointment', [DoctorController::class, 'myAppointment'])->name('doctor.myAppointment');
         Route::resource('/medical-check-up', MedicalCheckUpController::class);
         Route::get('/medical-record', [MedicalCheckUpController::class, 'indexMedicalRecord'])->name('medical-record.index');
+       Route::post('/appointment/search', function (\Illuminate\Http\Request $request) {
+             $query = $request->input('search');
+        $date = $request->input('date');
+
+        $user = Auth::user()->load('doctor');
+        $appointmentsQuery = $user->doctor->appointments()->with('employee.user');
+
+        // Menambahkan kondisi untuk pencarian berdasarkan tanggal jika $date tidak kosong
+        if (!empty($date)) {
+            $appointmentsQuery->whereDate('appointment_date', $date);
+        }
+
+        // Menambahkan kondisi untuk pencarian berdasarkan nama jika $query tidak kosong
+        if (!empty($query)) {
+            $appointmentsQuery->whereHas('employee.user', function($q) use ($query) {
+                $q->where('first_name', 'like', "%$query%")
+                  ->orWhere('last_name', 'like', "%$query%");
+            });
+        }
+
+        $appointments = $appointmentsQuery->paginate(5);
+
+        return view('content.appointment.dokter.index', compact('user', 'appointments'));
+    })->name('appointment.search');
+
         });
 
     Route::prefix('/pegawai')->group(function () {
