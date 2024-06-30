@@ -50,6 +50,8 @@
                         <th>Catatan Appointment</th>
                         <th>Catatan Alergi Obat</th>
                         <th>Status</th>
+                        <th>Sudah di diagnosa</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -68,6 +70,12 @@
                                     {{ $appointment->status }}
                                 </span>
                             </td>
+                            @if($appointment->diagnosed == true)
+                                <td>
+                                    <span class="badge bg-primary">Sudah</span>
+                                    <a href="{{route('pegawai.myDiagnosisDetail', $appointment->id)}}" class="badge bg-secondary mx-3">Lihat Diagnosa</a>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr>

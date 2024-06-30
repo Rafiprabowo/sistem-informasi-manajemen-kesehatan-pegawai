@@ -43,6 +43,7 @@
                         <th>Nama Pegawai</th>
                         <th>Diagnosis</th>
                         <th>Obat</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,6 +68,9 @@
                                         @endforeach
                                     @endforeach
                                 </ul>
+                            </td>
+                            <td>
+                                 <a href="{{route('pegawai.myDiagnosisDetail', $appointment->id)}}" class="btn btn-secondary">Lihat Detail</a>
                             </td>
                         </tr>
                     @endforeach

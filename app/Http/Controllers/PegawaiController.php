@@ -61,7 +61,7 @@ class PegawaiController extends Controller
 
     public function myAppointment()
     {
-                  $user = Auth::user()->load('employee');
+    $user = Auth::user()->load('employee');
 
     if ($user->employee) {
         $appointments = $user->employee->appointments()->with('doctor.user')->paginate(5);
@@ -78,6 +78,13 @@ class PegawaiController extends Controller
         ->paginate(5); // Ganti angka 10 dengan jumlah item yang diinginkan per halaman
 
     return view('content.pegawai.diagnosa.index', compact('user', 'appointments'));
+    }
+    public function myDiagnosisDetail($id){
+          $user = Auth::user();
+          $appointment = $user->employee->appointments()
+              ->with( 'diagnoses.medicines', 'doctor.speciality')
+            ->find($id);
+          return view('content.pegawai.diagnosa.detail', compact('user', 'appointment'));
     }
 
 
