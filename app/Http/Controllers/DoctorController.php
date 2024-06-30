@@ -14,10 +14,36 @@ class DoctorController extends Controller
 {
     //
     public function dashboard(){
-        $user = Auth::user();
+       // Ambil pengguna yang sedang login
+        $user = Auth::user()->load(['doctor.appointments', 'doctor.medicalCheckups', 'doctor.schedules']);
+
+        // Notifikasi
         $notifications = $user->notifications;
         $unreadNotifications = $user->unreadNotifications;
-        return view('content.dokter.dashboard', compact('user', 'notifications', 'unreadNotifications'));
+
+        // Hitung total appointments yang belum didiagnosis
+        $totalAppointmentsBelumDidiagnosa = $user->doctor->appointments->where('diagnosed', false)->count();
+        $totalAppointmentsPending = $user->doctor->appointments->where('status', 'pending')->count();
+
+        // Hitung total medical checkups
+        $totalMedicalCheckups = $user->doctor->medicalCheckups->count();
+
+        // Hitung jadwal yang tersedia dan terpesan
+        $schedulesAvailable = $user->doctor->schedules->where('status', 'available')->count();
+        $schedulesReserved = $user->doctor->schedules->where('is_reserved', 'reserved')->count();
+
+        // Kirim data ke view
+        return view('content.dokter.dashboard', compact(
+            'user',
+            'notifications',
+            'unreadNotifications',
+            'totalAppointmentsBelumDidiagnosa',
+            'totalAppointmentsPending',
+            'totalMedicalCheckups',
+            'schedulesAvailable',
+            'schedulesReserved'
+        ));
+
     }
     public function profile()
     {

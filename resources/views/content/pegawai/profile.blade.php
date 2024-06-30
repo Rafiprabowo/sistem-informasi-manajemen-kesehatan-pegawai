@@ -2,6 +2,7 @@
 @section('aside')
     @include('partials.aside.pegawai')
 @endsection
+
 @section('content')
     <div class="col-lg-8">
         @if(session()->has('success'))
@@ -26,7 +27,9 @@
                 <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
             </div>
         @endif
+            <a href="{{ route('pegawai.dashboard') }}" class="btn btn-secondary mb-3">Kembali</a>
         <div class="row row-cards">
+
             <div class="col-12">
                 <form class="card" id="updateProfileEmployee" action="{{ route('updateProfileEmployee') }}" method="post">
                     @csrf
@@ -104,7 +107,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Nomor kontak darurat</label>
+                                    <label class="form-label">Alamat kontak darurat</label>
                                     <input type="text" value="{{ $user->employee->emergency_contact_address }}" name="emergency_contact_address" class="form-control" placeholder="nomor kontak darurat">
                                 </div>
                             </div>
@@ -118,7 +121,6 @@
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-between">
-                        <a href="{{ route('pegawai.dashboard') }}" class="btn btn-secondary">Kembali</a>
                         <button type="submit" class="btn btn-primary ">Submit</button>
                     </div>
                 </form>

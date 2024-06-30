@@ -4,9 +4,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <h1 class="navbar-brand navbar-brand-autodark">
-            <a href=".">
-              <img src="{{asset('./static/logo.svg')}}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
-            </a>
+            SIMKES
           </h1>
 <div class="collapse navbar-collapse" id="sidebar-menu">
     <ul class="navbar-nav pt-lg-3">

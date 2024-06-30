@@ -47,37 +47,45 @@ class AuthController extends Controller
     }
 
     // Gagal login
-    return redirect('/login')->with('error', 'Email atau password salah');
+    return redirect()->route('login')->with('error', 'Email atau password salah');
 }
 
 
     public function attemptRegister(Request $request){
-        $validated = $request->validate([
-            'name' => 'required',
-            'username' => 'required|unique:users',
-            'email' => 'required|email|unique:users',
-            'address' => 'required',
-            'phone' => 'required',
-            'password' => 'required|min:8',
+         $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'password' => 'required|string|min:8',
         ]);
-        $validated["password"] = Hash::make($validated["password"]);
-        $user = User::create($validated);
-        $user->save();
-
-        Employee::create([
-            'user_id' => $user->id
+          if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+           $user = User::create([
+            'first_name' => $request->input('first_name'),
+            'last_name' => $request->input('last_name'),
+            'username' => $request->input('username'),
+            'email' => $request->input('email'),
+            'address' => $request->input('address'),
+            'phone' => $request->input('phone'),
+            'password' => Hash::make($request->input('password')),
+            'role' => 'pegawai', // Default role
         ]);
 
-        Auth::login($user);
+         Employee::create([
+            'user_id' => $user->id,
+        ]);
 
-        $request->session()->flash('success', 'User registered successfully and role assigned.');
-        return redirect('/login');
+          return redirect()->route('login')->with('success', 'Account created successfully. Please login.');
 
     }
     public function logout(Request $request) :RedirectResponse{
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }

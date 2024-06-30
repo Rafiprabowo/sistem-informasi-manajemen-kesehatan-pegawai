@@ -13,10 +13,6 @@ return new class extends Migration
     {
         Schema::create('medical_check_ups', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_employee');
-            $table->foreign('id_employee')->references('id')->on('employees');
-            $table->unsignedBigInteger('id_doctor');
-            $table->foreign('id_doctor')->references('id')->on('doctors');
             $table->date('date');
             $table->timestamps();
         });

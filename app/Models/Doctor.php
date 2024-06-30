@@ -30,7 +30,7 @@ class Doctor extends Authenticatable
         return $this->belongsTo(DoctorSpecialization::class);
     }
     public function medicalCheckups(): HasMany{
-        return $this->hasMany(MedicalCheckup::class);
+        return $this->hasMany(MedicalCheckup::class,'id_doctor','id');
     }
       public function diagnoses()
     {

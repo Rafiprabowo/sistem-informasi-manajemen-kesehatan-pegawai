@@ -37,42 +37,37 @@ class DatabaseSeeder extends Seeder
              'user_id' => $userDokter1->id,
              'speciality_id' => $speciality1->id,
          ]);
-
-        $userDokter2 = \App\Models\User::factory()->create([
-            'role' => 'dokter',
-        ]);
-        $doctor2 = Doctor::factory()->create([
-            'user_id' => $userDokter2->id,
-            'speciality_id' => $speciality2->id,
-        ]);
-
-        $userDokter3 = \App\Models\User::factory()->create([
-            'role' => 'dokter',
-        ]);
-        $doctor3 = Doctor::factory()->create([
-            'user_id' => $userDokter3->id,
-            'speciality_id' => $speciality3->id,
-        ]);
-
-        $userDokter4 = \App\Models\User::factory()->create([
-            'role' => 'dokter',
-        ]);
-        $doctor4 = Doctor::factory()->create([
-            'user_id' => $userDokter4->id,
-            'speciality_id' => $speciality4->id,
-        ]);
-
-        $userDokter5 = \App\Models\User::factory()->create([
-            'role' => 'dokter',
-        ]);
-        $doctor5 = Doctor::factory()->create([
-            'user_id' => $userDokter5->id,
-            'speciality_id' => $speciality5->id,
-        ]);
-
-
-
-
+//        $userDokter2 = \App\Models\User::factory()->create([
+//            'role' => 'dokter',
+//        ]);
+//        $doctor2 = Doctor::factory()->create([
+//            'user_id' => $userDokter2->id,
+//            'speciality_id' => $speciality2->id,
+//        ]);
+//
+//        $userDokter3 = \App\Models\User::factory()->create([
+//            'role' => 'dokter',
+//        ]);
+//        $doctor3 = Doctor::factory()->create([
+//            'user_id' => $userDokter3->id,
+//            'speciality_id' => $speciality3->id,
+//        ]);
+//
+//        $userDokter4 = \App\Models\User::factory()->create([
+//            'role' => 'dokter',
+//        ]);
+//        $doctor4 = Doctor::factory()->create([
+//            'user_id' => $userDokter4->id,
+//            'speciality_id' => $speciality4->id,
+//        ]);
+//
+//        $userDokter5 = \App\Models\User::factory()->create([
+//            'role' => 'dokter',
+//        ]);
+//        $doctor5 = Doctor::factory()->create([
+//            'user_id' => $userDokter5->id,
+//            'speciality_id' => $speciality5->id,
+//        ]);
          $userPegawai1 = \App\Models\User::factory()->create([
              'role' => 'pegawai'
          ]);
@@ -80,31 +75,30 @@ class DatabaseSeeder extends Seeder
             'user_id' => $userPegawai1->id,
         ]);
 
-         $userPegawai2 = \App\Models\User::factory()->create([
-             'role' => 'pegawai'
-         ]);
-         $employee2 = Employee::factory()->create([
-             'user_id' => $userPegawai2->id,
-         ]);
-         $userPegawai3 = \App\Models\User::factory()->create([
-             'role' => 'pegawai'
-         ]);
-         $employee3 = Employee::factory()->create([
-             'user_id' => $userPegawai3->id,
-         ]);
-         $userPegawai4 = \App\Models\User::factory()->create([
-             'role' => 'pegawai'
-         ]);
-         $employee4 = Employee::factory()->create([
-             'user_id' => $userPegawai4->id,
-         ]);
-         $userPegawai5 = \App\Models\User::factory()->create([
-             'role' => 'pegawai'
-         ]);
-         $employee5 = Employee::factory()->create([
-             'user_id' => $userPegawai5->id,
-         ]);
-
+//         $userPegawai2 = \App\Models\User::factory()->create([
+//             'role' => 'pegawai'
+//         ]);
+//         $employee2 = Employee::factory()->create([
+//             'user_id' => $userPegawai2->id,
+//         ]);
+//         $userPegawai3 = \App\Models\User::factory()->create([
+//             'role' => 'pegawai'
+//         ]);
+//         $employee3 = Employee::factory()->create([
+//             'user_id' => $userPegawai3->id,
+//         ]);
+//         $userPegawai4 = \App\Models\User::factory()->create([
+//             'role' => 'pegawai'
+//         ]);
+//         $employee4 = Employee::factory()->create([
+//             'user_id' => $userPegawai4->id,
+//         ]);
+//         $userPegawai5 = \App\Models\User::factory()->create([
+//             'role' => 'pegawai'
+//         ]);
+//         $employee5 = Employee::factory()->create([
+//             'user_id' => $userPegawai5->id,
+//         ]);
          $userAdmin = \App\Models\User::factory()->create([
              'role' => 'admin'
          ]);
@@ -118,10 +112,6 @@ class DatabaseSeeder extends Seeder
          Pharmacist::create([
              'user_id' =>$userApoteker->id
          ]);
-
-
-
-
 
          $pemeriksaanMajorHematologi = PemeriksaanMajor::factory()->create([
                 'name' => ' Hematologi',
@@ -178,12 +168,10 @@ class DatabaseSeeder extends Seeder
              'reference_value' => '4,2 - 5,4',
              'satuan' => 'juta mm3'
          ]);
-
          $lekosit  = PemeriksaanMinor::factory()->create([
              'name' => 'lekosit',
              'id_pemeriksaan_major' =>$pemeriksaanMajorHematologi->id
          ]);
-
          $lekositReferenceL = NilaiRujukan::factory()->create([
              'id_pemeriksaan_minor' => $lekosit->id,
              'gender' => 'L',
@@ -196,7 +184,6 @@ class DatabaseSeeder extends Seeder
              'reference_value' => '4000 - 10000',
              'satuan' => 'mm3'
          ]);
-
          $trombosit = PemeriksaanMinor::factory()->create([
              'name' => 'trombosit',
              'id_pemeriksaan_major' =>$pemeriksaanMajorHematologi->id

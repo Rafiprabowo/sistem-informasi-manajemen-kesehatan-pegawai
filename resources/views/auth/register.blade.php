@@ -26,7 +26,7 @@
     <div class="page page-center">
       <div class="container container-tight py-4">
         <div class="text-center mb-4">
-          <a href="../user" class="navbar-brand navbar-brand-autodark"><img src="./static/logo.svg" height="36" alt=""></a>
+            <h3>Sistem Informasi Kesehatan Pegawai</h3>
         </div>
           @if($errors->any())
                 <div class="alert alert-danger m-3">
@@ -39,44 +39,48 @@
           @endif
 
 
-        <form class="card card-md" action="/register" method="post" autocomplete="off" novalidate>
+        <form class="card card-md" action="{{route('attempt.register')}}" method="post" autocomplete="off" novalidate>
             @csrf
             @method('post')
           <div class="card-body">
-            <h2 class="card-title text-center mb-4">Create new account</h2>
+            <h2 class="card-title text-center mb-4">Buat akun baru</h2>
             <div class="mb-3">
-              <label class="form-label">Name</label>
-              <input type="text" name="name" class="form-control" placeholder="Enter name">
+              <label class="form-label">Nama depan</label>
+              <input type="text" name="first_name" class="form-control" placeholder="Enter first name" required>
+            </div>
+              <div class="mb-3">
+              <label class="form-label">Nama belakang</label>
+              <input type="text" name="last_name" class="form-control" placeholder="Enter last name" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Username</label>
-              <input type="text" name="username" class="form-control" placeholder="Enter username">
+              <input type="text" name="username" class="form-control" placeholder="Enter username" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Email address</label>
-              <input type="email" name="email" class="form-control" placeholder="Enter email">
+              <label class="form-label">Email </label>
+              <input type="email" name="email" class="form-control" placeholder="Enter email" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Address</label>
-              <input type="text" name="address" class="form-control" placeholder="Enter address">
+              <label class="form-label">Alamat</label>
+              <input type="text" name="address" class="form-control" placeholder="Enter address" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Phone</label>
-              <input type="text" name="phone" class="form-control" placeholder="+62xxxx">
+              <label class="form-label">No Hp</label>
+              <input type="text" name="phone" class="form-control" placeholder="+62xxxx" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Password</label>
               <div class="input-group input-group-flat">
-                <input type="password" name="password" class="form-control"  placeholder="Password"  autocomplete="off">
+                <input type="password" name="password" class="form-control"  placeholder="Password"  autocomplete="off" required>
               </div>
             </div>
             <div class="form-footer">
-              <button type="submit" class="btn btn-primary w-100">Create new account</button>
+              <button type="submit" class="btn btn-primary w-100">Buat akun</button>
             </div>
           </div>
         </form>
         <div class="text-center text-muted mt-3">
-          Already have account? <a href="/login" tabindex="-1">Sign in</a>
+          Sudah punya akun? <a href="{{route('login')}}" tabindex="-1">Login</a>
         </div>
       </div>
     </div>

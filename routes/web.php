@@ -76,6 +76,72 @@ Route::middleware('auth')->group(function () {
 
         return view('content.appointment.dokter.index', compact('user', 'appointments'));
     })->name('appointment.search');
+        Route::post('/diagnosa/search', function (\Illuminate\Http\Request $request) {
+        $query = $request->input('search');
+    $date = $request->input('date');
+
+    // Ambil pengguna yang sedang login dan relasi dokter
+    $user = Auth::user();
+    $doctor = $user->doctor;
+
+    // Ambil query appointments yang dimiliki dokter
+    $appointmentsQuery = \App\Models\Appointment::query()
+        ->where('doctor_id', $doctor->id)
+        ->with(['employee.user', 'diagnoses']);
+
+    // Filter berdasarkan tanggal appointment
+    if (!empty($date)) {
+        $appointmentsQuery->whereDate('appointment_date', $date);
+    }
+
+    // Filter berdasarkan nama pegawai melalui relasi diagnoses
+    if (!empty($query)) {
+        $appointmentsQuery->whereHas('diagnoses', function($q) use ($query) {
+            $q->whereHas('employee.user', function ($q) use ($query) {
+                $q->where('first_name', 'like', '%' . $query . '%')
+                  ->orWhere('last_name', 'like', '%' . $query . '%');
+            });
+        });
+    }
+
+    // Dapatkan hasil pencarian dengan paginasi
+    $appointments = $appointmentsQuery->paginate(5);
+    return view('content.dokter.diagnosa.index', compact('user', 'appointments'));
+
+        })->name('diagnosa.search');
+        Route::post('/medical-check-up/search', function (\Illuminate\Http\Request $request) {
+    $query = $request->input('search');
+    $date = $request->input('date');
+
+    // Buat query dasar dengan relasi
+    $medicalCheckUpsQuery = \App\Models\MedicalCheckUp::with(['pemeriksaanMinors' => function ($query) {
+        $query->with(['nilaiRujukan', 'pemeriksaanMajor']);
+    }]);
+
+    // Tambahkan filter untuk dokter yang sedang login
+    $doctorId = Auth::user()->doctor->id;
+    $medicalCheckUpsQuery->where('id_doctor', $doctorId);
+
+    // Filter berdasarkan nama pegawai jika query pencarian tidak kosong
+    if (!empty($query)) {
+        $medicalCheckUpsQuery->whereHas('employee.user', function($q) use ($query) {
+            $q->where('first_name', 'like', '%' . $query . '%')
+              ->orWhere('last_name', 'like', '%' . $query . '%');
+        });
+    }
+
+    // Filter berdasarkan tanggal jika input tanggal tidak kosong
+    if (!empty($date)) {
+        $medicalCheckUpsQuery->whereDate('date', $date);
+    }
+
+    // Paginate hasil pencarian
+    $medicalCheckUps = $medicalCheckUpsQuery->paginate(10);
+
+    // Return view dengan hasil pencarian
+    return view('content.dokter.medical-check-up.index', compact('medicalCheckUps'));
+
+        })->name('medical-check-up.search');
         });
 
     Route::prefix('/pegawai')->group(function () {

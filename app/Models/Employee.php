@@ -32,7 +32,7 @@ class Employee extends Model
         return $this->hasMany(Appointment::class);
     }
     public function medicalCheckups(): HasMany{
-        return $this->hasMany(MedicalCheckup::class);
+        return $this->hasMany(MedicalCheckup::class, 'id_employee','id');
     }
      public function diagnoses()
     {

@@ -31,7 +31,7 @@
 </div>
         @endif
         <div class="text-center mb-4">
-          <a href="../user" class="navbar-brand navbar-brand-autodark"><img src="./static/logo.svg" height="36" alt=""></a>
+          <h3>Sistem Informasi Kesehatan Pegawai</h3>
         </div>
         <div class="card card-md">
 
@@ -40,7 +40,7 @@
             <form action="/login" method="post" autocomplete="off" novalidate>
                 @csrf
               <div class="mb-3">
-                <label class="form-label">Email address</label>
+                <label class="form-label">Email</label>
                 <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="your@email.com" autocomplete="off">
                  @error('email')
                               <div class="invalid-feedback">{{$message}}</div>
@@ -49,9 +49,6 @@
               <div class="mb-2">
                 <label class="form-label">
                   Password
-                  <span class="form-label-description">
-                    <a href="#">I forgot password</a>
-                  </span>
                 </label>
                 <div class="input-group input-group-flat">
                   <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"  placeholder="Your password"  autocomplete="off">
@@ -66,21 +63,16 @@
                 </div>
               </div>
               <div class="mb-2">
-                <label class="form-check">
-                  <input type="checkbox" class="form-check-input"/>
-                  <span class="form-check-label">Remember me on this device</span>
-                </label>
               </div>
               <div class="form-footer">
-                <button type="submit" class="btn btn-primary w-100">Sign in</button>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
               </div>
             </form>
           </div>
-          <div class="hr-text">or</div>
 
         </div>
         <div class="text-center text-muted mt-3">
-          Don't have account yet? <a href="/register" tabindex="-1">Sign up</a>
+          Belum punya akun? <a href="{{route('register')}}" tabindex="-1">Daftar</a>
         </div>
       </div>
     </div>

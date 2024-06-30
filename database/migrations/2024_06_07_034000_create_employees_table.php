@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('emergency_contact_number')->nullable();
             $table->string('emergency_contact_relationship')->nullable();
             $table->string('emergency_contact_address')->nullable();
-            $table->foreignId('user_id')->nullable();
             $table->timestamps();
         });
     }

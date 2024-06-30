@@ -19,20 +19,13 @@
                         <input type="text" class="form-control form-control-sm" value="{{$appointments->total()}}" size="3" aria-label="Invoices count">
                     </div>
                     entries
+                    </div>
+                         <x-search-form
+                            action="{{route('diagnosa.search')}}"
+                            placeholder="Cari diagnosa"
+                            buttonText="Cari"
+                        />
                 </div>
-                     <div class="ms-auto text-muted">
-                        Search:
-                        <div class="ms-2 d-inline-block">
-                              <div class="input-group mb-2 d-flex">
-                                  <form action="" method="post" class="d-flex">
-                                      @csrf
-                                      <input type="text" class="form-control" placeholder="Search for…">
-                                   <button class="btn btn-primary mx-1" type="submit">Cari</button>
-                                  </form>
-                              </div>
-                        </div>
-                      </div>
-            </div>
         </div>
         <div class="table-responsive">
             <table class="table card-table table-vcenter text-nowrap datatable">
