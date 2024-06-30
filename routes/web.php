@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/my-appointment', [PegawaiController::class, 'myAppointment'])->name('pegawai.myAppointment');
         Route::get('/my-diagnosis', [PegawaiController::class, 'myDiagnosis'])->name('pegawai.myDiagnosis');
         Route::get('/my-diagnosis/{id}', [PegawaiController::class, 'myDiagnosisDetail'])->name('pegawai.myDiagnosisDetail');
+        Route::get('/my-medical-check-up', [PegawaiController::class, 'myMedicalCheckUp'])->name('pegawai.myMedicalCheckUp');
     });
 
     Route::prefix('/admin')->group(function () {

@@ -6,6 +6,7 @@ use App\Http\Requests\UpdateEmployeeProfileRequest;
 use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Employee;
+use App\Models\MedicalCheckUp;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -85,6 +86,14 @@ class PegawaiController extends Controller
               ->with( 'diagnoses.medicines', 'doctor.speciality')
             ->find($id);
           return view('content.pegawai.diagnosa.detail', compact('user', 'appointment'));
+    }
+    public function myMedicalCheckUp(){
+         $medicalCheckUps = MedicalCheckUp::with(['doctor.user','pemeriksaanMinors' => function ($query) {
+            $query->with(['nilaiRujukan', 'pemeriksaanMajor']);
+        }])
+            ->where('id_employee', Auth::user()->employee->id)
+            ->paginate(10);
+        return view('content.pegawai.medical-check-up.index', compact('medicalCheckUps'));
     }
 
 
