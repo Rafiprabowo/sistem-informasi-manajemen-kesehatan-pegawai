@@ -111,8 +111,8 @@
                     type: 'GET',
                     success: function (response){
                         if(response.success){
-                            location.reload()
                             alert('Appointment approved successfully!')
+                           location.reload()
                         }else {
                             alert('Failed to approve appointment')
                         }

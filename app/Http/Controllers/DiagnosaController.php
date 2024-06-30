@@ -20,6 +20,7 @@ public function index()
     $user = Auth::user();
     $appointments = $user->doctor->appointments()
         ->with('employee.user', 'diagnoses.medicines')
+        ->where('diagnosed', true)
         ->paginate(5); // Ganti angka 10 dengan jumlah item yang diinginkan per halaman
 
     return view('content.dokter.diagnosa.index', compact('user', 'appointments'));
@@ -37,7 +38,7 @@ public function index()
     // Ambil appointments milik dokter yang sedang login
     $appointments = $doctor->appointments()
         ->where('diagnosed', false) // Hanya appointment yang belum didiagnosa
-        ->where('status', 'approved') // Hanya appointment dengan status approved
+        ->where('status', 'approved')// Hanya appointment dengan status approved
         ->orderBy('appointment_date', 'asc')
         ->paginate(5);
 
