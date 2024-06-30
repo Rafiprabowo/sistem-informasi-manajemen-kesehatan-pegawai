@@ -33,12 +33,12 @@
                         </div>
                         entries
                       </div>
-                      <div class="ms-auto text-muted">
-                        Search:
-                        <div class="ms-2 d-inline-block">
-                          <input type="text" class="form-control form-control-sm" aria-label="Search invoice">
-                        </div>
-                      </div>
+                      <x-search-form
+                        action="{{route('appointment.search')}}"
+                        placeholder="Cari appointment"
+                        buttonText="Cari"
+                        value="{{ request('search') }}"
+                    />
                     </div>
                   </div>
                   <div class="table-responsive">
@@ -101,8 +101,8 @@
                 {{ $appointments->links() }}
                 </div>
               </div>
-@endsection
-@section('script')
+            @endsection
+            @section('script')
                     <script>
                          $(document).ready(function() {
         // Check if there is a success message in sessionStorage

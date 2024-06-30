@@ -52,7 +52,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/my-appointment', [DoctorController::class, 'myAppointment'])->name('doctor.myAppointment');
         Route::resource('/medical-check-up', MedicalCheckUpController::class);
         Route::get('/medical-record', [MedicalCheckUpController::class, 'indexMedicalRecord'])->name('medical-record.index');
-       Route::post('/appointment/search', function (\Illuminate\Http\Request $request) {
+        Route::post('/appointment/search', function (\Illuminate\Http\Request $request) {
              $query = $request->input('search');
         $date = $request->input('date');
 
@@ -76,7 +76,6 @@ Route::middleware('auth')->group(function () {
 
         return view('content.appointment.dokter.index', compact('user', 'appointments'));
     })->name('appointment.search');
-
         });
 
     Route::prefix('/pegawai')->group(function () {
@@ -88,6 +87,43 @@ Route::middleware('auth')->group(function () {
         Route::get('/my-diagnosis', [PegawaiController::class, 'myDiagnosis'])->name('pegawai.myDiagnosis');
         Route::get('/my-diagnosis/{id}', [PegawaiController::class, 'myDiagnosisDetail'])->name('pegawai.myDiagnosisDetail');
         Route::get('/my-medical-check-up', [PegawaiController::class, 'myMedicalCheckUp'])->name('pegawai.myMedicalCheckUp');
+        Route::post('/appointmentPegawai/search', function (\Illuminate\Http\Request $request) {
+            $query = $request->input('search');
+            $date = $request->input('date');
+            $user = Auth::user()->load('employee');
+            $appointmentsQuery = $user->employee->appointments()->with('doctor.user');
+            if (!empty($date)) {
+                $appointmentsQuery->whereDate('appointment_date', $date);
+            }
+            if (!empty($query)) {
+                $appointmentsQuery->whereHas('doctor.user', function($q) use ($query) {
+                    $q->where('first_name', 'like', "%$query%")
+                        ->orWhere('last_name', 'like', "%$query%");
+                });
+            }
+            $appointments = $appointmentsQuery->paginate(5);
+            return view('content.appointment.pegawai.index', compact('user', 'appointments'));
+        })->name('appointmentPegawai.search');
+        Route::post('/diagnosaPegawai/search', function (\Illuminate\Http\Request $request) {
+            $query = $request->input('search');
+            $date = $request->input('date');
+            $user = Auth::user();
+            $appointmentsQuery = $user->employee->appointments()
+                ->with('doctor.user', 'diagnoses.medicines');
+            // Menambahkan kondisi untuk pencarian berdasarkan tanggal jika $date tidak kosong
+            if (!empty($date)) {
+                $appointmentsQuery->whereDate('appointment_date', $date);
+            }
+            // Menambahkan kondisi untuk pencarian berdasarkan nama dokter jika $query tidak kosong
+            if (!empty($query)) {
+                $appointmentsQuery->whereHas('doctor.user', function($q) use ($query) {
+                    $q->where('first_name', 'like', "%$query%")
+                      ->orWhere('last_name', 'like', "%$query%");
+                });
+            }
+            $appointments = $appointmentsQuery->paginate(5);
+            return view('content.pegawai.diagnosa.index', compact('user', 'appointments'));
+        })->name('diagnosaPegawai.search');
     });
 
     Route::prefix('/admin')->group(function () {
@@ -102,6 +138,21 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [PharmachistController::class,'dashboard'])->name('apoteker.dashboard',);
         Route::resource('/obat', MedicineController::class);
         Route::resource('/kategori-obat', \App\Http\Controllers\MedicineCategoriesController::class);
+        Route::post('/medicine/search', function (\Illuminate\Http\Request $request) {
+            $query = $request->input('name');
+        $kategori = $request->input('kategori');
+        $medicinesQuery = Medicine::query()->with('categories');
+        if (!empty($query)) {
+            $medicinesQuery->where('name', 'like', "%$query%");
+        }
+        if (!empty($kategori)) {
+            $medicinesQuery->whereHas('categories', function($q) use ($kategori) {
+                $q->where('name', 'like', "%$kategori%");
+            });
+        }
+        $medicines = $medicinesQuery->paginate(5);
+        return view('content.apoteker.obat.index', compact('medicines'));
+        })->name('medicine.search');
     });
 
     /**

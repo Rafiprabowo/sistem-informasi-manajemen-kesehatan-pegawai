@@ -20,18 +20,12 @@
                     </div>
                     entries
                 </div>
-                     <div class="ms-auto text-muted">
-                        Search:
-                        <div class="ms-2 d-inline-block">
-                              <div class="input-group mb-2 d-flex">
-                                  <form action="" method="post" class="d-flex">
-                                      @csrf
-                                      <input type="text" class="form-control" placeholder="Search for…">
-                                   <button class="btn btn-primary mx-1" type="submit">Cari</button>
-                                  </form>
-                              </div>
-                        </div>
-                      </div>
+                     <x-search-form
+                        action="{{route('diagnosaPegawai.search')}}"
+                        placeholder="Cari nama"
+                        buttonText="Cari"
+                        value="{{ request('search') }}"
+                    />
             </div>
         </div>
         <div class="table-responsive">
@@ -40,7 +34,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Appointment Date</th>
-                        <th>Nama Pegawai</th>
+                        <th>Nama Dokter</th>
                         <th>Diagnosis</th>
                         <th>Obat</th>
                         <th>Aksi</th>
@@ -51,7 +45,7 @@
                         <tr>
                             <td>{{ $appointment->id }}</td>
                             <td>{{ $appointment->appointment_date }}</td>
-                            <td>{{ $appointment->employee->user->first_name }} {{ $appointment->employee->user->last_name }}</td>
+                            <td>{{ $appointment->doctor->user->first_name }} {{ $appointment->doctor->user->last_name }}.{{$appointment->doctor->speciality->name}}</td>
                             <td>
                                 @foreach ($appointment->diagnoses as $diagnosa)
                                     {{ $diagnosa->diagnosa }}
