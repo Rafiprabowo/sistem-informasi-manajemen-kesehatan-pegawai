@@ -15,7 +15,11 @@ class AdminController extends Controller
 {
     //
     public function dashboard(){
-        return view('content.admin.dashboard');
+        $totalDokter = Doctor::all()->count();
+        $totalPegawai = Employee::all()->count();
+        $totalApoteker = Pharmacist::all()->count();
+        $totalAdmin = Admin::all()->count();
+        return view('content.admin.dashboard', compact('totalDokter', 'totalPegawai', 'totalApoteker', 'totalAdmin'));
     }
     public function profile(){
         return view('content.admin.profile');

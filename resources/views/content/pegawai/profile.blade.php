@@ -34,7 +34,7 @@
                 <form class="card" id="updateProfileEmployee" action="{{ route('updateProfileEmployee') }}" method="post">
                     @csrf
                     <div class="card-body">
-                        <h3 class="card-title">Lengkapi Profil</h3>
+                        <h3 class="card-title">Profil Pegawai</h3>
                         <hr>
                         <div class="row row-cards">
                             <h3>Biodata pegawai</h3>
@@ -66,13 +66,13 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Tanggal lahir</label>
-                                    <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" value="{{ $user->employee->date_of_birth ?? '' }}">
+                                    <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" value="{{ $user->employee->date_of_birth ?? '' }}" disabled>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Jenis Kelamin</label>
-                                    <select class="form-select" id="gender" name="gender">
+                                    <select class="form-select" id="gender" name="gender" disabled>
                                         <option value="">--Pilih jenis kelamin--</option>
                                         <option value="L" {{ $user->employee->gender == "L" ? 'selected' : '' }}>Laki-laki</option>
                                         <option value="P" {{ $user->employee->gender == "P" ? 'selected' : '' }}>Perempuan</option>
@@ -82,7 +82,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Jabatan</label>
-                                    <input type="text" id="position" name="position" class="form-control" value="{{ $user->employee->position }}">
+                                    <input type="text" id="position" name="position" class="form-control" value="{{ $user->employee->position }}" disabled>
                                 </div>
                             </div>
                             <hr>
@@ -90,38 +90,34 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Nama kontak darurat</label>
-                                    <input type="text" value="{{ $user->employee->emergency_contact_name }}" name="emergency_contact_name" class="form-control" placeholder="nama kontak darurat">
+                                    <input type="text" value="{{ $user->employee->emergency_contact_name }}" name="emergency_contact_name" class="form-control" placeholder="nama kontak darurat" disabled>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Hubungan dengan kontak darurat</label>
-                                    <input type="text" value="{{ $user->employee->emergency_contact_relationship }}" name="emergency_contact_relationship" class="form-control" placeholder="hubungan dengan kontak darurat">
+                                    <input type="text" value="{{ $user->employee->emergency_contact_relationship }}" name="emergency_contact_relationship" class="form-control" placeholder="hubungan dengan kontak darurat" disabled>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Nomor kontak darurat</label>
-                                    <input type="text" value="{{ $user->employee->emergency_contact_number }}" name="emergency_contact_number" class="form-control" placeholder="nomor kontak darurat">
+                                    <input type="text" value="{{ $user->employee->emergency_contact_number }}" name="emergency_contact_number" class="form-control" placeholder="nomor kontak darurat" disabled>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Alamat kontak darurat</label>
-                                    <input type="text" value="{{ $user->employee->emergency_contact_address }}" name="emergency_contact_address" class="form-control" placeholder="nomor kontak darurat">
+                                    <input type="text" value="{{ $user->employee->emergency_contact_address }}" name="emergency_contact_address" class="form-control" placeholder="nomor kontak darurat" disabled>
                                 </div>
                             </div>
                              <div class="col-md-12">
                          <div class="mb-3 mb-0">
                 <label class="form-label">Riwayat Penyakit yang dimiliki</label>
-                <textarea name="medical_history" rows="5" class="form-control" placeholder="Riwayat Penyakit">{{$user->employee->medical_history}}</textarea>
+                <textarea name="medical_history" rows="5" class="form-control" placeholder="Riwayat Penyakit" disabled>{{$user->employee->medical_history}}</textarea>
             </div>
-
                         </div>
                         </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <button type="submit" class="btn btn-primary ">Submit</button>
                     </div>
                 </form>
             </div>

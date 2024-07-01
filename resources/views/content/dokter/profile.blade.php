@@ -61,29 +61,33 @@
 									       value="{{$user->address}}" disabled>
                           </div>
                         </div>
+                        <div>
+                            <div class="mb-3">
+                        <label for="position" class="form-label">Jenis Kelamin</label>
+                        <input type="text" class="form-control" value="{{$user->doctor->gender }}" disabled required>
+                        </div>
+                        </div>
                         <div class="col-sm-6 col-md-3">
                           <div class="mb-3">
                             <label class="form-label">Spesialisasi</label>
                               <h3 class="text-xl-start">{{$user->doctor->speciality->name ?? '' }}</h3>
                                 <div>
-                                <a href="#" id="new-specialization" class="btn">
-                                Set new spesialisasi
-                                </a>
-                                </div>
+{{--                                <a href="#" id="new-specialization" class="btn">--}}
+{{--                                Set new spesialisasi--}}
+{{--                                </a>--}}
+{{--                                </div>--}}
                         </div>
-                                    <div id="specialization-select-container" style="display:none;">
-                    <select class="form-select mb-7" name="speciality_id">
-                        <option value="">-- Pilih spesialisasi --</option>
-                        @foreach($specializations as $specialization)
-                            <option value="{{ $specialization->id }}">{{ $specialization->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+{{--                                    <div id="specialization-select-container" style="display:none;">--}}
+{{--                    <select class="form-select mb-7" name="speciality_id">--}}
+{{--                        <option value="">-- Pilih spesialisasi --</option>--}}
+{{--                        @foreach($specializations as $specialization)--}}
+{{--                            <option value="{{ $specialization->id }}">{{ $specialization->name }}</option>--}}
+{{--                        @endforeach--}}
+{{--                    </select>--}}
+{{--                </div>--}}
                       </div>
                     </div>
-                    <div class="card-footer text-end">
-                      <button type="submit" class="btn btn-primary">Update Profile</button>
-                    </div>
+
                     </div>
                   </form>
                 </div>
@@ -92,14 +96,14 @@
 
 @endsection
 
-@section('script')
-    <script>
-        $(document).ready(function() {
-    $('#new-specialization').click(function(event) {
-        event.preventDefault();
-        $('#specialization-select-container').toggle(); // Menampilkan/menyembunyikan select
-    });
-});
+{{--@section('script')--}}
+{{--    <script>--}}
+{{--        $(document).ready(function() {--}}
+{{--    $('#new-specialization').click(function(event) {--}}
+{{--        event.preventDefault();--}}
+{{--        $('#specialization-select-container').toggle(); // Menampilkan/menyembunyikan select--}}
+{{--    });--}}
+{{--});--}}
 
-    </script>
-@endsection
+{{--    </script>--}}
+{{--@endsection--}}
