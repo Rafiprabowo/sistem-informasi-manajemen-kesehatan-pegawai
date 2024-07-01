@@ -89,6 +89,9 @@ class AdminDokterController extends Controller
     public function edit(string $id)
     {
         //
+        $dokter = Doctor::with('user', 'speciality')->findOrFail($id);
+        $specialities = DoctorSpecialization::all();
+        return view('content.admin.dokter.edit', compact('dokter', 'specialities'));
     }
 
     /**
@@ -97,6 +100,26 @@ class AdminDokterController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+            'gender' => 'required',
+            'speciality_id' => 'required',
+        ]);
+        $user = User::with('doctor')->findOrFail($id);
+        $user->update([
+            'first_name' => $request->get('first_name'),
+            'last_name' => $request->get('last_name'),
+            'address' => $request->get('address'),
+            'phone' => $request->get('phone'),
+        ]);
+        Doctor::where('user_id', $user->doctor->id)->update([
+            'speciality_id' => $request->get('speciality_id'),
+            'gender' => $request->get('gender'),
+        ]);
+        return redirect()->route('dokters.index')->with('success', 'dokter updated successfully.');
     }
 
     /**

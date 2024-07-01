@@ -81,14 +81,35 @@ class AdminApotekerController extends Controller
     public function edit(string $id)
     {
         //
+        $apoteker = Pharmacist::with('user')->findOrFail($id);
+        return view('content.admin.apoteker.edit', compact('apoteker'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request ,$id)
     {
         //
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string',
+            'gender' => 'required',
+        ]);
+         $user = User::find($id);
+         Pharmacist::where('user_id', $user->id)->update([
+            'gender' => $request->get('gender'),
+        ]);
+        $user->update([
+             'first_name' => $request->get('first_name'),
+            'last_name' => $request->get('last_name'),
+            'address' => $request->get('address'),
+            'phone' => $request->get('phone'),
+         ]);
+        return redirect()->route('apotekers.index')->with('success', 'Apoteker updated successfully.');
+
     }
 
     /**

@@ -96,6 +96,8 @@ class AdminPegawaiController extends Controller
     public function edit(string $id)
     {
         //
+        $employee = Employee::with('user')->findOrFail($id);
+        return view('content.admin.pegawai.edit', compact('employee'));
     }
 
     /**
@@ -104,6 +106,38 @@ class AdminPegawaiController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'position' => 'required|string|max:255',
+        'date_of_birth' => 'required|date',
+        'gender' => 'required|in:L,P',
+        'address' => 'required|string|max:255',
+        'phone' => 'required|string|max:15',
+        'medical_history' => 'nullable|string',
+        'emergency_contact_name' => 'required|string|max:255',
+        'emergency_contact_number' => 'required|string|max:15',
+        'emergency_contact_relationship' => 'required|string|max:255',
+        'emergency_contact_address' => 'required|string|max:255',
+    ]);
+        $user = User::find($id);
+        $user->update([
+            'first_name' =>$request->first_name,
+             'last_name' => $request->last_name,
+             'address' => $request->address,
+            'phone' => $request->phone,
+        ]);
+        Employee::where('user_id', $user->id)->update([
+            'position' => $request->position,
+            'date_of_birth' => $request->date_of_birth,
+            'gender' => $request->gender,
+            'medical_history' => $request->medical_history,
+            'emergency_contact_name' => $request->emergency_contact_name,
+            'emergency_contact_number' => $request->emergency_contact_number,
+            'emergency_contact_relationship' => $request->emergency_contact_relationship,
+            'emergency_contact_address' => $request->emergency_contact_address,
+        ]);
+        return redirect()->route('pegawais.index')->with('success', 'Employee updated successfully.');
     }
 
     /**

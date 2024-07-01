@@ -48,11 +48,17 @@
                             <td>{{ $pharmacist->user->address }}</td>
                             <td>{{ $pharmacist->user->phone }}</td>
                             <td>
-                                <form action="{{ route('apotekers.destroy', $pharmacist->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus apoteker ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger mx-2">Hapus</button>
+                                <div class="d-flex">
+                                    <div>
+                                    <a href="{{route('apotekers.edit', $pharmacist->id)}}" class="btn btn-secondary">Edit</a>
+                                </div>
+                                <form action="{{ route('admins.destroy', $pharmacist->user->id) }}" method="POST"
+                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus apoteker ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger mx-2">Hapus</button>
                                 </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

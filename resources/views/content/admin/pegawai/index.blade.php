@@ -57,11 +57,17 @@
                                 </ul>
                             </td>
                             <td>
-                                <form action="{{ route('pegawais.destroy', $employee->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pegawai ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger mx-2">Hapus</button>
+                                <div class="d-flex">
+                                    <div>
+                                    <a href="{{route('pegawais.edit', $employee->id)}}" class="btn btn-secondary">Edit</a>
+                                </div>
+                                <form action="{{ route('pegawais.destroy', $employee->user->id) }}" method="POST"
+                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus pegawai ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger mx-2">Hapus</button>
                                 </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

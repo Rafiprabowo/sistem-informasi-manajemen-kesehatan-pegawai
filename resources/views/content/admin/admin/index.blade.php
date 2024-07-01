@@ -49,12 +49,17 @@
                             <td>{{ $admin->user->address }}</td>
                             <td>{{ $admin->user->phone }}</td>
                             <td>
+                                <div class="d-flex">
+                                    <div>
+                                    <a href="{{route('admins.edit', $admin->id)}}" class="btn btn-secondary">Edit</a>
+                                </div>
                                 <form action="{{ route('admins.destroy', $admin->id) }}" method="POST"
                                       onsubmit="return confirm('Apakah Anda yakin ingin menghapus admin ini?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger mx-2">Hapus</button>
                                 </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

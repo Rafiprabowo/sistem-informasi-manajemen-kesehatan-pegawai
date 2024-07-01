@@ -12,34 +12,34 @@
                 </ul>
             </div>
         @endif
-    <form action="{{route('apotekers.update', $apoteker->user->id)}}" method="post" class="card">
+    <form action="{{route('admins.update', $admin->user->id)}}" method="post" class="card">
         @csrf
         @method('PUT')
         <div class="card-header">
-                  <h3 class="card-title">Edit Apoteker</h3>
+                  <h3 class="card-title">Edit Admin</h3>
                 </div>
         <div class="card-body">
         <div class="mb-3">
         <label class="form-label">Nama depan</label>
-        <input type="text" value="{{$apoteker->user->first_name}}" id="first_name" name="first_name" class="form-control" required>
+        <input type="text" value="{{$admin->user->first_name}}" id="first_name" name="first_name" class="form-control" required>
     </div>
     <div class="mb-3">
         <label class="form-label">Nama belakang</label>
-        <input type="text" value="{{$apoteker->user->last_name}}" id="last_name" name="last_name" class="form-control" required>
+        <input type="text" value="{{$admin->user->last_name}}" id="last_name" name="last_name" class="form-control" required>
     </div>
     <div class="mb-3">
         <label class="form-label">Alamat</label>
-        <input type="text" value="{{$apoteker->user->address}}" id="address" name="address" class="form-control" required>
+        <input type="text" value="{{$admin->user->address}}" id="address" name="address" class="form-control" required>
     </div>
     <div class="mb-3">
         <label class="form-label">No Hp</label>
-        <input type="text" value="{{$apoteker->user->phone}}" id="phone" name="phone" class="form-control" required>
+        <input type="text" value="{{$admin->user->phone}}" id="phone" name="phone" class="form-control" required>
     </div>
         <div class="mb-3">
                     <label class="form-label">Jenis Kelamin</label>
-                    <select class="form-select" name="gender" >
-                        <option value="L" {{$apoteker->gender == "L" ? 'selected' : ''}}>Laki-laki</option>
-                        <option value="P" {{$apoteker->gender == "P" ? 'selected' : ''}}>Perempuan</option>
+                    <select class="form-select" name="gender">
+                          <option value="L" {{$admin->gender == "L" ? 'selected' : ''}}>Laki-laki</option>
+                        <option value="P" {{$admin->gender == "P" ? 'selected' : ''}}>Perempuan</option>
                     </select>
                 </div>
         <div class="card-footer text-end">

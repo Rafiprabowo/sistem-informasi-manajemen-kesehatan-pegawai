@@ -15,7 +15,6 @@
         @endif
         <a href="{{route('pegawais.index')}}" class="btn btn-secondary mb-3">Kembali</a>
               <form class="card" action="{{route('pegawais.store')}}" method="post">
-
                   @csrf
                 <div class="card-header">
                   <h3 class="card-title">Tambah Pegawai</h3>

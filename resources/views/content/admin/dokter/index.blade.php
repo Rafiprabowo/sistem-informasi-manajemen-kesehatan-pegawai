@@ -48,12 +48,17 @@
                             <td>{{ $doctor->user->address }}</td>
                             <td>{{ $doctor->user->phone }}</td>
                             <td>
-                                <form action="{{ route('dokters.destroy', $doctor->id) }}" method="POST"
+                                <div class="d-flex">
+                                    <div>
+                                    <a href="{{route('dokters.edit', $doctor->id)}}" class="btn btn-secondary">Edit</a>
+                                </div>
+                                <form action="{{ route('admins.destroy', $doctor->user->id) }}" method="POST"
                                       onsubmit="return confirm('Apakah Anda yakin ingin menghapus dokter ini?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger mx-2">Hapus</button>
                                 </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
