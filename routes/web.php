@@ -210,7 +210,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/role-user', [AdminController::class, 'updateRole'])->name('admin.updateRole');
     });
     });
-Route::middleware(['auth', 'role:pegawai'])->group(function () {
+Route::middleware(['auth', 'role:apoteker'])->group(function () {
         Route::prefix('/apoteker')->group(function () {
         Route::get('/', [PharmachistController::class,'dashboard'])->name('apoteker.dashboard',);
         Route::resource('/obat', MedicineController::class);
