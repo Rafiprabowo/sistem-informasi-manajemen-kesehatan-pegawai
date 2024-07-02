@@ -21,13 +21,14 @@
             </div>
         @endif
         <div class="mb-3">
-            <a href="{{route('pegawai.dashboard')}}" class="btn btn-secondary">Kembali</a>
+            <a href="{{route('pegawai.myJadwal')}}" class="btn btn-secondary">Kembali</a>
         </div>
     </div>
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Jadwal Check Up</h3>
         </div>
+
         <div class="card-body border-bottom py-3">
             <div class="d-flex">
                 <div class="text-muted">
@@ -38,12 +39,11 @@
                     </div>
                     entries
                 </div>
-                {{--                     <x-search-bar--}}
-                {{--                        action=""--}}
-                {{--                        placeholder="berdasarkan nama"--}}
-                {{--                        buttonText="Cari"--}}
-                {{--                        value=""--}}
-                {{--                    />--}}
+                 <x-name-search
+                        action="{{ route('myMcu.search') }}"
+                        placeholder="cari nama dokter"
+                        buttonText="Cari"
+                    />
             </div>
         </div>
         <div class="table-responsive">

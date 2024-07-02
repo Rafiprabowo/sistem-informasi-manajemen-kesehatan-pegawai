@@ -309,6 +309,7 @@
                         success: function (response){
                             console.log(response)
                             if(response.success && response.data.length > 0){
+                                alert('A jadwal check up pegawai baru ' )
                                 let selectEmployee = $('#select-employee')
                                 selectEmployee.empty()
                                 selectEmployee.html('<option value="">--Pilih Pegawai--</option>')
@@ -318,7 +319,7 @@
                                     )
                                 });
                             }else {
-                                alert('Error : ' +response.message )
+                                alert('Tidak ada jadwal check up pegawai ' )
                             }
                         },
                         error: function (){

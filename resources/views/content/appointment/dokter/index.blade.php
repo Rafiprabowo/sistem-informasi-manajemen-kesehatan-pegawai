@@ -20,7 +20,7 @@
         @endif
 
             <div>
-            <a href="{{route('doctor.dashboard')}}" class="btn btn-secondary mb-3">Kembali</a>
+            <a href="{{route('appointments.index')}}" class="btn btn-secondary mb-3">Kembali</a>
         </div>
                 <div class="card">
                   <div class="card-header">
@@ -37,7 +37,7 @@
                       </div>
                       <x-search-form
                         action="{{route('appointment.search')}}"
-                        placeholder="Cari appointment"
+                        placeholder="Cari nama pegawai"
                         buttonText="Cari"
                         value="{{ request('search') }}"
                     />
@@ -50,7 +50,6 @@
                         <th>No</th>
                         <th>Nama Pegawai</th>
                         <th>Jenis Kelamin</th>
-                        <th>Jabatan</th>
                         <th>Appointment Date</th>
                         <th>Waktu Mulai</th>
                         <th>Catatan Appointment</th>
@@ -65,8 +64,7 @@
                         <tr>
                                 <td><span class="text-muted">{{$index + 1}}</span></td>
                                 <td>{{$appointment->employee->user->first_name}} {{$appointment->employee->user->last_name}}</td>
-                                <td>{{$appointment->employee->user->gender}}</td>
-                                <td>{{$appointment->employee->user->position}}</td>
+                                <td>{{$appointment->employee->gender}}</td>
                                 <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d-m-Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($appointment->appointment_start_time)->format('H:i') }}</td>
                                 <td>{{$appointment->note}}</td>

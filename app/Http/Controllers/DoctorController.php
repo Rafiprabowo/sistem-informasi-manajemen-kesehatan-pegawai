@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
 use App\Models\Doctor;
+use App\Models\DoctorSchedule;
 use App\Models\DoctorSpecialization;
-use App\Models\Schedule;
+use App\Models\MedicalCheckUp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,27 +23,26 @@ class DoctorController extends Controller
         $notifications = $user->notifications;
         $unreadNotifications = $user->unreadNotifications;
 
-        // Hitung total appointments yang belum didiagnosis
-        $totalAppointmentsBelumDidiagnosa = $user->doctor->appointments->where('diagnosed', false)->count();
-        $totalAppointmentsPending = $user->doctor->appointments->where('status', 'pending')->count();
+            $totalMedicalCheckUpMenunggu = MedicalCheckup::where('id_doctor', $user->doctor->id)->count();
+        $totalAppointmentBelumDidiagnosa = Appointment::where('doctor_id', $user->doctor->id)
+                                        ->where('diagnosed', 0)
+                                        ->count(); // Ensure you call count() to get the integer value
+        $totalAppointmentMenunggu = Appointment::where('doctor_id', $user->doctor->id)
+            ->where('status', 'pending')
+            ->count(); // Ensure you call count() to get the integer value
+        $totalJadwal = DoctorSchedule::where('doctor_id', $user->doctor->id)->count();
 
-        // Hitung total medical checkups
-        $totalMedicalCheckups = $user->doctor->medicalCheckups->count();
 
-        // Hitung jadwal yang tersedia dan terpesan
-        $schedulesAvailable = $user->doctor->schedules->where('status', 'available')->count();
-        $schedulesReserved = $user->doctor->schedules->where('is_reserved', 'reserved')->count();
 
         // Kirim data ke view
         return view('content.dokter.dashboard', compact(
             'user',
             'notifications',
             'unreadNotifications',
-            'totalAppointmentsBelumDidiagnosa',
-            'totalAppointmentsPending',
-            'totalMedicalCheckups',
-            'schedulesAvailable',
-            'schedulesReserved'
+            'totalMedicalCheckUpMenunggu',
+            'totalAppointmentMenunggu',
+            'totalJadwal',
+            'totalAppointmentBelumDidiagnosa'
         ));
 
     }

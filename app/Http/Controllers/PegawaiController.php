@@ -21,15 +21,8 @@ class PegawaiController extends Controller
     public function dashboard(){
          $user = Auth::user()->load(['employee.appointments', 'employee.medicalCheckups']);
 
-        // Hitung total appointments yang sudah didiagnosis
-        $totalDiagnosedAppointments = $user->employee->appointments->where('diagnosed', true)->count();
-        $totalAppointmentsPending = $user->employee->appointments->where('status', 'pending')->count();
-
-        // Hitung total medical checkups
-        $totalMedicalCheckups = $user->employee->medicalCheckups->count();
-
         // Kirim data ke view
-        return view('content.pegawai.dashboard', compact('user', 'totalDiagnosedAppointments', 'totalMedicalCheckups','totalAppointmentsPending'));
+        return view('content.pegawai.dashboard', compact('user', ));
     }
     public function profile(){
         $user = Auth::user()->load('employee');

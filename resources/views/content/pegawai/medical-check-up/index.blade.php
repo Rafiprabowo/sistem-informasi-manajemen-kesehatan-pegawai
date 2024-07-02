@@ -5,7 +5,7 @@
 @section('content')
     <div class="col-12">
         <div class="col-lg-auto d-inline-block mb-3">
-        <a href="{{route('pegawai.dashboard')}}" class="btn btn-secondary">Kembali</a>
+        <a href="{{route('pegawai.myMedicalCheckUp')}}" class="btn btn-secondary">Kembali</a>
     </div>
     <div class="card">
         <div class="card-header">
@@ -20,7 +20,12 @@
                     </div>
                     entries
                 </div>
-
+                 <x-search-form
+                        action="{{route('mcu.search')}}"
+                        placeholder="Cari nama dokter"
+                        buttonText="Cari"
+                        value="{{ request('search') }}"
+                    />
             </div>
         </div>
         <div class="table-responsive">
@@ -43,7 +48,11 @@
                                         <td>{{$mcu->doctor->user->first_name}} {{$mcu->doctor->user->last_name}} {{$mcu->doctor->speciality->name}}</td>
                                         <td>{{$mcu->date}}</td>
                                         <td>
-                                            <a href="{{route('pegawai.showMyCheckUp', $mcu->id)}}" class="btn btn-secondary">Lihat Hasil</a>
+                                           @if($mcu->status == true)
+                                                <a href="{{route('pegawai.showMyCheckUp', $mcu->id)}}" class="btn btn-secondary">Lihat Hasil</a>
+                                            @else
+                                                Hasil MCU belum keluar
+                                            @endif
                                         </td>
                                         <td>
                                         </td>

@@ -60,7 +60,7 @@ Route::middleware(['auth','role:dokter'])->group(function () {
         Route::resource('/medical-check-up', MedicalCheckUpController::class);
         Route::get('/medical-record', [MedicalCheckUpController::class, 'indexMedicalRecord'])->name('medical-record.index');
         Route::post('/appointment/search', function (\Illuminate\Http\Request $request) {
-             $query = $request->input('search');
+             $query = $request->input('name');
         $date = $request->input('date');
 
         $user = Auth::user()->load('doctor');
@@ -117,7 +117,7 @@ Route::middleware(['auth','role:dokter'])->group(function () {
 
             })->name('diagnosa.search');
         Route::post('/medical-check-up/search', function (\Illuminate\Http\Request $request) {
-    $query = $request->input('search');
+    $query = $request->input('name');
     $date = $request->input('date');
 
     // Buat query dasar dengan relasi
@@ -170,7 +170,7 @@ Route::middleware(['auth', 'role:pegawai'])->group(function () {
         Route::get('/my-jadwal-check-up', [PegawaiController::class, 'myJadwal'])->name('pegawai.myJadwal');
         Route::get('/my-medical-check-up', [PegawaiController::class, 'myMedicalCheckUp'])->name('pegawai.myMedicalCheckUp');
         Route::post('/appointmentPegawai/search', function (\Illuminate\Http\Request $request) {
-            $query = $request->input('search');
+            $query = $request->input('name');
             $date = $request->input('date');
             $user = Auth::user()->load('employee');
             $appointmentsQuery = $user->employee->appointments()->with('doctor.user');
@@ -207,6 +207,33 @@ Route::middleware(['auth', 'role:pegawai'])->group(function () {
             return view('content.pegawai.diagnosa.index', compact('user', 'appointments'));
         })->name('diagnosaPegawai.search');
         Route::get('/my-medical-check-up/{id}', [PegawaiController::class, 'showMyCheckUp'])->name('pegawai.showMyCheckUp');
+        Route::post('/dokter/search', function (\Illuminate\Http\Request $request) {
+             $search = $request->input('name');
+             $medicalCheckUps = MedicalCheckup::whereHas('doctor.user', function($query) use ($search) {
+                $query->where('first_name', 'like', '%' . $search . '%')
+                      ->orWhere('last_name', 'like', '%' . $search . '%');
+            })->with(['doctor.user', 'doctor.speciality'])->paginate(10);
+
+             return view('content.pegawai.medical-check-up.index', compact('medicalCheckUps'));
+
+        })->name('myMcu.search');
+        Route::post('/mcu/search', function (\Illuminate\Http\Request $request) {
+            $search = $request->input('name');
+        $date = $request->input('date');
+
+            $medicalCheckUps = MedicalCheckup::where(function($query) use ($search, $date) {
+                if ($search) {
+                    $query->whereHas('doctor.user', function($query) use ($search) {
+                        $query->where('first_name', 'like', '%' . $search . '%')
+                              ->orWhere('last_name', 'like', '%' . $search . '%');
+                    });
+                }
+                if ($date) {
+                    $query->orWhere('date', 'like', '%' . $date . '%');
+                }
+            })->with(['doctor.user', 'doctor.speciality'])->paginate(10);
+            return view('content.pegawai.medical-check-up.index', compact('medicalCheckUps'));
+        })->name('mcu.search');
        });
     });
 Route::middleware(['auth', 'role:admin'])->group(function () {

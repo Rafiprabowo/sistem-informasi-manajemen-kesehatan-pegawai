@@ -5,7 +5,7 @@
 @section('content')
     <div class="col-12">
         <div class="col-lg-auto d-inline-block mb-3">
-        <a href="{{route('pegawai.dashboard')}}" class="btn btn-secondary">Kembali</a>
+        <a href="{{route('pegawai.myDiagnosis')}}" class="btn btn-secondary">Kembali</a>
     </div>
     <div class="card">
         <div class="card-header">
@@ -47,10 +47,10 @@
                             <td>{{ $appointment->doctor->user->first_name }} {{ $appointment->doctor->user->last_name }}.{{$appointment->doctor->speciality->name}}</td>
                             <td>
                                 @if($appointment->diagnosed == true)
-                                    <p>Diagnosa Sudah ada</p>
+                                    <p>Hasil diagnosa sudah ada</p>
                                      <a href="{{route('pegawai.myDiagnosisDetail', $appointment->id)}}" class="btn btn-secondary">Lihat Diagnosa</a>
                                 @else
-                                    Maaf belum didiagnosa oleh dokter
+                                    Diagnosa belum keluar
                                 @endif
                             </td>
                         </tr>

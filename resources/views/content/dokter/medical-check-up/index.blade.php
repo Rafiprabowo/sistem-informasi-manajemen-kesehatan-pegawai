@@ -5,7 +5,7 @@
 @section('content')
     <div class="col-12">
         <div class="col-lg-auto d-inline-block mb-3">
-        <a href="{{route('doctor.dashboard')}}" class="btn btn-secondary">Kembali</a>
+        <a href="{{route('medical-check-up.index')}}" class="btn btn-secondary">Kembali</a>
     </div>
     <div class="card">
         <div class="card-header">
@@ -50,7 +50,11 @@
                                         <td>{{$mcu->employee->age}}</td>
                                         <td>{{$mcu->date}}</td>
                                         <td>
+                                            @if($mcu->status == true)
                                             <a href="{{route('medical-check-up.show',$mcu->id)}}" class="btn btn-secondary">Detail Medical Check Up</a>
+                                            @else
+                                                Belum ada
+                                            @endif
                                         </td>
                                         <td>
                                         </td>

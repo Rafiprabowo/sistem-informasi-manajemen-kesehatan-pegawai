@@ -7,7 +7,7 @@
 @section('content')
     <h2>Appointments</h2>
     <div class="div">
-        <a href="{{ route('doctor-schedules.index') }}" class="btn btn-secondary mb-3">Kembali</a>
+        <a href="{{ route('pegawai.myAppointment') }}" class="btn btn-secondary mb-3">Kembali</a>
     </div>
     <div class="card">
         <div class="card-header">
