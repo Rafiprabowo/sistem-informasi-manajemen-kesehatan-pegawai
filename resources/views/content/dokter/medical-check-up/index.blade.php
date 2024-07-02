@@ -22,7 +22,7 @@
                 </div>
             <x-search-form
                         action="{{route('medical-check-up.search')}}"
-                        placeholder="Cari medical check up"
+                        placeholder="Cari nama pegawai"
                         buttonText="Cari"
                     />
             </div>
@@ -33,12 +33,10 @@
                     <tr>
                         <th>No Medical Record</th>
                                     <th>Nama Pegawai</th>
-                                    <th>Jabatan</th>
                                     <th>Jenis Kelamin</th>
                                     <th>Tanggal Lahir</th>
                                     <th>Usia</th>
                                     <th>Alamat</th>
-                                    <th>Tanggal MCU</th>
                                     <th>Hasil MCU</th>
                     </tr>
                 </thead>
@@ -46,19 +44,13 @@
                                 @forelse($medicalCheckUps as $mcu)
                                     <tr>
                                         <td>{{$mcu->id}}</td>
-                                        <td>{{$mcu->employee->user->first_name}}</td>
-                                        <td>{{$mcu->employee->position}}</td>
+                                        <td>{{$mcu->employee->user->first_name}} {{$mcu->employee->user->last_name}}</td>
                                         <td>{{$mcu->employee->gender}}</td>
                                         <td>{{\Carbon\Carbon::parse($mcu->employee->date_of_birth)->format('d-m-Y')}}</td>
                                         <td>{{$mcu->employee->age}}</td>
-                                        <td>{{$mcu->employee->user->address}}</td>
                                         <td>{{$mcu->date}}</td>
                                         <td>
-                                            @foreach($mcu->pemeriksaanMinors as $pemeriksaanMinor)
-                                                <ul class="list-group-flush">
-                                                <li class="list-group-item">{{$pemeriksaanMinor->name.' | Hasil : '.$pemeriksaanMinor->pivot->result}}</li>
-                                                </ul>
-                                            @endforeach
+                                            <a href="{{route('medical-check-up.show',$mcu->id)}}" class="btn btn-secondary">Detail Medical Check Up</a>
                                         </td>
                                         <td>
                                         </td>

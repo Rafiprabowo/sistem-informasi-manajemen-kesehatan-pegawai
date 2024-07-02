@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Doctor;
 use App\Models\DoctorSchedule;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -39,52 +40,73 @@ class DoctorScheduleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-     public function store(Request $request)
-    {
-        // Custom validation rule to check unique start_time and end_time for the same doctor and date
-        $validator = Validator::make($request->all(), [
-            'date' => 'required|date',
-            'start_time' => [
-                'required',
-                'date_format:H:i',
-                function ($attribute, $value, $fail) use ($request) {
-                    $exists = DoctorSchedule::where('doctor_id', $request->doctor_id)
-                        ->where('date', $request->date)
-                        ->where(function ($query) use ($request) {
-                            $query->whereBetween('start_time', [$request->start_time, $request->end_time])
-                                ->orWhereBetween('end_time', [$request->start_time, $request->end_time])
-                                ->orWhere(function($query) use ($request) {
-                                    $query->where('start_time', '<', $request->start_time)
-                                          ->where('end_time', '>', $request->end_time);
-                                });
+   public function store(Request $request)
+{
+    $request->validate([
+        'doctor_id' => 'required|exists:doctors,id',
+        'start_time' => 'required|date|after_or_equal:now',
+    ]);
+
+    $startTime = Carbon::parse($request->start_time);
+    $endTime = $startTime->clone()->addMinutes(20);
+    $date = $startTime->toDateString();
+
+    try {
+        // Check for schedule conflicts
+        $conflict = DoctorSchedule::where(function ($query) use ($startTime, $endTime, $request) {
+                $query->where('doctor_id', $request->doctor_id)
+                    ->where(function ($query) use ($startTime, $endTime) {
+                        $query->where(function ($query) use ($startTime, $endTime) {
+                            $query->whereBetween('start_time', [$startTime, $endTime])
+                                ->orWhereBetween('end_time', [$startTime, $endTime]);
                         })
-                        ->exists();
+                        ->orWhere(function ($query) use ($startTime, $endTime) {
+                            $query->where('start_time', '<=', $startTime)
+                                ->where('end_time', '>=', $endTime);
+                        });
+                    });
+            })
+            ->orWhere(function ($query) use ($startTime, $endTime, $request) {
+                $query->where('doctor_id', '!=', $request->doctor_id)
+                    ->where(function ($query) use ($startTime, $endTime) {
+                        $query->where(function ($query) use ($startTime, $endTime) {
+                            $query->whereBetween('start_time', [$startTime, $endTime])
+                                ->orWhereBetween('end_time', [$startTime, $endTime]);
+                        })
+                        ->orWhere(function ($query) use ($startTime, $endTime) {
+                            $query->where('start_time', '<=', $startTime)
+                                ->where('end_time', '>=', $endTime);
+                        });
+                    });
+            })
+            ->exists();
 
-                    if ($exists) {
-                        $fail('The schedule overlaps with an existing one.');
-                    }
-                },
-            ],
-            'end_time' => 'required|date_format:H:i|after:start_time',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+        if ($conflict) {
+            return back()->withErrors(['conflict' => 'Schedule conflicts with another doctor’s appointment.']);
         }
 
-        // If validation passes, create a new DoctorSchedule
+        // Save the schedule
         DoctorSchedule::create([
             'doctor_id' => $request->doctor_id,
-            'date' => $request->date,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'date' => $date,
             'status' => 'available',
         ]);
 
-        return redirect()->route('doctor-schedules.index')->with('success', 'Schedule added successfully');
+        return redirect()->route('doctor-schedules.index')->with('success', 'Schedule added successfully.');
+
+    } catch (QueryException $e) {
+        if ($e->getCode() == 23000) { // SQLSTATE[23000]: Integrity constraint violation
+            return back()->withErrors(['conflict' => 'This schedule conflicts with an existing appointment.']);
+        }
+
+        // Handle other possible exceptions
+        return back()->withErrors(['error' => 'An unexpected error occurred. Please try again later.']);
     }
+}
+
+
 
 
 

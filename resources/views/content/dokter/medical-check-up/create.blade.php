@@ -4,6 +4,7 @@
 @endsection
 @section('content')
     <input type="hidden" id="id_doctor" value="{{\Illuminate\Support\Facades\Auth::user()->doctor->id}}" >
+     <input type="hidden" id="medical_check_ups_id" name="medical_check_ups_id">
     <div class="col-lg-auto d-inline-block mb-3 mt-3 ">
         <a id="submit-all" href="#" class="btn btn-primary">Simpan semua data</a>
     </div>
@@ -30,7 +31,9 @@
                     <div class="tab-content">
                       <div class="tab-pane fade active show" id="tabs-profile-7">
                         <label class="form-label">Pilih Pegawai</label>
-                         <select name="id_employee" id="select-employee" class="form-select mb-3"></select>
+                         <select name="id_employee" id="select-employee" class="form-select mb-3">
+
+                         </select>
                         <div class="card">
                             <div class="card-header">
                               <h3 class="card-title">Profile pegawai</h3>
@@ -176,9 +179,13 @@
             let pemeriksaanData = {};
             fetchAllEmployee()
 
+
             $('#select-employee').on('change', function(){
             let employeeId = $(this).val();
             fetchGetEmployeeById(employeeId);
+             let selectedOption = $(this).find('option:selected');
+                let medicalCheckUpId = selectedOption.data('mcuid');
+                $('#medical_check_ups_id').val(medicalCheckUpId);
             });
 
             // Event listener for adding pemeriksaan minor
@@ -204,11 +211,12 @@
 
 
            // Submit all data
-            $('#submit-all').click(function (e){
+            $('#submit-all').click(function (e) {
                 e.preventDefault();
-                if(confirm('Apakah anda yakin ingin menyimpan data medical check up semuanya ?')){
+                if (confirm('Apakah anda yakin ingin menyimpan data medical check up semuanya ?')) {
                     let id_employee = $('#select-employee').val();
                     let id_doctor = $('#id_doctor').val();
+                    let medical_check_ups_id = $('#medical_check_ups_id').val(); // Adjust how you retrieve medical_check_ups_id
 
                     // Convert pemeriksaanData to array of objects
                     let pemeriksaanArray = Object.keys(pemeriksaanData).map(id => ({
@@ -224,13 +232,15 @@
                         data: JSON.stringify({
                             id_employee: id_employee,
                             id_doctor: id_doctor,
+                            medical_check_ups_id: medical_check_ups_id, // Ensure this is correct
                             pemeriksaanData: pemeriksaanArray
                         }),
                         success: function(response) {
-                            if(response.status === 'success') {
+                            if (response.status === 'success') {
                                 alert('Data submitted successfully');
                                 $('#list-pemeriksaan-minor').empty();
                                 pemeriksaanData = {}; // Reset the data object
+                                window.location.href = '{{route('medical-check-up.index')}}'
                             } else {
                                 alert('Error: ' + response.message);
                             }
@@ -242,6 +252,7 @@
                     });
                 }
             });
+
             // Fetch data for pemeriksaan minor by ID
             function fetchGetPemeriksaanMinorById(minorId) {
                 $.ajax({
@@ -303,7 +314,7 @@
                                 selectEmployee.html('<option value="">--Pilih Pegawai--</option>')
                                 $.each(response.data, function (key, employee) {
                                     selectEmployee.append(
-                                        `<option value="${employee.id}">${employee.name}</option>`
+                                        `<option value="${employee.id}" data-mcuid="${employee.medical_check_up_id}">${employee.name}</option>`
                                     )
                                 });
                             }else {

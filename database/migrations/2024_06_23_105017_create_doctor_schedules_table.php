@@ -16,12 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('doctor_id');
             $table->foreign('doctor_id')->references('id')->on('doctors')->ondelete('cascade');
             $table->string('date');
-            $table->time('start_time');
-            $table->time('end_time');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
             $table->enum('status', ['available', 'reserved', 'cancelled'])->default('available');
             $table->unsignedBigInteger('employee_id')->nullable();
             $table->foreign('employee_id')->references('id')->on('employees')->ondelete('set null');
             $table->timestamps();
+            $table->unique(['doctor_id', 'start_time', 'end_time']);
         });
     }
 

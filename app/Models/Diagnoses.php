@@ -17,7 +17,7 @@ class Diagnoses extends Model
   public function medicines()
     {
         return $this->belongsToMany(Medicine::class, 'detail_diagnosas', 'id_diagnosis', 'id_medicine')
-                    ->withPivot('dosis_obat')
+                    ->withPivot('dosis_obat','jumlah')
                     ->withTimestamps();
     }
      public function employee()

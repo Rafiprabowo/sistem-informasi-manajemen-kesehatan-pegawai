@@ -5,7 +5,7 @@
 @section('content')
     <div class="col-12">
         <div class="d-flex mb-3">
-            <a href="/admin/" class="btn btn-secondary">Kembali</a>
+            <a href="/apoteker/" class="btn btn-secondary">Kembali</a>
             <a href="{{ route('apotekers.create') }}" class="btn btn-primary mx-3">Tambah apoteker</a>
         </div>
         @if(session()->has('success'))
@@ -25,14 +25,32 @@
             </div>
         @endif
         <div class="card">
-
-
+            <div class="card-body border-bottom py-3">
+                <div class="d-flex">
+                    <div class="text-muted">
+                        Show
+                        <div class="mx-2 d-inline-block">
+                            <input type="text" class="form-control form-control-sm" value="{{$pharmacists->total()}}"
+                                   size="3" aria-label="Invoices count">
+                        </div>
+                        entries
+                    </div>
+                    <x-name-search
+                        action="{{ route('pharmacies.search') }}"
+                        placeholder="cari nama"
+                        buttonText="Cari"
+                    />
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-vcenter card-table">
                     <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama</th>
+                        <th>Nama Depan</th>
+                        <th>Nama Belakang</th>
+                        <th>Username</th>
+                        <th>Email</th>
                         <th>Jenis Kelamin</th>
                         <th>Alamat</th>
                         <th>No Hp</th>
@@ -43,7 +61,10 @@
                     @forelse($pharmacists as $pharmacist)
                         <tr>
                             <td>{{ $loop->iteration + $i }}</td>
-                            <td>{{ $pharmacist->user->first_name }} {{ $pharmacist->user->last_name }}</td>
+                            <td>{{ $pharmacist->user->first_name }}</td>
+                            <td>{{ $pharmacist->user->last_name }}</td>
+                            <td>{{ $pharmacist->user->username }}</td>
+                            <td>{{ $pharmacist->user->email }}</td>
                             <td>{{$pharmacist->gender}}</td>
                             <td>{{ $pharmacist->user->address }}</td>
                             <td>{{ $pharmacist->user->phone }}</td>

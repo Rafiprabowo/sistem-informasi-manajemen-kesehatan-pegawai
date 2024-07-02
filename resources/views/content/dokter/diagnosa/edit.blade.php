@@ -140,8 +140,9 @@
                                             <th>Nama Obat</th>
                                             <th>Kategori Obat</th>
                                             <th>Deskripsi Obat</th>
-                                            <th>Jumlah</th>
+                                            <th>Satuan</th>
                                             <th>Dosis</th>
+                                            <th>Jumlah</th>
                                             <th>Proses</th>
                                         </tr>
                                       </thead>
@@ -168,6 +169,7 @@
                                     <th>Nama Obat</th>
                                     <th>Kategori Obat</th>
                                     <th>Deskripsi Obat</th>
+                                    <th>Satuan</th>
                                     <th>Stok Obat</th>
                                     <th>Jumlah</th>
                                     <th></th>
@@ -180,6 +182,7 @@
                                         <td>{{$medicine->name}}</td>
                                         <td>{{$medicine->categories->name}}</td>
                                         <td>{{$medicine->description}}</td>
+                                        <td>{{$medicine->satuan}}</td>
                                         <td>{{$medicine->stock}}</td>
                                         <td>
                                             <input type="number" class="form-control jumlah-obat" data-id="{{$medicine->id}}" data-stock="{{$medicine->stock}}" min="1" max="{{$medicine->stock}}">
@@ -309,47 +312,54 @@
     });
 
     function fetchObatById(obatID, jumlahObat) {
-        $.ajax({
-            url: '/api/fetch-medicine/' + obatID,
-            type: "GET",
-            dataType: "json",
-            success: function (response) {
-                if (response.status === 'success' && response.data) {
-                    let listMedicines = $('#list-medicines');
-                    if (listMedicines.find(`tr[data-id="${response.data.id}"]`).length === 0) {
-                        listMedicines.append(
-                            `<tr data-id="${response.data.id}">
-                                <td>${response.data.id}</td>
-                                <td>${response.data.name}</td>
-                                <td>${response.data.category}</td>
-                                <td>${response.data.description}</td>
-                                <td>${jumlahObat}</td>
-                                <td>
-                                    <input type="text" id="dosis-${response.data.id}" class="form-control dosis-obat" data-id="${response.data.id}">
-                                </td>
-                                <td>
-                                    <a data-id="${response.data.id}" class="remove-medicine btn btn-danger">Hapus</a>
-                                </td>
-                            </tr>`
-                        );
+    $.ajax({
+        url: '/api/fetch-medicine/' + obatID,
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+            if (response.status === 'success' && response.data) {
+                // Define listMedicines before using it
+                let listMedicines = $('#list-medicines');
 
-                        dataResep[response.data.id] = {
-                            jumlah: jumlahObat,
-                            dosis: ''
-                        };
-                    } else {
-                        alert('Obat sudah ada di daftar.');
-                    }
+                // Check if the medicine already exists in the list
+                if (listMedicines.find(`tr[data-id="${response.data.id}"]`).length === 0) {
+                    // Append the new row to the table
+                    listMedicines.append(
+                        `<tr data-id="${response.data.id}">
+                            <td>${response.data.id}</td>
+                            <td>${response.data.name}</td>
+                            <td>${response.data.category}</td>
+                            <td>${response.data.description}</td>
+                            <td>${response.data.satuan}</td>
+                            <td>
+                                <input type="text" id="dosis-${response.data.id}" class="form-control dosis-obat" data-id="${response.data.id}">
+                            </td>
+                            <td>${jumlahObat}</td>
+                            <td>
+                                <a data-id="${response.data.id}" class="remove-medicine btn btn-danger">Hapus</a>
+                            </td>
+                        </tr>`
+                    );
+
+                    // Store data in dataResep object
+                    dataResep[response.data.id] = {
+                        jumlah: jumlahObat,
+                        dosis: ''
+                    };
                 } else {
-                    alert('Error: ' + response.message);
+                    alert('Obat sudah ada di daftar.');
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error('Request failed:', status, error);
-                alert('An error occurred. Check the console for details.');
+            } else {
+                alert('Error: ' + response.message);
             }
-        });
-    }
+        },
+        error: function (xhr, status, error) {
+            console.error('Request failed:', status, error);
+            alert('An error occurred. Check the console for details.');
+        }
+    });
+}
+
 });
 
     </script>

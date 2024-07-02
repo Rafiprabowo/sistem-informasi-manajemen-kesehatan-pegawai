@@ -35,7 +35,15 @@ class MedicalCheckUpController extends Controller
     {
         //
         $pemeriksaanMinors = PemeriksaanMinor::all();
-        return view('content.dokter.medical-check-up.create', compact('pemeriksaanMinors'));
+        $doctorId = Auth::user()->doctor->id;
+
+        $medicalCheckUps = MedicalCheckUp::with('employee.user')
+            ->where('id_doctor', $doctorId)
+            ->where('status', 0)
+            ->get(); // tambahkan get() untuk mengeksekusi query
+
+        return view('content.dokter.medical-check-up.create', compact('pemeriksaanMinors', 'medicalCheckUps'));
+
     }
 
     /**
@@ -52,6 +60,12 @@ class MedicalCheckUpController extends Controller
     public function show(string $id)
     {
         //
+         $medicalCheckUps = MedicalCheckUp::with(['pemeriksaanMinors' => function ($query) {
+            $query->with(['nilaiRujukan', 'pemeriksaanMajor']);
+        }])->with('employee.user')->findOrFail($id);
+         $user = Auth::user()->load('doctor');
+        return view('content.dokter.medical-check-up.detail', compact('medicalCheckUps', 'user'));
+
     }
 
     /**
@@ -70,6 +84,25 @@ class MedicalCheckUpController extends Controller
     public function update(Request $request, string $id)
     {
         //
+    }
+    public function storeMcu(Request $request){
+        $request->validate([
+            'id_employee' => 'required|exists:employees,id',
+            'id_doctor' => 'required|exists:doctors,id',
+            'date' => 'required|date|after_or_equal:today',
+        ]);
+
+        MedicalCheckUp::create($request->all());
+        return redirect()->route('jadwalCheckUpPegawai')->with('success', 'Data berhasil ditambah');
+    }
+    public function updateMcu(Request $request, string $id){
+        $request->validate([
+            'id_employee' => 'required|exists:employees,id',
+            'id_doctor' => 'required|exists:doctors,id',
+            'date' => 'required|date',
+        ]);
+        MedicalCheckUp::find($id)->update($request->all());
+        return redirect()->route('jadwalCheckUpPegawai')->with('success', 'Data berhasil diubah');
     }
 
     /**
@@ -95,6 +128,7 @@ class MedicalCheckUpController extends Controller
     $validator = Validator::make($request->all(), [
         'id_employee' => 'required|exists:employees,id',
         'id_doctor' => 'required|exists:doctors,id',
+        'medical_check_ups_id' => 'required|exists:medical_check_ups,id', // Ensure this matches your database table name
         'pemeriksaanData' => 'required|array|min:1',
         'pemeriksaanData.*.id' => 'required|exists:pemeriksaan_minors,id',
         'pemeriksaanData.*.nilai' => 'required|string' // Adjust based on your validation requirements
@@ -114,21 +148,27 @@ class MedicalCheckUpController extends Controller
     // Start a transaction to ensure atomicity
     DB::beginTransaction();
     try {
-        // Create a new medical check-up record
-        $medicalCheckUp = MedicalCheckUp::create([
-            'id_employee' => $request->id_employee,
-            'id_doctor' => $request->id_doctor,
-            'date' => now() // Use the current date or provide a date field in the request
+        // Retrieve the medical check-up record
+        $medicalCheckUp = MedicalCheckUp::findOrFail($request->medical_check_ups_id);
+
+        // Update the medical check-up record
+        $medicalCheckUp->update([
+            'date' => now(),
+            'status' => 1,
         ]);
 
-        // Insert each pemeriksaan minor into detail_pemeriksaans
-        foreach ($uniquePemeriksaanData as $pemeriksaan) {
-            DetailPemeriksaan::create([
-                'id_medical_check_up' => $medicalCheckUp->id,
-                'id_pemeriksaan_minor' => $pemeriksaan['id'],
-                'result' => $pemeriksaan['nilai'] // Use the corresponding result
-            ]);
+            foreach ($uniquePemeriksaanData as $pemeriksaan) {
+            DetailPemeriksaan::updateOrCreate(
+                [
+                    'id_medical_check_up' => $medicalCheckUp->id,
+                    'id_pemeriksaan_minor' => $pemeriksaan['id']
+                ],
+                [
+                    'result' => $pemeriksaan['nilai']
+                ]
+            );
         }
+
 
         // Commit the transaction
         DB::commit();
@@ -148,6 +188,7 @@ class MedicalCheckUpController extends Controller
         ], 500);
     }
 }
+
 
 
 

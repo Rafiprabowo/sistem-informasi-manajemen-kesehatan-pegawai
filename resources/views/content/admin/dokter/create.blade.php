@@ -4,6 +4,15 @@
 @endsection
 @section('content')
     <div class="col-md-6">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <a href="{{route('dokters.index')}}" class="btn btn-secondary mb-3">Kembali</a>
               <form class="card" action="{{route('dokters.store')}}" method="post">
                   @csrf

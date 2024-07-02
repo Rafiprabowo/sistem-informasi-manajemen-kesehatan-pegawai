@@ -30,6 +30,14 @@
                        class="form-control" required>
             </div>
             <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" value="{{$dokter->user->username}}" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" value="{{$dokter->user->email}}" id="email" name="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
                 <label class="form-label">Alamat</label>
                 <input type="text" value="{{$dokter->user->address}}" id="address" name="address" class="form-control"
                        required>

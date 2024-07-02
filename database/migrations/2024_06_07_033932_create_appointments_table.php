@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->date('appointment_date');
-            $table->time('appointment_start_time');
-            $table->time('appointment_end_time');
+            $table->dateTime('appointment_start_time');
+            $table->dateTime('appointment_end_time');
             $table->text('note')->nullable();
             $table->text('alergi_obat')->nullable();
-            $table->enum('appointment_type', ['consultation', 'checkup']);
             $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled'])->default('pending');
             $table->timestamps();
         });

@@ -7,10 +7,13 @@ use App\Http\Controllers\DoctorScheduleController;
 use App\Http\Controllers\MedicalCheckUpController;
 use App\Http\Controllers\MedicineController;
 use App\Models\Appointment;
+use App\Models\Doctor;
 use App\Models\Employee;
+use App\Models\MedicalCheckUp;
 use App\Models\Medicine;
 use App\Models\MedicineCategories;
 use App\Models\Pharmacist;
+use Faker\Provider\Medical;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DoctorController;
@@ -29,7 +32,9 @@ use App\Http\Controllers\PemeriksaanMinorController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::get('/test', function () {
+    return view('content.test.create');
+});
 // Di web.php
 Route::view('/unauthorized', 'errors.unauthorized')->name('unauthorized');
 Route::get('/', function (){
@@ -80,37 +85,37 @@ Route::middleware(['auth','role:dokter'])->group(function () {
     })->name('appointment.search');
         Route::post('/diagnosa/search', function (\Illuminate\Http\Request $request) {
         $query = $request->input('search');
-    $date = $request->input('date');
+        $date = $request->input('date');
 
-    // Ambil pengguna yang sedang login dan relasi dokter
-    $user = Auth::user();
-    $doctor = $user->doctor;
+        // Ambil pengguna yang sedang login dan relasi dokter
+        $user = Auth::user();
+        $doctor = $user->doctor;
 
-    // Ambil query appointments yang dimiliki dokter
-    $appointmentsQuery = \App\Models\Appointment::query()
-        ->where('doctor_id', $doctor->id)
-        ->with(['employee.user', 'diagnoses']);
+        // Ambil query appointments yang dimiliki dokter
+        $appointmentsQuery = \App\Models\Appointment::query()
+            ->where('doctor_id', $doctor->id)
+            ->with(['employee.user', 'diagnoses']);
 
-    // Filter berdasarkan tanggal appointment
-    if (!empty($date)) {
-        $appointmentsQuery->whereDate('appointment_date', $date);
-    }
+        // Filter berdasarkan tanggal appointment
+        if (!empty($date)) {
+            $appointmentsQuery->whereDate('appointment_date', $date);
+        }
 
-    // Filter berdasarkan nama pegawai melalui relasi diagnoses
-    if (!empty($query)) {
-        $appointmentsQuery->whereHas('diagnoses', function($q) use ($query) {
-            $q->whereHas('employee.user', function ($q) use ($query) {
-                $q->where('first_name', 'like', '%' . $query . '%')
-                  ->orWhere('last_name', 'like', '%' . $query . '%');
+        // Filter berdasarkan nama pegawai melalui relasi diagnoses
+        if (!empty($query)) {
+            $appointmentsQuery->whereHas('diagnoses', function($q) use ($query) {
+                $q->whereHas('employee.user', function ($q) use ($query) {
+                    $q->where('first_name', 'like', '%' . $query . '%')
+                      ->orWhere('last_name', 'like', '%' . $query . '%');
+                });
             });
-        });
-    }
+        }
 
-    // Dapatkan hasil pencarian dengan paginasi
-    $appointments = $appointmentsQuery->paginate(5);
-    return view('content.dokter.diagnosa.index', compact('user', 'appointments'));
+        // Dapatkan hasil pencarian dengan paginasi
+        $appointments = $appointmentsQuery->paginate(5);
+        return view('content.dokter.diagnosa.index', compact('user', 'appointments'));
 
-        })->name('diagnosa.search');
+            })->name('diagnosa.search');
         Route::post('/medical-check-up/search', function (\Illuminate\Http\Request $request) {
     $query = $request->input('search');
     $date = $request->input('date');
@@ -144,7 +149,13 @@ Route::middleware(['auth','role:dokter'])->group(function () {
     return view('content.dokter.medical-check-up.index', compact('medicalCheckUps'));
 
         })->name('medical-check-up.search');
-
+        Route::get('/detail/diagnosa/{id}', function ($id) {
+          $user = Auth::user();
+          $appointment = $user->doctor->appointments()
+              ->with( 'diagnoses.medicines', 'employee.user')
+            ->find($id);
+          return view('content.dokter.diagnosa.detail', compact('user', 'appointment'));
+        })->name('detail.diagnosa');
     });
     });
 Route::middleware(['auth', 'role:pegawai'])->group(function () {
@@ -156,6 +167,7 @@ Route::middleware(['auth', 'role:pegawai'])->group(function () {
         Route::get('/my-appointment', [PegawaiController::class, 'myAppointment'])->name('pegawai.myAppointment');
         Route::get('/my-diagnosis', [PegawaiController::class, 'myDiagnosis'])->name('pegawai.myDiagnosis');
         Route::get('/my-diagnosis/{id}', [PegawaiController::class, 'myDiagnosisDetail'])->name('pegawai.myDiagnosisDetail');
+        Route::get('/my-jadwal-check-up', [PegawaiController::class, 'myJadwal'])->name('pegawai.myJadwal');
         Route::get('/my-medical-check-up', [PegawaiController::class, 'myMedicalCheckUp'])->name('pegawai.myMedicalCheckUp');
         Route::post('/appointmentPegawai/search', function (\Illuminate\Http\Request $request) {
             $query = $request->input('search');
@@ -175,7 +187,7 @@ Route::middleware(['auth', 'role:pegawai'])->group(function () {
             return view('content.appointment.pegawai.index', compact('user', 'appointments'));
         })->name('appointmentPegawai.search');
         Route::post('/diagnosaPegawai/search', function (\Illuminate\Http\Request $request) {
-            $query = $request->input('search');
+            $query = $request->input('name');
             $date = $request->input('date');
             $user = Auth::user();
             $appointmentsQuery = $user->employee->appointments()
@@ -194,21 +206,112 @@ Route::middleware(['auth', 'role:pegawai'])->group(function () {
             $appointments = $appointmentsQuery->paginate(5);
             return view('content.pegawai.diagnosa.index', compact('user', 'appointments'));
         })->name('diagnosaPegawai.search');
-    });
+        Route::get('/my-medical-check-up/{id}', [PegawaiController::class, 'showMyCheckUp'])->name('pegawai.showMyCheckUp');
+       });
     });
 Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::prefix('/admin')->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
         Route::get('/profile', [AdminController::class, 'profile'])->name('admin.profile');
         Route::post('/profile', [AdminController::class, 'updateProfile']);
-        //crud user
         Route::resource('/dokters', \App\Http\Controllers\AdminDokterController::class);
         Route::resource('/apotekers', \App\Http\Controllers\AdminApotekerController::class);
         Route::resource('/pegawais', \App\Http\Controllers\AdminPegawaiController::class);
         Route::resource('/admins', \App\Http\Controllers\AdminAdminController::class);
-        Route::get('/role-user', [AdminController::class, 'changeRole'])->name('admin.changeRole');
-        Route::post('/role-user', [AdminController::class, 'updateRole'])->name('admin.updateRole');
-    });
+        Route::get('/buat/check-up/pegawai', [AdminController::class,'buatCheckUpPegawai'])->name('buatCheckUpPegawai');
+        Route::post('/buat/check-up/pegawai', [MedicalCheckUpController::class, 'storeMcu'])->name('storeMcu');
+        Route::get('/jadwal-check-up/pegawai', function (){
+            $mcus = MedicalCheckUp::with(['doctor.user', 'doctor.speciality', 'employee.user'])->paginate(10);
+            return view('content.admin.mcu.index', compact('mcus'));
+        })->name('jadwalCheckUpPegawai');
+        Route::get('/edit/check-up/pegawai/{id}', function ($id) {
+            $mcu = MedicalCheckUp::with(['doctor.user', 'doctor.speciality', 'employee.user'])->findOrFail($id);
+            return view('content.admin.mcu.edit', compact('mcu'));
+        })->name('editCheckUpPegawai');
+        Route::put('/edit/check-up/pegawai/{id}', [MedicalCheckUpController::class,'updateMcu'])->name('updateCheckUpPegawai');
+        Route::post('/admins/search', function (\Illuminate\Http\Request $request) {
+            $search = $request->input('name');
+
+            // Bangun query dengan whereHas dan with
+            $query = \App\Models\Admin::whereHas('user', function ($query) use ($search) {
+                if (!empty($search)) {
+                    $query->where('first_name', 'LIKE', "%{$search}%")
+                          ->orWhere('last_name', 'LIKE', "%{$search}%");
+                }
+            })->with('user'); // Eager loading untuk user
+
+            // Lakukan paginasi
+            $admins = $query->paginate(5);
+
+            // Tampilkan view dengan hasil pencarian dan paginasi
+            return view('content.admin.admin.index', compact('admins'))
+                ->with('i', ($request->input('page', 1) - 1) * 5);
+        })->name('admins.search');
+        Route::post('/pegawais/search', function (\Illuminate\Http\Request $request) {
+            $search = $request->input('name');
+            $query = Employee::whereHas('user', function ($query) use ($search) {
+                if (!empty($search)) {
+                    $query->where('first_name', 'LIKE', "%{$search}%")
+                        ->orWhere('last_name', 'LIKE', "%{$search}%");
+                }
+            })->with('user');
+
+            $employees = $query->paginate(5);
+            return view('content.admin.pegawai.index', compact('employees'))
+            ->with('i', (request()->input('page', 1) - 1) * 5);
+
+        })->name('pegawais.search');
+        Route::post('/pharmacies/search', function (\Illuminate\Http\Request $request) {
+            $search = $request->input('name');
+            $query = Pharmacist::whereHas('user', function ($query) use ($search) {
+                if (!empty($search)) {
+                    $query->where('first_name', 'LIKE', "%{$search}%")
+                        ->orWhere('last_name', 'LIKE', "%{$search}%");
+                }
+            })->with('user');
+            $pharmacists = $query->paginate(5);
+            return view('content.admin.apoteker.index', compact('pharmacists'))
+            ->with('i', (request()->input('page', 1) - 1) * 5);
+        })->name('pharmacies.search');
+        Route::post('/doctors/search', function (\Illuminate\Http\Request $request) {
+            $search = $request->input('name');
+
+            // Bangun query dengan whereHas dan with
+            $query = Doctor::whereHas('user', function ($query) use ($search) {
+                if (!empty($search)) {
+                    $query->where('first_name', 'LIKE', "%{$search}%")
+                          ->orWhere('last_name', 'LIKE', "%{$search}%");
+                }
+            })->with('user');
+
+            // Lakukan paginasi
+            $doctors = $query->paginate(5);
+
+            // Tampilkan view dengan hasil pencarian dan paginasi
+            return view('content.admin.dokter.index', compact('doctors'));
+        })->name('doctors.search');
+        Route::post('/mcus/search', function (\Illuminate\Http\Request $request) {
+            $search = $request->input('name');
+
+                $query = MedicalCheckUp::whereHas('doctor.user', function ($query) use ($search) {
+                    if (!empty($search)) {
+                        $query->where('first_name', 'LIKE', "%{$search}%")
+                              ->orWhere('last_name', 'LIKE', "%{$search}%");
+                    }
+                })->orWhereHas('employee.user', function ($query) use ($search) {
+                    if (!empty($search)) {
+                        $query->where('first_name', 'LIKE', "%{$search}%")
+                              ->orWhere('last_name', 'LIKE', "%{$search}%");
+                    }
+                })->with('doctor.user', 'employee.user');
+
+                // Jika perlu, tambahkan dengan('doctor.user') dan with('employee.user') untuk mengambil relasi
+                $mcus = $query->paginate(10);
+
+                 return view('content.admin.mcu.index', compact('mcus'));
+
+        })->name('mcus.search');
+        });
     });
 Route::middleware(['auth', 'role:apoteker'])->group(function () {
         Route::prefix('/apoteker')->group(function () {
@@ -241,19 +344,30 @@ Route::middleware('auth')->group(function () {
      * /api/fetch-employee/{id}
      */
     Route::get('/api/fetch-get-all-employee',function (){
-        $employees = Employee::all()->load('user');
-        $formattedEmployees = $employees->map(function($employee){
-           return [
-             'id' => $employee->id,
-             'name' => $employee->user->first_name.' '.$employee->user->last_name,
-             'address' => $employee->user->address,
-             'phone' => $employee->user->phone,
-             'position' => $employee->position,
-             'gender' => $employee->gender,
-             'age' => $employee->age
-           ];
-        });
-        return response()->json(['success' => true, 'data' => $formattedEmployees]);
+         try {
+            $doctorId = Auth::user()->doctor->id;
+               $medicalCheckUps = MedicalCheckUp::where('id_doctor', $doctorId)
+            ->where('status', 0)
+            ->with('employee.user')
+            ->get();
+
+            $formattedEmployees = $medicalCheckUps->map(function ($medicalCheckUp) {
+                return [
+                    'medical_check_up_id' => $medicalCheckUp->id,
+                    'id' => $medicalCheckUp->employee->id,
+                    'name' => $medicalCheckUp->employee->user->first_name . ' ' . $medicalCheckUp->employee->user->last_name,
+                    'address' => $medicalCheckUp->employee->user->address,
+                    'phone' => $medicalCheckUp->employee->user->phone,
+                    'position' => $medicalCheckUp->employee->position,
+                    'gender' => $medicalCheckUp->employee->gender,
+                    'age' => $medicalCheckUp->employee->age,
+                ];
+            });
+
+            return response()->json(['success' => true, 'data' => $formattedEmployees]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     })->name('fetch-all-employee');
     Route::get('/api/fetch-employee/{id}', function ($id) {
         // Find the employee
@@ -299,6 +413,10 @@ Route::middleware('auth')->group(function () {
                 ->where('available_time', '>=', $now)
             ->get(['doctor_id', 'available_time']);
         return response()->json(['schedules' => $schedules]);
+    });
+    Route::get('api/get-doctors', function (\Illuminate\Http\Request $request) {
+        $doctors = Doctor::with(['user', 'speciality'])->get();
+        return response()->json(['success' => true, 'data' => $doctors]);
     });
 
     /**

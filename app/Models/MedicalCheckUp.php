@@ -10,13 +10,7 @@ class MedicalCheckUp extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    protected $casts = [
-      'date' => 'date',
-    ];
 
-    public function getDateAttribute($value){
-        return Carbon::parse($value)->format('d-m-Y');
-    }
 
     // Relasi ke DetailPemeriksaan
     public function pemeriksaanMinors()

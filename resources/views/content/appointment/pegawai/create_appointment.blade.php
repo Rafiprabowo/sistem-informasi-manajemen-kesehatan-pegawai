@@ -31,7 +31,7 @@
                 </div>
             @endif
               <div class="row row-cards">
-                <div class="col-12">
+                <div class="col-8">
                   <form class="card" id="createAppointmentForm" action="{{route('appointment.store')}}" method="post">
                       @csrf
                     <div class="card-body">
@@ -118,7 +118,7 @@
                         </div>
                           <hr>
                             <h3>Detail appoitnment</h3>
-
+                            <small class="form-hint mb-3 text-red">Durasi setiap appointment adalah 20 menit</small>
                          <div class="col-md-4">
                 <div class="mb-3">
                     <label class="form-label">Pilih Berdasarkan Spesialisasi</label>
@@ -153,16 +153,6 @@
                 </div>
             </div>
             <!-- Appointment Type and Notes -->
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="form-label">Kategori Appointment</label>
-                    <select class="form-select" id="appointment_type" name="appointment_type">
-                        <option value="">Pilih tipe appointment</option>
-                        <option value="consultation">Konsultasi</option>
-                        <option value="checkup">Checkup</option>
-                    </select>
-                </div>
-            </div>
             <div class="col-md-12">
                 <div class="mb-3 mb-0">
                     <label class="form-label">Catatan Appointment</label>
@@ -227,7 +217,7 @@
                 // Redirect after 2 seconds
                 setTimeout(function() {
                     window.location.href = '{{route('pegawai.myAppointment')}}'; // Ganti dengan URL tujuan
-                }, 2000);
+                }, 1000);
             } else {
                 alert('Failed to create appointment');
             }
@@ -299,7 +289,7 @@
                         selectSchedule.html('<option value="">-- Pilih jadwal --</option>');
 
                         $.each(response.data, function (key, schedule) {
-                            selectSchedule.append('<option value="' + schedule.id + '">' + schedule.date + ' ' + schedule.start_time + ' ' + schedule.end_time + '</option>');
+                            selectSchedule.append('<option value="' + schedule.id + '">' + schedule.start_time +'</option>');
                         });
                     } else {
                         alert('Jadwal Not found');

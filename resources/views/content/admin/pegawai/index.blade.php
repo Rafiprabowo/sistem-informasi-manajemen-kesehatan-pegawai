@@ -5,7 +5,7 @@
 @section('content')
     <div class="col-12">
         <div class="d-flex mb-3">
-            <a href="/admin/" class="btn btn-secondary">Kembali</a>
+            <a href="/pegawai/" class="btn btn-secondary">Kembali</a>
             <a href="{{ route('pegawais.create') }}" class="btn btn-primary mx-3">Tambah pegawai</a>
         </div>
         @if(session()->has('success'))
@@ -25,17 +25,36 @@
             </div>
         @endif
         <div class="card">
+            <div class="card-body border-bottom py-3">
+                <div class="d-flex">
+                    <div class="text-muted">
+                        Show
+                        <div class="mx-2 d-inline-block">
+                            <input type="text" class="form-control form-control-sm" value="{{$employees->total()}}"
+                                   size="3" aria-label="Invoices count">
+                        </div>
+                        entries
+                    </div>
+                    <x-name-search
+                        action="{{ route('pegawais.search') }}"
+                        placeholder="cari nama"
+                        buttonText="Cari"
+                    />
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-vcenter card-table">
                     <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama</th>
-                        <th>Jabatan</th>
+                        <th>Nama Depan</th>
+                        <th>Nama Belakang</th>
+                        <th>Username</th>
+                        <th>Email</th>
                         <th>Alamat</th>
                         <th>No Hp</th>
                         <th>Jenis Kelamin</th>
-                        <th>Kontak darurat</th>
+                        <th>Jabatan</th>
                         <th>Aksi</th>
                     </tr>
                     </thead>
@@ -43,19 +62,15 @@
                     @forelse($employees as $employee)
                         <tr>
                             <td>{{ $loop->iteration + $i }}</td>
-                            <td>{{ $employee->user->first_name }} {{ $employee->user->last_name }}</td>
-                            <td>{{ $employee->position }}</td>
+                            <td>{{ $employee->user->first_name }} </td>
+                            <td>{{ $employee->user->last_name }}</td>
+                            <td>{{$employee->user->username}}</td>
+                            <td>{{$employee->user->email}}</td>
                             <td>{{ $employee->user->address }}</td>
                             <td>{{ $employee->user->phone }}</td>
                             <td>{{ $employee->gender }}</td>
-                            <td>
-                                <ul>
-                                    <li>Nama : {{$employee->emergency_contact_name}}</li>
-                                    <li>Alamat : {{$employee->emergency_contact_address}}</li>
-                                    <li>No Hp : {{$employee->emergency_contact_number}}</li>
-                                    <li>Hubungan : {{$employee->emergency_contact_relationship}}</li>
-                                </ul>
-                            </td>
+                            <td>{{ $employee->position }}</td>
+
                             <td>
                                 <div class="d-flex">
                                     <div>

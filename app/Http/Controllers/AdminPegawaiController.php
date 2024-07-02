@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Doctor;
 use App\Models\Employee;
 use App\Models\Pharmacist;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AdminPegawaiController extends Controller
 {
@@ -104,41 +107,66 @@ class AdminPegawaiController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        //
-        $request->validate([
-            'first_name' => 'required|string|max:255',
+{
+    // Validasi input
+    $request->validate([
+        'first_name' => 'required|string|max:255',
         'last_name' => 'required|string|max:255',
+        'username' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('users', 'username')->ignore($id),
+        ],
+        'email' => [
+            'required',
+            'string',
+            'email',
+            'max:255',
+            Rule::unique('users', 'email')->ignore($id),
+        ],
+        'address' => 'required|string|max:255',
+        'phone' => 'required|string|max:15',
         'position' => 'required|string|max:255',
         'date_of_birth' => 'required|date',
         'gender' => 'required|in:L,P',
-        'address' => 'required|string|max:255',
-        'phone' => 'required|string|max:15',
         'medical_history' => 'nullable|string',
         'emergency_contact_name' => 'required|string|max:255',
         'emergency_contact_number' => 'required|string|max:15',
         'emergency_contact_relationship' => 'required|string|max:255',
         'emergency_contact_address' => 'required|string|max:255',
     ]);
-        $user = User::find($id);
-        $user->update([
-            'first_name' =>$request->first_name,
-             'last_name' => $request->last_name,
-             'address' => $request->address,
-            'phone' => $request->phone,
+
+    try {
+        DB::beginTransaction();
+
+        // Update User
+        $user = User::with('employee')->findOrFail($id);
+        $userData = $request->only(['first_name', 'last_name', 'username', 'email', 'address', 'phone']);
+        $user->update($userData);
+
+        // Update Employee
+        $employee = $user->employee()->firstOrFail();
+        $employeeData = $request->only([
+            'position',
+            'date_of_birth',
+            'gender',
+            'medical_history',
+            'emergency_contact_name',
+            'emergency_contact_number',
+            'emergency_contact_relationship',
+            'emergency_contact_address'
         ]);
-        Employee::where('user_id', $user->id)->update([
-            'position' => $request->position,
-            'date_of_birth' => $request->date_of_birth,
-            'gender' => $request->gender,
-            'medical_history' => $request->medical_history,
-            'emergency_contact_name' => $request->emergency_contact_name,
-            'emergency_contact_number' => $request->emergency_contact_number,
-            'emergency_contact_relationship' => $request->emergency_contact_relationship,
-            'emergency_contact_address' => $request->emergency_contact_address,
-        ]);
+        $employee->update($employeeData);
+
+        DB::commit();
         return redirect()->route('pegawais.index')->with('success', 'Employee updated successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->withErrors(['error' => 'An error occurred while updating the employee.']);
     }
+}
+
 
     /**
      * Remove the specified resource from storage.

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('description');
             $table->integer('stock');
+            $table->string('satuan');
             $table->foreignId('category_id');
             $table->timestamps();
         });

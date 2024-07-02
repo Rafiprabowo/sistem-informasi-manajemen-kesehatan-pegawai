@@ -53,7 +53,6 @@ public function store(Request $request)
         'employee_id' => 'required|exists:employees,id',
         'doctor_id' => 'required|exists:doctors,id',
         'schedule_id' => 'required|exists:doctor_schedules,id',
-        'appointment_type' => 'required',
         'note' => 'required',
         'alergi_obat' => 'required'
     ]);
@@ -73,7 +72,6 @@ public function store(Request $request)
                 'appointment_date' => $schedule->date,
                 'appointment_start_time' => $schedule->start_time,
                 'appointment_end_time' => $schedule->end_time,
-                'appointment_type' => $validated['appointment_type'],
                 'note' => $validated['note'],
                 'alergi_obat' => $validated['alergi_obat']
             ]);

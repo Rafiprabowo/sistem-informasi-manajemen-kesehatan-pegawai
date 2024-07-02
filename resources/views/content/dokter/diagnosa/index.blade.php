@@ -34,8 +34,7 @@
                         <th>ID</th>
                         <th>Appointment Date</th>
                         <th>Nama Pegawai</th>
-                        <th>Diagnosis</th>
-                        <th>Obat</th>
+                        <th>Hasil Diagnosa</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,21 +44,7 @@
                             <td>{{ $appointment->appointment_date }}</td>
                             <td>{{ $appointment->employee->user->first_name }} {{ $appointment->employee->user->last_name }}</td>
                             <td>
-                                @foreach ($appointment->diagnoses as $diagnosa)
-                                    {{ $diagnosa->diagnosa }}
-                                @endforeach
-                            </td>
-                            <td>
-                                <ul>
-                                    @foreach ($appointment->diagnoses as $diagnosa)
-                                        @foreach ($diagnosa->medicines as $medicine)
-                                             <ul class="list-group">
-                                                 <li class="list-group-item">{{ $medicine->name }}</li>
-                                                 <li class="list-group-item">Dosis : {{$medicine->pivot->dosis_obat}}</li>
-                                             </ul>
-                                        @endforeach
-                                    @endforeach
-                                </ul>
+                                <a href="{{route('detail.diagnosa', $appointment->id)}}">Lihat Detail</a>
                             </td>
                         </tr>
                     @endforeach

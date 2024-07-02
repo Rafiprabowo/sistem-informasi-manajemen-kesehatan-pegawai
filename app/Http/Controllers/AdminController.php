@@ -24,6 +24,12 @@ class AdminController extends Controller
     public function profile(){
         return view('content.admin.profile');
     }
+    public function buatCheckUpPegawai(){
+        $doctors = Doctor::with('user', 'speciality')->get();
+        $employees = Employee::with('user')->get();
+        return view('content.admin.buat_check_up_pegawai', compact('doctors', 'employees'));
+    }
+
     public function updateProfile(Request $request){
         $user = Auth::user();
         $request->validate([

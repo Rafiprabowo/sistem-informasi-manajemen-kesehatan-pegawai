@@ -11,6 +11,7 @@
         <div class="card-header">
             <h3 class="card-title">Hasil Diagnosa</h3>
         </div>
+
         <div class="card-body border-bottom py-3">
             <div class="d-flex">
                 <div class="text-muted">
@@ -20,12 +21,12 @@
                     </div>
                     entries
                 </div>
-                     <x-search-form
-                        action="{{route('diagnosaPegawai.search')}}"
-                        placeholder="Cari nama"
-                        buttonText="Cari"
-                        value="{{ request('search') }}"
-                    />
+                <x-search-diagnosa
+            action="{{route('diagnosaPegawai.search')}}"
+            placeholderNama="Nama dokter"
+            placeholderTanggal="Tanggal diagnosa"
+            buttonText="Cari"
+        />
             </div>
         </div>
         <div class="table-responsive">
@@ -35,9 +36,7 @@
                         <th>ID</th>
                         <th>Appointment Date</th>
                         <th>Nama Dokter</th>
-                        <th>Diagnosis</th>
-                        <th>Obat</th>
-                        <th>Aksi</th>
+                        <th>Status Diagnosa</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,24 +46,12 @@
                             <td>{{ $appointment->appointment_date }}</td>
                             <td>{{ $appointment->doctor->user->first_name }} {{ $appointment->doctor->user->last_name }}.{{$appointment->doctor->speciality->name}}</td>
                             <td>
-                                @foreach ($appointment->diagnoses as $diagnosa)
-                                    {{ $diagnosa->diagnosa }}
-                                @endforeach
-                            </td>
-                            <td>
-                                <ul>
-                                    @foreach ($appointment->diagnoses as $diagnosa)
-                                        @foreach ($diagnosa->medicines as $medicine)
-                                             <ul class="list-group">
-                                                 <li class="list-group-item">{{ $medicine->name }}</li>
-                                                 <li class="list-group-item">Dosis : {{$medicine->pivot->dosis_obat}}</li>
-                                             </ul>
-                                        @endforeach
-                                    @endforeach
-                                </ul>
-                            </td>
-                            <td>
-                                 <a href="{{route('pegawai.myDiagnosisDetail', $appointment->id)}}" class="btn btn-secondary">Lihat Detail</a>
+                                @if($appointment->diagnosed == true)
+                                    <p>Diagnosa Sudah ada</p>
+                                     <a href="{{route('pegawai.myDiagnosisDetail', $appointment->id)}}" class="btn btn-secondary">Lihat Diagnosa</a>
+                                @else
+                                    Maaf belum didiagnosa oleh dokter
+                                @endif
                             </td>
                         </tr>
                     @endforeach

@@ -32,6 +32,7 @@
                                     <th>Nama Dokter</th>
                                     <th>Tanggal MCU</th>
                                     <th>Hasil MCU</th>
+                        <th></th>
                     </tr>
                 </thead>
                   <tbody>
@@ -42,11 +43,7 @@
                                         <td>{{$mcu->doctor->user->first_name}} {{$mcu->doctor->user->last_name}} {{$mcu->doctor->speciality->name}}</td>
                                         <td>{{$mcu->date}}</td>
                                         <td>
-                                            @foreach($mcu->pemeriksaanMinors as $pemeriksaanMinor)
-                                                <ul class="list-group-flush">
-                                                <li class="list-group-item">{{$pemeriksaanMinor->name.' | Hasil : '.$pemeriksaanMinor->pivot->result}}</li>
-                                                </ul>
-                                            @endforeach
+                                            <a href="{{route('pegawai.showMyCheckUp', $mcu->id)}}" class="btn btn-secondary">Lihat Hasil</a>
                                         </td>
                                         <td>
                                         </td>

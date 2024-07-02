@@ -42,6 +42,7 @@ class MedicineController extends Controller
         'description' => 'required|string',
         'category_id' => 'required|exists:medicine_categories,id',
         'stock' => 'required|integer|min:1',
+        'satuan' => 'required|string'
     ]);
 
     // Cek apakah obat dengan nama yang sama sudah ada
@@ -51,7 +52,7 @@ class MedicineController extends Controller
     }
 
     // Buat data obat baru
-    Medicine::create($request->only(['name', 'description', 'category_id', 'stock']));
+    Medicine::create($request->only(['name', 'description', 'category_id', 'stock','satuan']));
 
     return redirect()->route('obat.index')->with('success', 'Obat Berhasil Ditambahkan');
 }
@@ -93,6 +94,7 @@ class MedicineController extends Controller
         'description' => 'required|string',
         'category_id' => 'required|exists:medicine_categories,id',
         'stock' => 'required|integer|min:1',
+        'satuan' => 'required',
     ]);
 
     try {
@@ -104,6 +106,7 @@ class MedicineController extends Controller
         $medicine->description = $request->description;
         $medicine->category_id = $request->category_id;
         $medicine->stock = $request->stock;
+        $medicine->satuan = $request->satuan;
         $medicine->save();
 
         return redirect()->route('obat.index')->with('success', 'Data obat berhasil diupdate');
@@ -142,7 +145,8 @@ public function getMedicineById($id)
         'name' => $medicine->name,
         'category' => $medicine->categories->name,
         'description' => $medicine->description,
-        'stock' => $medicine->stock
+        'stock' => $medicine->stock,
+        'satuan' => $medicine->satuan
     ];
 
     return response()->json(['status' => 'success', 'data' => $formattedMedicine], 200);

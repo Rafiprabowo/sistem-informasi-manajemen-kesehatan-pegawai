@@ -26,14 +26,32 @@
             </div>
         @endif
         <div class="card">
-
-
+            <div class="card-body border-bottom py-3">
+                <div class="d-flex">
+                    <div class="text-muted">
+                        Show
+                        <div class="mx-2 d-inline-block">
+                            <input type="text" class="form-control form-control-sm" value="{{$admins->total()}}"
+                                   size="3" aria-label="Invoices count">
+                        </div>
+                        entries
+                    </div>
+                    <x-name-search
+                        action="{{ route('admins.search') }}"
+                        placeholder="cari nama"
+                        buttonText="Cari"
+                    />
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-vcenter card-table">
                     <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama</th>
+                        <th>Nama Depan</th>
+                        <th>Nama Belakang</th>
+                        <th>Username</th>
+                        <th>Email</th>
                         <th>Jenis Kelamin</th>
                         <th>Alamat</th>
                         <th>No Hp</th>
@@ -44,21 +62,25 @@
                     @forelse($admins as $admin)
                         <tr>
                             <td>{{ $loop->iteration + $i }}</td>
-                            <td>{{ $admin->user->first_name }} {{ $admin->user->last_name }}</td>
+                            <td>{{ $admin->user->first_name }} </td>
+                            <td>{{ $admin->user->last_name }}</td>
+                            <td>{{ $admin->user->username }}</td>
+                            <td>{{ $admin->user->email }}</td>
                             <td>{{$admin->gender}}</td>
                             <td>{{ $admin->user->address }}</td>
                             <td>{{ $admin->user->phone }}</td>
                             <td>
                                 <div class="d-flex">
                                     <div>
-                                    <a href="{{route('admins.edit', $admin->id)}}" class="btn btn-secondary">Edit</a>
-                                </div>
-                                <form action="{{ route('admins.destroy', $admin->id) }}" method="POST"
-                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus admin ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger mx-2">Hapus</button>
-                                </form>
+                                        <a href="{{route('admins.edit', $admin->id)}}"
+                                           class="btn btn-secondary">Edit</a>
+                                    </div>
+                                    <form action="{{ route('admins.destroy', $admin->id) }}" method="POST"
+                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus admin ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger mx-2">Hapus</button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -70,13 +92,10 @@
                     </tbody>
                 </table>
                 <div class="card-footer d-flex align-items-center">
-                    <p class="m-0 text-muted">
-                        Showing {{ $admins->firstItem() }} to {{ $admins->lastItem() }}
-                        of {{ $admins->total() }} entries
-                    </p>
+                    <p class="m-0 text-muted">Showing {{ $admins->firstItem() }} to {{ $admins->lastItem() }}
+                        of {{ $admins->total() }} entries</p>
                     {{ $admins->links() }}
                 </div>
             </div>
         </div>
-    </div>
 @endsection

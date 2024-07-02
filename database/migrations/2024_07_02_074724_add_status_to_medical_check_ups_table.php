@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('doctor_schedules', function (Blueprint $table) {
-        $table->unique(['doctor_id', 'date', 'start_time', 'end_time'], 'doctor_schedule_unique');
-    });
+        Schema::table('medical_check_ups', function (Blueprint $table) {
+            //
+            $table->boolean('status')->default(false);
+        });
     }
 
     /**
@@ -22,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('medical_check_ups', function (Blueprint $table) {
+            //
+        });
     }
 };

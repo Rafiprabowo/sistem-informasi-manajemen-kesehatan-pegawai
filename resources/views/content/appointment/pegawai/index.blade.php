@@ -24,7 +24,7 @@
                       </div>
                      <x-search-form
                         action="{{route('appointmentPegawai.search')}}"
-                        placeholder="Cari appointment"
+                        placeholder="Cari nama dokter"
                         buttonText="Cari"
                         value="{{ request('search') }}"
                     />
@@ -67,6 +67,10 @@
                                 <td>
                                     <span class="badge bg-primary">Sudah</span>
                                     <a href="{{route('pegawai.myDiagnosisDetail', $appointment->id)}}" class="badge bg-secondary mx-3">Lihat Diagnosa</a>
+                                </td>
+                            @else
+                                <td>
+                                    <span class="badge bg-secondary">Belum</span>
                                 </td>
                             @endif
                         </tr>

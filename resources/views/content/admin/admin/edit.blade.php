@@ -27,6 +27,14 @@
         <label class="form-label">Nama belakang</label>
         <input type="text" value="{{$admin->user->last_name}}" id="last_name" name="last_name" class="form-control" required>
     </div>
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" value="{{$admin->user->username}}" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" value="{{$admin->user->email}}" id="email" name="email" class="form-control" required>
+            </div>
     <div class="mb-3">
         <label class="form-label">Alamat</label>
         <input type="text" value="{{$admin->user->address}}" id="address" name="address" class="form-control" required>

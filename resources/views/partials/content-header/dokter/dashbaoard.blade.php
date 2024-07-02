@@ -7,7 +7,7 @@
                   Overview
                 </div>
                 <h2 class="page-title">
-                  Dashboard Apoteker
+                  Dashboard Dokter
                 </h2>
               </div>
               <!-- Page title actions -->

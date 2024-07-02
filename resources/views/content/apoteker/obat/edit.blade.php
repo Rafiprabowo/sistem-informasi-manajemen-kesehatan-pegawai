@@ -80,6 +80,17 @@
 
                     </div>
                 </div>
+                 <div class="mb-3">
+                    <label class="form-label required">Satuan</label>
+                    <div>
+                        <input
+                            type="text"
+                            name="satuan"
+                            class="form-control "
+                            value="{{ old('satuan', $medicine->satuan) }}"
+                            placeholder="Satuan Obat">
+                    </div>
+                </div>
 
             </div>
             <div class="card-footer d-flex justify-content-between">

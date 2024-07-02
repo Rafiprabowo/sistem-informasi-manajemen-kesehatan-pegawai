@@ -1,31 +1,34 @@
 @extends('template')
 @section('aside')
-    @include('partials.aside.pegawai')
+    @include('partials.aside.dokter')
 @endsection
 @section('content')
-    <a href="{{route('pegawai.dashboard')}}" class="btn btn-secondary">Kembali</a>
+    <a href="{{route('doctor.dashboard')}}" class="btn btn-secondary">Kembali</a>
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-9">
             <div class="card card-lg">
                 <div class="card-body markdown">
-                    <h1>Hasil Diagnosa {{$user->first_name.' '.$user->last_name}}</h1>
+                    <h2>Hasil Diagnosa Pegawai</h2>
                     <hr>
-                      <h3>Appointment ID : {{$appointment->id}}</h3>
+                    <h3>Nama : {{$appointment->employee->user->first_name}} {{$appointment->employee->user->last_name}}</h3>
+                    <h3>Jabatan : {{$appointment->employee->position}}</h3>
+                    <h3>Tanggal Lahir : {{$appointment->employee->date_of_birth}}</h3>
+                    <h3>Jenis Kelamin : {{$appointment->employee->gender}}</h3>
+                    <hr>
+                    <h3>Appointment ID : {{$appointment->id}}</h3>
                     <h3>Tanggal Appointment :  {{ \Carbon\Carbon::parse($appointment->appointment_start_time)->format('d/m/y H:i') }}</h3>
                     <h3>Catatan Appointment : {{$appointment->note}}</h3>
                     <h3>Catatan Alergi Obat : {{$appointment->alergi_obat}}</h3>
                     <hr>
-                    <h3>Nama Dokter : {{$appointment->doctor->user->first_name}} {{$appointment->doctor->user->last_name}} </h3>
-                    <h3>Spesialisasi : {{$appointment->doctor->speciality->name}}</h3>
+                    <h3>Nama Dokter : {{$user->first_name}} {{$user->last_name}} </h3>
+                    <h3>Spesialisasi : {{$user->doctor->speciality->name}}</h3>
                     <hr>
-                    <h2>Hasil Diagnosa</h2>
-                    <hr>
-                     @php
+                    @php
                         $firstDiagnosis = $appointment->diagnoses->first();
                     @endphp
                     <h3>Hasil Diagnosa Penyakit : {{ $firstDiagnosis->diagnosa }}</h3>
                     <h3>Resep : </h3>
-                     <table class="table-responsive">
+                    <table class="table-responsive">
                         <thead>
                             <tr>
                                 <th>No</th>

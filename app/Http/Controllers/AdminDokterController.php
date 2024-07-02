@@ -7,23 +7,20 @@ use App\Models\DoctorSpecialization;
 use App\Models\Pharmacist;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AdminDokterController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-
-             $doctors = Doctor::with('user', 'speciality')->paginate(5);
-            return view('content.admin.dokter.index', compact('doctors'))
-                ->with('i', (request()->input('page', 1) - 1) * 5);
-
-
-    }
+   public function index()
+   {
+       $doctors = Doctor::with('user', 'speciality')->paginate(5);
+       return view('content.admin.dokter.index', compact('doctors'));
+   }
 
     /**
      * Show the form for creating a new resource.
@@ -103,23 +100,42 @@ class AdminDokterController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users', 'username')->ignore($id),
+            ],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($id),
+            ],
             'address' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
-            'gender' => 'required',
-            'speciality_id' => 'required',
+            'phone' => 'required|string|max:20',
+            'gender' => 'required|in:L,P',
+            'speciality_id' => 'required|exists:doctor_specializations,id',
         ]);
         $user = User::with('doctor')->findOrFail($id);
-        $user->update([
-            'first_name' => $request->get('first_name'),
-            'last_name' => $request->get('last_name'),
-            'address' => $request->get('address'),
-            'phone' => $request->get('phone'),
-        ]);
-        Doctor::where('user_id', $user->doctor->id)->update([
-            'speciality_id' => $request->get('speciality_id'),
-            'gender' => $request->get('gender'),
-        ]);
-        return redirect()->route('dokters.index')->with('success', 'dokter updated successfully.');
+         try {
+            DB::beginTransaction();
+
+            $user = User::findOrFail($id);
+            $user->update($request->only(['first_name', 'last_name', 'username', 'email', 'address', 'phone']));
+
+            $doctor = Doctor::where('user_id', $id)->firstOrFail();
+            $doctor->update($request->only(['gender', 'speciality_id']));
+
+            DB::commit();
+
+            return redirect()->route('dokters.index')->with('success', 'Doctor updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'An error occurred while updating the doctor.']);
+        }
+
     }
 
     /**

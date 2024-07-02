@@ -35,6 +35,12 @@ class PegawaiController extends Controller
         $user = Auth::user()->load('employee');
         return view('content.pegawai.profile', compact('user'));
     }
+    public function myJadwal()
+    {
+        $user = Auth::user()->load('employee');
+        $mcus = MedicalCheckUp::where('id_employee', $user->employee->id)->paginate(10);
+        return view('content.pegawai.medical-check-up.jadwalku', compact('user', 'mcus'));
+    }
          public function updateProfileEmployee(Request $request)
     {
         // Validasi data yang dikirimkan
@@ -104,6 +110,12 @@ class PegawaiController extends Controller
             ->where('id_employee', Auth::user()->employee->id)
             ->paginate(10);
         return view('content.pegawai.medical-check-up.index', compact('medicalCheckUps'));
+    }
+    public function showMyCheckUp($id){
+         $medicalCheckUps = MedicalCheckUp::with(['pemeriksaanMinors' => function ($query) {
+            $query->with(['nilaiRujukan', 'pemeriksaanMajor']);
+        }])->with('doctor.user')->findOrFail($id);
+        return view('content.pegawai.medical-check-up.detail', compact('medicalCheckUps'));
     }
 
 

@@ -17,6 +17,7 @@ class Appointment extends Model
         'status' => 'pending'
     ];
 
+
     public function employee()
     {
         return $this->belongsTo(Employee::class);

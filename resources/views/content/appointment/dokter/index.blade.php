@@ -49,14 +49,15 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Pegawai</th>
+                        <th>Jenis Kelamin</th>
+                        <th>Jabatan</th>
                         <th>Appointment Date</th>
                         <th>Waktu Mulai</th>
-                        <th>Waktu Selesai</th>
-                        <th>Nama Dokter</th>
                         <th>Catatan Appointment</th>
                         <th>Catatan Alergi Obat</th>
                         <th>Status</th>
-                        <th>Action</th>
+                        <th>Status Diagnosa</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -64,10 +65,10 @@
                         <tr>
                                 <td><span class="text-muted">{{$index + 1}}</span></td>
                                 <td>{{$appointment->employee->user->first_name}} {{$appointment->employee->user->last_name}}</td>
+                                <td>{{$appointment->employee->user->gender}}</td>
+                                <td>{{$appointment->employee->user->position}}</td>
                                 <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('d-m-Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($appointment->appointment_start_time)->format('H:i') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($appointment->appointment_end_time)->format('H:i') }}</td>
-                                <td>{{$user->first_name}} {{$user->last_name}} {{$user->doctor->speciality->name ?? ''}}</td>
                                 <td>{{$appointment->note}}</td>
                                 <td>{{$appointment->alergi_obat}}</td>
                                 <td>

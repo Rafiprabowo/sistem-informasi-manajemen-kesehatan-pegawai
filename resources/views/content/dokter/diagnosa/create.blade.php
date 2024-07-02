@@ -47,9 +47,9 @@
                       <thead>
                         <tr>
                           <th>Appointment ID</th>
-                          <th>Detail Appointment</th>
-                          <th>Biodata Pegawai</th>
-                          <th>Kontak Darurat</th>
+                            <th>Nama Pegawai</th>
+                            <th>Jabatan</th>
+                            <th>Waktu Appointment</th>
                           <th>Aksi</th>
                         </tr>
                       </thead>
@@ -57,34 +57,10 @@
                         @forelse($appointments as $index => $appointment)
                              <tr>
                                 <td>{{ $appointment->id }}</td>
-                                <td>
-                                    <label for="" class="form-label">Detail Appointment</label>
-                                    <ul class="list-group" >
-                                        <li class="list-group-item">Tgl : {{ \Carbon\Carbon::parse($appointment->date)->format('d-m-Y') }}</li>
-                                        <li class="list-group-item">Waktu: {{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($appointment->end_time)->format('H:i') }}</li>
-                                        <li class="list-group-item">Catatan: {{ $appointment->note }}</li>
-                                        <li class="list-group-item">Alergi Obat: {{ $appointment->alergi_obat }}</li>
-                                    </ul>
-                                </td>
-                                <td>
-                                    <label for="" class="form-label">Biodata Pegawai</label>
-                                    <ul class="list-group">
-                                        <li class="list-group-item">Nama : {{ $appointment->employee->user->first_name . ' ' . $appointment->employee->user->last_name }}</li>
-                                        <li class="list-group-item">JK: {{ $appointment->employee->gender }}</li>
-                                        <li class="list-group-item">Tgl Lahir: {{ $appointment->employee->date_of_birth ? \Carbon\Carbon::parse($appointment->employee->date_of_birth)->format('d-m-Y') : 'Data tidak tersedia' }}</li>
-                                        <li class="list-group-item">Usia: {{ $appointment->employee->age ?? 'Data tidak tersedia' }}</li>
-                                        <li class="list-group-item">Riwayat Penyakit: {{ $appointment->employee->medical_history ?? 'null' }}</li>
-                                    </ul>
-                                </td>
-                                 <td class="">
-                                     <label for="" class="form-label">Kontak Darurat</label>
-                                     <ul class="list-group">
-                                         <li class="list-group-item">Nama  : {{$appointment->employee->emergency_contact_name}}</li>
-                                         <li class="list-group-item">Hubungan : {{$appointment->employee->emergency_contact_name}}</li>
-                                         <li class="list-group-item">Nomor Hp  : {{$appointment->employee->emergency_contact_number}}</li>
-                                         <li class="list-group-item">Alamat  : {{$appointment->employee->emergency_contact_address}}</li>
-                                     </ul>
-                                 </td>
+                                 <td>{{$appointment->employee->user->first_name}} {{$appointment->employee->user->last_name}}</td>
+                                 <td>{{$appointment->employee->position}}</td>
+                                 <td>{{\Carbon\Carbon::parse($appointment->date)->format('d/m/y H:i')}}</td>
+
                                  <td>
                                      <div class="mb-3">
                                          <a href="{{route('diagnosa.edit', $appointment->id)}}" class="btn btn-primary">Buat Diagnosa</a>
@@ -102,18 +78,4 @@
                 </div>
               </div>
             @endsection
-            @section('script')
-                    <script>
-                         $(document).ready(function() {
-        // Check if there is a success message in sessionStorage
-        var successMessage = sessionStorage.getItem('successMessage');
-        if (successMessage) {
-            // Display success message using alert or other UI element
-            alert(successMessage);
-            // Clear the session after displaying the message
-            sessionStorage.removeItem('successMessage');
-        }
-    });
-                    </script>
 
-@endsection
